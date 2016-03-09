@@ -10,7 +10,7 @@
   "categories": [
     "Other"
   ],
-  "icon": "sublime.png",
+  "icon": "keyboard.png",
   "repository": {
       "type": "git",
       "url": "https://github.com/waderyan/vscode-sublime-keybindings.git"
