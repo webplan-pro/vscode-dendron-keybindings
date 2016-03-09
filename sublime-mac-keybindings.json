@@ -430,12 +430,14 @@
     // End Incremental find panel key bindings
     
         // { "keys": ["super+k", "super+shift+up"], "command": "new_pane", "args": {"move": false} },
+        
+    	// { "keys": ["super+shift+l"], "command": "split_selection_into_lines" },
     
     // End Good feature to add
     
     // This may be covered by workbench.files.action.openPreviousWorkingFile... but it conflicts with prev_view Sublime command (Tab model) 
     // { "keys": ["super+shift+t"], "command": "reopen_last_file" },
-	// { "keys": ["super+shift+l"], "command": "split_selection_into_lines" },
+
     
     // Custom Snippets
     // { "keys": ["ctrl+o"], "command": "insert_snippet", "args": { "contents": "$0\n" } },
