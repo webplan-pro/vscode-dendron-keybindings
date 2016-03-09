@@ -1,13 +1,6 @@
-# README
-## This is the README for your extension "sublime-keybindings" 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# Sublime Keybindings
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+Ports Sublime keybindings to VS Code. Currently this is only for Mac. Windows / Linux to come. 
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-** Enjoy!**
+More Todos:
+- Finish conversion tool. See `convert.js` for the code to migrate Sublime key bindings to VS Code key bindings with a script. 
