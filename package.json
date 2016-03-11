@@ -2,8 +2,8 @@
   "name": "sublime-keybindings",
   "displayName": "Sublime Keybindings",
   "description": "Port of Sublime keybindings.",
-  "version": "1.0.2",
-  "publisher": "waderyan",
+  "version": "1.0.4",
+  "publisher": "ms-vscode",
   "engines": {
     "vscode": "^0.10.6"
   },
