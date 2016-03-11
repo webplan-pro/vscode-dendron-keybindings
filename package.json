@@ -16,7 +16,7 @@
       "url": "https://github.com/waderyan/vscode-sublime-keybindings.git"
   },
   "bugs": {
-        "url": "https://github.com/Microsoft/vscode-sublime-keybindings/issues",
+        "url": "https://github.com/Microsoft/vscode-sublime-keybindings/issues"
   },
   "contributes": {
     "keybindings": [
