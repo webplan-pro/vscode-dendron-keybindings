@@ -1,6 +1,6 @@
 # Sublime Keybindings
 
-Ports Sublime keybindings to VS Code. Currently only for Mac. 
+Ports Sublime keybindings to VS Code for Mac. 
 
 There was a lot to do here, so if you find something missing please open an issue and let me know. 
 
