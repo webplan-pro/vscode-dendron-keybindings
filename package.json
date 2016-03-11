@@ -18,6 +18,7 @@
   "bugs": {
         "url": "https://github.com/Microsoft/vscode-sublime-keybindings/issues"
   },
+  "license": "license.txt",
   "contributes": {
     "keybindings": [
         {
