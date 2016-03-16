@@ -69,7 +69,7 @@
         },
         {
             "key": "cmd+w",
-            "command": "workbench.action.files.closeFile"
+            "command": "workbench.files.action.closeFile"
         },
         {
             "key": "cmd+k cmd+b",
@@ -192,7 +192,7 @@
     },
     {
         "key": "cmd+k cmd+down",
-        "command": "workbench.action.files.closeFile"
+        "command": "workbench.files.action.closeFile"
     },
     {
         "key": "alt+cmd+[",
