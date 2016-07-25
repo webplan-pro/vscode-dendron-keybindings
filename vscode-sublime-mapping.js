@@ -210,5 +210,8 @@ module.exports = {
     ],
     "editor.action.showContextMenu": [
         { "command": "context_menu" },
-    ]
+    ],
+    "editor.action.insertCursorAtEndOfEachLineSelected" : [
+        { "keys": ["shift+ctrl+l"], "command": "split_selection_into_lines" }        
+    ]    
 };
