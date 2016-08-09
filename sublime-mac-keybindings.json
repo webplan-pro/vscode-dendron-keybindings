@@ -103,7 +103,29 @@
 		[
 			{ "key": "setting.is_widget", "operator": "equal", "operand": true }
 		]
-	}
+	},
+	 { "key": "alt+down",          "command": "cursorEnd",
+                                     "when": "editorTextFocus" },
+	{ "key": "alt+up",              "command": "cursorHome",
+										"when": "editorTextFocus" },
+
+	{ "key": "alt+shift+down",      "command": "cursorEndSelect",
+										"when": "editorTextFocus" },
+	{ "key": "alt+shift+up",        "command": "cursorHomeSelect",
+										"when": "editorTextFocus" },
+
+	{ "key": "alt+shift+left",      "command": "cursorWordEndLeftSelect",
+										"when": "editorTextFocus" },
+	{ "key": "alt+shift+right",     "command": "cursorWordEndRightSelect",
+										"when": "editorTextFocus" },
+
+	{ "key": "ctrl+cmd+down",       "command": "editor.action.moveLinesDownAction",
+										"when": "editorTextFocus" },
+	{ "key": "ctrl+cmd+up",         "command": "editor.action.moveLinesUpAction",
+										"when": "editorTextFocus" },
+
+	{ "key": "shift+cmd+d",         "command": "editor.action.copyLinesDownAction",
+										"when": "editorTextFocus" }
     
      
     // Start Not sure
