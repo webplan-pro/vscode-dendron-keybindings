@@ -8,16 +8,16 @@ module.exports = {
     "workbench.action.files.openFileFolder": [
         { "command": "prompt_open" }
     ],
-    "workbench.files.action.openPreviousWorkingFile": [
+    "workbench.action.previousEditor": [
         { "command": "reopen_last_file" },
         { "keys": ["super+shift+["], "command": "prev_view" },
         { "keys": ["super+alt+left"], "command": "prev_view" },
     ],
-    "workbench.files.action.openNextWorkingFile": [
+    "workbench.action.nextEditor": [
         { "keys": ["super+shift+]"], "command": "next_view" },
         { "keys": ["super+alt+right"], "command": "next_view" },
     ],
-    "workbench.files.action.newUntitledFile": [
+    "workbench.action.files.newUntitledFile": [
         { "keys": ["super+n"], "command": "new_file" }
     ],
     "workbench.action.files.save": [
@@ -29,11 +29,11 @@ module.exports = {
     "workbench.action.files.saveAll": [
         { "keys": ["super+alt+s"], "command": "save_all" }
     ],
-    "workbench.action.files.closeFile": [
+    "workbench.action.closeActiveEditor": [
         { "keys": ["super+w"], "command": "close" },
         { "keys": ["super+k", "super+down"], "command": "close_pane" },
     ],
-    "workbench.action.files.closeAllFiles": [],
+    "workbench.action.closeAllEditors": [],
     "workbench.action.toggleSidebarVisibility": [
         { "keys": ["super+k", "super+b"], "command": "toggle_side_bar" }
     ],
