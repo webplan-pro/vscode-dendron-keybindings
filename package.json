@@ -36,7 +36,7 @@
         },
         {
             "key": "cmd+n",
-            "command": "workbench.files.action.newUntitledFile"
+            "command": "workbench.action.files.newUntitledFile"
         },
         {
             "key": "cmd+s",
@@ -48,20 +48,20 @@
         },
         {
             "key": "shift+cmd+[",
-            "command": "workbench.files.action.openPreviousWorkingFile",
+            "command": "workbench.action.previousEditor",
             "when": "editorTextFocus"
         },
         {
             "key": "shift+cmd+]",
-            "command": "workbench.files.action.openNextWorkingFile"
+            "command": "workbench.action.nextEditor"
         },
         {
             "key": "shift+alt+left",
-            "command": "workbench.files.action.openPreviousWorkingFile"
+            "command": "workbench.action.previousEditor"
         },
         {
             "key": "shift+alt+right",
-            "command": "workbench.files.action.openNextWorkingFile"
+            "command": "workbench.action.nextEditor"
         },
         {
             "key": "alt+cmd+s",
@@ -192,7 +192,7 @@
     },
     {
         "key": "cmd+k cmd+down",
-        "command": "workbench.files.action.closeFile"
+        "command": "workbench.action.closeActiveEditor"
     },
     {
         "key": "alt+cmd+[",
