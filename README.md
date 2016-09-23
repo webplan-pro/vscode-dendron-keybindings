@@ -3,6 +3,8 @@
 The Sublime Keybindings extension maps common Sublime keybindings to VS Code keybindings. After installing the extension and restarting Code your favorite
 key bindings from Sublime are now available. 
 
+> Note - Windows and Linux keybindings have not been implemented. 
+
 For features not yet in VS Code, see this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776). 
 
 | macOS | Feature | Supported |
@@ -61,18 +63,11 @@ For features not yet in VS Code, see this [GitHub issue](https://github.com/Micr
 | cmd+alt+w | Toggle Find Whole Word | Yes | 
 | ctrl+shift+d | Copy Lines Down | Yes | 
 
-> Note - Windows and Linux have not been implemented yet. 
-
 
 ## Releases
 
 1.3.0 - Improved README
 1.2.0 - Fixes a number of keybinding changes with [PR #9](https://github.com/Microsoft/vscode-sublime-keybindings/pull/9) and [PR #12](https://github.com/Microsoft/vscode-sublime-keybindings/pull/12) (credit to [securingsincity](https://github.com/Microsoft/vscode-sublime-keybindings/issues?q=is%3Apr+author%3Asecuringsincity) and [benmosher](https://github.com/Microsoft/vscode-sublime-keybindings/issues?q=is%3Apr+author%3Abenmosher)).
- 
-
-##Todos:
-
-- Windows / Linux keybindings.
 
 ## License
 [MIT](license.txt)
