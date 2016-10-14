@@ -73,7 +73,7 @@
         },
         {
             "key": "cmd+w",
-            "command": "workbench.files.action.closeFile"
+            "command": "workbench.action.closeActiveEditor"
         },
         {
             "key": "cmd+k cmd+b",
