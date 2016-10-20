@@ -26,7 +26,7 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | ctrl+down | ctrl+alt+down | Scroll line down | `scrollLineDown` | 
 | tab and shift+tab | tab and shift+tab | Tab | `tab` | 
 | ctrl+p | cmd+p and cmd+t | Quick open | `workbench.action.quickOpen` |
-| f12 | f12 and cmd+alt+down | Go to decleration | `editor.action.goToDeclaration` |
+| f12 | f12 and cmd+alt+down | Go to declaration | `editor.action.goToDeclaration` |
 | alt+- | ctrl+- | Navigate back | `workbench.action.navigateBack` | 
 | alt+shift+- | ctrl+shift+- | Navigate forward | `workbench.action.navigateForward` | 
 | f3 and f4 | cmd+g and f4 | Next find | `editor.action.nextMatchFindAction` | 
@@ -39,6 +39,11 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | context_menu | atl+f12 | Show context menu | `editor.action.showContextMenu` |
 | ctrl++ | cmd++ | Increase font | `workbench.action.zoomIn` |
 | ctrl+- | cmd+- | Decrease font | `workbench.action.zoomOut` |
+| ctrl+alt+down / alt+shift+down | ctrl+shift+down  | Vertical / Column Select down | `cursorColumnSelectDown` |
+| ctrl+alt+up / alt+shift+up | ctrl+shift+up  | Vertical / Column Select up | `cursorColumnSelectUp` |
+| ctrl+alt+pageup / alt+shift+pageup | ctrl+shift+pageup | Vertical / Column Select page up | `cursorColumnSelectPageUp` |
+| ctrl+alt+pagedown / alt+shift+pagedown | ctrl+shift+pagedown | Vertical / Column Select page down | `cursorColumnSelectPageDown` |
+| ctrl+shift+l, cmd+shift+l | Split selection into lines | `editor.action.insertCursorAtEndOfEachLineSelected` |
 
 Additionally, you can see all of the keyboard shortcuts in the extension's details page in VS Code. 
 
@@ -52,9 +57,9 @@ This is likely because VS Code has not implemented this feature. Head on over to
 
 We may have missed a keyboard shortcut. If we did please help us out! It is very easy to make a PR. 
 
-1. Head over to our Github repository. 
-2. Open the `package.json` file. 
-3. Add a JSON object to `contributions.keybindings` like below. 
+1. Head over to our [GitHub repository](https://github.com/Microsoft/vscode-sublime-keybindings). 
+2. Open the [`package.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json). 
+3. Add a JSON object to [`contributions.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json#L25) like below. 
 4. Open a PR. 
 
 ```json
@@ -70,6 +75,8 @@ We may have missed a keyboard shortcut. If we did please help us out! It is very
 You can read more about how to contribute keybindings in extensions in the [official documentation](http://code.visualstudio.com/docs/extensionAPI/extension-points#_contributeskeybindings). 
 
 ## Releases
+
+1.5.0 - New keybindings and nit fixes per [@bhancock8](https://github.com/bhancock8)
 
 1.4.0 - Added Windows / Linux key bindings and a number of missing commands. Updated the README. 
 
