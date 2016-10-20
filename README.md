@@ -37,10 +37,12 @@ Want to use the same keybindings in Visual Studio Code that you know for Sublime
 | ctrl+shift+] | cmd+alt+] | Unfold | `editor.fold` | 
 | ctrl+k ctrl+0 and ctrl+k ctrl+j | cmd+k cmd+0 and cmd+k cmd+j | Fold all | `editor.unfoldAll` | 
 | context_menu | atl+f12 | Show context menu | `editor.action.showContextMenu` |
+| ctrl++ | cmd++ | Increase font | `workbench.action.zoomIn` |
+| ctrl+- | cmd+- | Decrease font | `workbench.action.zoomOut` |
 
 Additionally, you can see all of the keyboard shortcuts in the extension's details page in VS Code. 
 
-![extension contributions](contributions.png)
+![extension contributions](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/contributions.png?raw=true)
 
 ## Why doesn't join lines (or another command) work? 
 
