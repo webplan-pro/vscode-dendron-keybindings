@@ -293,30 +293,35 @@
                 "mac": "ctrl+shift+up",
                 "win": "alt+shift+up",
                 "linux": "alt+shift+up",
+                "key": "alt+shift+up",
                 "command": "cursorColumnSelectUp",
                 "when": "editorTextFocus" 
             }, {
                 "mac": "ctrl+shift+down",
                 "win": "alt+shift+down",
                 "linux": "alt+shift+down",
+                "key": "alt+shift+down",
                 "command": "cursorColumnSelectDown",
                 "when": "editorTextFocus" 
             }, {
                 "mac": "ctrl+shift+pageup",
                 "win": "alt+shift+pageup",
                 "linux": "alt+shift+pageup",
+                "key": "alt+shift+pageup",
                 "command": "cursorColumnSelectPageUp",
                 "when": "editorTextFocus" 
             }, {
                 "mac": "ctrl+shift+pagedown",
                 "win": "alt+shift+pagedown",
                 "linux": "alt+shift+pagedown",
+                "key": "alt+shift+pagedown",
                 "command": "cursorColumnSelectPageDown",
                 "when": "editorTextFocus" 
             }, {
                 "mac": "cmd+shift+l",
                 "win": "ctrl+shift+l",
                 "linux": "ctrl+shift+l",
+                "key": "ctrl+shift+l",
                 "command": "editor.action.insertCursorAtEndOfEachLineSelected",
                 "when": "editorTextFocus"
             }
