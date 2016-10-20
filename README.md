@@ -1,6 +1,6 @@
-# Sublime Keymap for VS Code
+# Sublime Text Keymap for VS Code
 
-Want to use the same keybindings in Visual Studio Code that you know for Sublime Text? This extension ports the most popular Sublime Text keyboard shortcuts to Visual Studio Code. After installing the extension and restarting Code your favorite key bindings from Sublime are now available. 
+This extension ports the most popular Sublime Text keyboard shortcuts to Visual Studio Code. After installing the extension and restarting VS Code your favorite keyboard shortcuts from Sublime Text are now available. 
 
 ## What keyboard shortcuts are included?
 
