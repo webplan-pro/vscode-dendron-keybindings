@@ -46,7 +46,7 @@ Additionally, you can see all of the keyboard shortcuts in the extension's detai
 
 ## Why doesn't join lines (or another command) work? 
 
-This is likely because VS Code has not implemented this feature. Head on over to this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776) and let VS Code know what you'd like to see. 
+This is likely because VS Code has not implemented this feature. Head on over to this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776) and let the VS Code team know what you'd like to see. 
 
 ## How do I contribute a keyboard shortcut?
 
@@ -62,9 +62,12 @@ We may have missed a keyboard shortcut. If we did please help us out! It is very
     "mac": "<keyboard shortcut for mac>",
     "linux": "<keyboard shortcut for linux",
     "win": "<keyboard shortcut for windows",
+    "key": "<default keyboard shortcut>",
     "command": "<name of the command in VS Code"
 }
 ```
+
+You can read more about how to contribute keybindings in extensions in the [official documentation](http://code.visualstudio.com/docs/extensionAPI/extension-points#_contributeskeybindings). 
 
 ## Releases
 
