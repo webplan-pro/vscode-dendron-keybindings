@@ -7,7 +7,7 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | Windows / Linux | Mac | Description  | VSC Command |
 | --------------- | --- | ------- | ------------ | ----------- |
 | <kbd>f9</kbd> | <kbd>f5</kbd> | Sort lines | `editor.action.sortLinesAscending` | 
-| <kbd>ctrl</kbd>+<kbd>f9</kbd> | <kbd>ctrl</kbd>+f5</kbd> | Sort lines | `editor.action.sortLinesDescending` | 
+| <kbd>ctrl</kbd>+<kbd>f9</kbd> | <kbd>ctrl</kbd>+<kbd>f5</kbd> | Sort lines | `editor.action.sortLinesDescending` | 
 | <kbd>ctrl</kbd>+<kbd>w</kbd> | <kbd>cmd</kbd>+<kbd>w</kbd> | Close file | `workbench.files.action.closeFile` | 
 | <kbd>ctrl</kbd>+k <kbd>ctrl</kbd>+<kbd>b</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>b</kbd> | Toggle sidebar | `workbench.action.toggleSidebarVisibility` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>k</kbd> | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>k</kbd> | Delete Line | `editor.action.deleteLines` | 
@@ -16,13 +16,13 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | <kbd>ctrl</kbd>+<kbd>l</kbd> | <kbd>cmd</kbd>+<kbd>l</kbd> | Select line (repeat for next lines) | `expandLineSelection` |  
 | <kbd>ctrl</kbd>+<kbd>m</kbd> | <kbd>ctrl</kbd>+<kbd>m</kbd> | Jump to bracket | `editor.action.jumpToBracket` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>d</kbd> | <kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>d</kbd> | Duplicate line | `editor.action.copyLinesDownAction` | 
-| <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>/</kbd> | <kbd>cmd</kbd>+alt+<kbd>/</kbd> | Block comment | `editor.action.blockComment` | 
+| <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>/</kbd> | <kbd>cmd</kbd>+<kbd>alt</kbd>+<kbd>/</kbd> | Block comment | `editor.action.blockComment` | 
 | <kbd>ctrl</kbd>+<kbd>r</kbd> and <kbd>ctrl</kbd>+<kbd>;</kbd> | <kbd>cmd</kbd>+<kbd>r</kbd> | Go to Symbol | `workbench.action.gotoSymbol` | 
-| <kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>2</kbd> and <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+up | alt+<kbd>cmd</kbd>+<kbd>2</kbd> and <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+up | Split editor | `workbench.action.splitEditor` | 
-| <kbd>ctrl</kbd>+<kbd>h</kbd>| <kbd>cmd</kbd>+alt+<kbd>f</kbd> | Replace | `workbench.action.replaceInFiles` | 
+| <kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>2</kbd> and <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+<kbd>up</kbd> | <kbd>alt</kbd>+<kbd>cmd</kbd>+<kbd>2</kbd> and <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>up</kbd> | Split editor | `workbench.action.splitEditor` | 
+| <kbd>ctrl</kbd>+<kbd>h</kbd>| <kbd>cmd</kbd>+<kbd>alt</kbd>+<kbd>f</kbd> | Replace | `workbench.action.replaceInFiles` | 
 | <kbd>ctrl</kbd>+<kbd>pagedown</kbd> | <kbd>shift</kbd>+<kbd>cmd</kbd>+<kbd>]</kbd> and <kbd>alt</kbd>+<kbd>cmd</kbd>+<kbd>right</kbd> | Next Tab | `workbench.action.nextEditor` | 
 | <kbd>ctrl</kbd>+<kbd>pageup</kbd> | <kbd>shift</kbd>+<kbd>cmd</kbd>+<kbd>[</kbd> and <kbd>alt</kbd>+<kbd>cmd</kbd>+left | Previous Tab | `workbench.action.previousEditor` | 
-| <kbd>ctrl</kbd>+up | <kbd>ctrl</kbd>+<kbd>alt</kbd>+up | Scroll line up | `scrollLineUp` | 
+| <kbd>ctrl</kbd>+<kbd>up</kbd> | <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>up</kbd> | Scroll line up | `scrollLineUp` | 
 | <kbd>ctrl</kbd>+<kbd>down</kbd> | <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>down</kbd> | Scroll line down | `scrollLineDown` | 
 | <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd> | <kbd>tab</kbd> and <kbd>shift</kbd>+<kbd>tab</kbd> | Tab | `tab` | 
 | <kbd>ctrl</kbd>+<kbd>p</kbd> | <kbd>cmd</kbd>+<kbd>p</kbd> and <kbd>cmd</kbd>+<kbd>t</kbd> | Quick open | `workbench.action.quickOpen` |
@@ -30,7 +30,7 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | <kbd>alt</kbd>+<kbd>-</kbd> | <kbd>ctrl</kbd>+<kbd>-</kbd> | Navigate back | `workbench.action.navigateBack` | 
 | <kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>-</kbd> | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>-</kbd> | Navigate forward | `workbench.action.navigateForward` | 
 | <kbd>f3</kbd> and <kbd>f4</kbd> | <kbd>cmd</kbd>+<kbd>g</kbd> and <kbd>f4</kbd> | Next find | `editor.action.nextMatchFindAction` | 
-| <kbd>shift</kbd>+<kbd>f3</kbd> and <kbd>shift</kbd>+<kbd>f4</kbd> | <kbd>shift</kbd>+<kbd>cmd</kbd>+<kbd>g</kbd> and <kbd>shift</kbd>+f4 | Previous find | `editor.action.previousMatchFindAction` | 
+| <kbd>shift</kbd>+<kbd>f3</kbd> and <kbd>shift</kbd>+<kbd>f4</kbd> | <kbd>shift</kbd>+<kbd>cmd</kbd>+<kbd>g</kbd> and <kbd>shift</kbd>+<kbd>f4</kbd> | Previous find | `editor.action.previousMatchFindAction` | 
 | <kbd>ctrl</kbd>+/ and <kbd>ctrl</kbd>+<kbd>shift</kbd>+/ | <kbd>cmd</kbd>+/ and <kbd>ctrl</kbd>+<kbd>cmd</kbd>+<kbd>down</kbd> | Comment line | `editor.action.commentLine` | 
 | <kbd>ctrl</kbd>+k <kbd>ctrl</kbd>+<kbd>down</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>down</kbd> | Close active editor | `workbench.action.closeActiveEditor` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>[</kbd> | <kbd>alt</kbd>+<kbd>cmd</kbd>+<kbd>[</kbd> | Fold | `editor.fold` | 
