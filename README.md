@@ -9,7 +9,7 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | <kbd>f9</kbd> | <kbd>f5</kbd> | Sort lines | `editor.action.sortLinesAscending` | 
 | <kbd>ctrl</kbd>+<kbd>f9</kbd> | <kbd>ctrl</kbd>+<kbd>f5</kbd> | Sort lines | `editor.action.sortLinesDescending` | 
 | <kbd>ctrl</kbd>+<kbd>w</kbd> | <kbd>cmd</kbd>+<kbd>w</kbd> | Close file | `workbench.files.action.closeFile` | 
-| <kbd>ctrl</kbd>+k <kbd>ctrl</kbd>+<kbd>b</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>b</kbd> | Toggle sidebar | `workbench.action.toggleSidebarVisibility` | 
+| <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+<kbd>b</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>b</kbd> | Toggle sidebar | `workbench.action.toggleSidebarVisibility` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>k</kbd> | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>k</kbd> | Delete Line | `editor.action.deleteLines` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>up</kbd> | <kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>up</kbd> | Move line <kbd>up</kbd> | `editor.action.moveLinesUpAction` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>down</kbd> | <kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>down</kbd> | Move line down | `editor.action.moveLinesDownAction` | 
@@ -31,8 +31,8 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | <kbd>alt</kbd>+<kbd>shift</kbd>+<kbd>-</kbd> | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>-</kbd> | Navigate forward | `workbench.action.navigateForward` | 
 | <kbd>f3</kbd> and <kbd>f4</kbd> | <kbd>cmd</kbd>+<kbd>g</kbd> and <kbd>f4</kbd> | Next find | `editor.action.nextMatchFindAction` | 
 | <kbd>shift</kbd>+<kbd>f3</kbd> and <kbd>shift</kbd>+<kbd>f4</kbd> | <kbd>shift</kbd>+<kbd>cmd</kbd>+<kbd>g</kbd> and <kbd>shift</kbd>+<kbd>f4</kbd> | Previous find | `editor.action.previousMatchFindAction` | 
-| <kbd>ctrl</kbd>+/ and <kbd>ctrl</kbd>+<kbd>shift</kbd>+/ | <kbd>cmd</kbd>+/ and <kbd>ctrl</kbd>+<kbd>cmd</kbd>+<kbd>down</kbd> | Comment line | `editor.action.commentLine` | 
-| <kbd>ctrl</kbd>+k <kbd>ctrl</kbd>+<kbd>down</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>down</kbd> | Close active editor | `workbench.action.closeActiveEditor` | 
+| <kbd>ctrl</kbd>+<kbd>/</kbd> and <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>/</kbd> | <kbd>cmd</kbd>+<kbd>/</kbd> and <kbd>ctrl</kbd>+<kbd>cmd</kbd>+<kbd>down</kbd> | Comment line | `editor.action.commentLine` | 
+| <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+<kbd>down</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>down</kbd> | Close active editor | `workbench.action.closeActiveEditor` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>[</kbd> | <kbd>alt</kbd>+<kbd>cmd</kbd>+<kbd>[</kbd> | Fold | `editor.fold` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>]</kbd> | <kbd>cmd</kbd>+<kbd>alt</kbd>+<kbd>]</kbd> | Unfold | `editor.fold` | 
 | <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+<kbd>0</kbd> and <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+<kbd>j</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>0</kbd> and <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>j</kbd> | Fold all | `editor.unfoldAll` | 
