@@ -1,72 +1,75 @@
-# Sublime Keybindings for VS Code
+# Sublime Keymap for VS Code
 
-The Sublime Keybindings extension maps common Sublime keybindings to VS Code keybindings. After installing the extension and restarting Code your favorite
-key bindings from Sublime are now available. 
+Want to use the same keybindings in Visual Studio Code that you know for Sublime Text? This extension ports the most popular Sublime Text keyboard shortcuts to Visual Studio Code. After installing the extension and restarting Code your favorite key bindings from Sublime are now available. 
 
-> Note - Windows and Linux keybindings have not been implemented. 
+## What keyboard shortcuts are included?
 
-For features not yet in VS Code, see this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776). 
+| Windows / Linux | Mac | Description  | VSC Command |
+| --------------- | --- | ------- | ------------ | ----------- |
+| f9 | f5 | Sort lines | `editor.action.sortLinesAscending` | 
+| ctrl+f9 | ctrl+f5 | Sort lines | `editor.action.sortLinesDescending` | 
+| ctrl+w | cmd+w | Close file | `workbench.files.action.closeFile` | 
+| ctrl+k ctrl+b | cmd+k cmd+b | Toggle sidebar | `workbench.action.toggleSidebarVisibility` | 
+| ctrl+shift+k | ctrl+shift+k | Delete Line | `editor.action.deleteLines` | 
+| ctrl+shift+up | cmd+shift+up | Move line up | `editor.action.moveLinesUpAction` | 
+| ctrl+shift+down | cmd+shift+down | Move line down | `editor.action.moveLinesDownAction` | 
+| ctrl+l | cmd+l | Select line (repeat for next lines) | `expandLineSelection` |  
+| ctrl+m | ctrl+m | Jump to bracket | `editor.action.jumpToBracket` | 
+| ctrl+shift+d | cmd+shift+d | Duplicate line | `editor.action.copyLinesDownAction` | 
+| ctrl+shift+/ | cmd+alt+/ | Block comment | `editor.action.blockComment` | 
+| ctrl+r and ctrl+; | cmd+r | Go to Symbol | `workbench.action.gotoSymbol` | 
+| alt+shift+2 and ctrl+k ctrl+up | alt+cmd+2 and cmd+k cmd+up | Split editor | `workbench.action.splitEditor` | 
+| ctrl+h | cmd+alt+f | Replace | `workbench.action.replaceInFiles` | 
+| ctrl+pagedown | shift+cmd+] and alt+cmd+right | Next Tab | `workbench.action.nextEditor` | 
+| ctrl+pageup | shift+cmd+[ and alt+cmd+left | Previous Tab | `workbench.action.previousEditor` | 
+| ctrl+up | ctrl+alt+up | Scroll line up | `scrollLineUp` | 
+| ctrl+down | ctrl+alt+down | Scroll line down | `scrollLineDown` | 
+| tab and shift+tab | tab and shift+tab | Tab | `tab` | 
+| ctrl+p | cmd+p and cmd+t | Quick open | `workbench.action.quickOpen` |
+| f12 | f12 and cmd+alt+down | Go to decleration | `editor.action.goToDeclaration` |
+| alt+- | ctrl+- | Navigate back | `workbench.action.navigateBack` | 
+| alt+shift+- | ctrl+shift+- | Navigate forward | `workbench.action.navigateForward` | 
+| f3 and f4 | cmd+g and f4 | Next find | `editor.action.nextMatchFindAction` | 
+| shift+f3 and shift+f4 | shift+cmd+g and shift+f4 | Previous find | `editor.action.previousMatchFindAction` | 
+| ctrl+/ and ctrl+shift+/ | cmd+/ and ctrl+cmd+down | Comment line | `editor.action.commentLine` | 
+| ctrl+k ctrl+down | cmd+k cmd+down | Close active editor | `workbench.action.closeActiveEditor` | 
+| ctrl+shift+[ | alt+cmd+[ | Fold | `editor.fold` | 
+| ctrl+shift+] | cmd+alt+] | Unfold | `editor.fold` | 
+| ctrl+k ctrl+0 and ctrl+k ctrl+j | cmd+k cmd+0 and cmd+k cmd+j | Fold all | `editor.unfoldAll` | 
+| context_menu | atl+f12 | Show context menu | `editor.action.showContextMenu` |
 
-| macOS | Feature | Supported |
-| ----- | ------- | --------- |
-| cmd+j | Join Lines | No - Vote on [Github](https://github.com/Microsoft/vscode/issues/1759) |
-| shift+cmd+n | Open a New Window | Yes |
-| shift+cmd+w | Close Window | Yes |
-| cmd+o | Open File Folder | Yes |
-| cmd+n | New Untitled File | Yes | 
-| cmd+s | Save File | Yes |
-| shift+cmd+s | Save As | Yes | 
-| shift+cmd+[ | Previous Editor | Yes | 
-| shift+cmd+] | Next Editor | Yes |
-| shift+alt+left | Previous Editor | Yes |
-| shift+alt+right | Next Editor | Yes |
-| cmd+alt+s | Save All Files | Yes |
-| cmd+w | Close File | Yes | 
-| cmd+k cmd+b | Toggle Sidebar Visibility | Yes | 
-| ctrl+cmd+f | Toggle Full Screen | Yes |
-| cmd+u | Cursor Undo | Yes | 
-| ctrl+alt+up | Scroll Line Up | Yes | 
-| ctrl+alt+down | Scroll Line Down | Yes | 
-| Escape | Hide Suggest Widget | Yes | 
-| cmd+] | Indent Lines | Yes | 
-| cmd+[ | Outdent Lines | Yes | 
-| shift+tab | Tab | Yes | 
-| ctrl+g | Go to Line | Yes | 
-| cmd+t | Quick Open | Yes | 
-| cmd+r | Go to Symbol | Yes | 
-| f12 | Go to Decleration | Yes | 
-| alt+cmd+down | Go to Declaration | Yes | 
-| shift+cmd+- | Navigate Forward | Yes | 
-| ctrl+- | Navigate Forward | Yes | 
-| shift+cmd+g | Previous Match Find | Yes | 
-| cmd+g | Next Match Find | Yes |
-| f4 | Next Match Find | Yes | 
-| shift+f4 | Previous Match Find | Yes | 
-| shift+cmd+up | Move Lines Up | Yes | 
-| shift+cmd+down | Move Lines Down | Yes | 
-| cmd+/ | Comment Line | Yes | 
-| alt+cmd+/ | Comment Line | Yes | 
-| cmd+k cmd+up | Split Editor | Yes | 
-| cmd+k cmd+down | Close Active Editor | Yes | 
-| alt+cmd+[ | Fold | Yes | 
-| alt+cmd+] | Unfold | Yes | 
-| cmd+k cmd+1 | Fold Level 1 | Yes | 
-| cmd+k cmd+2 | Fold Level 2 | Yes | 
-| cmd+k cmd+3 | Fold Level 3 | Yes | 
-| cmd+k cmd+4 | Fold Level 4 | Yes | 
-| cmd+k cmd+5 | Fold Level 5 | Yes | 
-| cmd+k cmd+0 | Unfold All | Yes | 
-| cmd+k cmd+j | Unfold All | Yes |
-| alt+cmd+r | Toggle Find Regex | Yes |
-| cmd+alt+c | Toggle Find Case Sensitive | Yes | 
-| alt+f12 | Show Context Menu | Yes | 
-| cmd+alt+w | Toggle Find Whole Word | Yes | 
-| ctrl+shift+d | Copy Lines Down | Yes | 
+Additionally, you can see all of the keyboard shortcuts in the extension's details page in VS Code. 
 
+![extension contributions](contributions.png)
+
+## Why doesn't join lines (or another command) work? 
+
+This is likely because VS Code has not implemented this feature. Head on over to this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776) and let VS Code know what you'd like to see. 
+
+## How do I contribute a keyboard shortcut?
+
+We may have missed a keyboard shortcut. If we did please help us out! It is very easy to make a PR. 
+
+1. Head over to our Github repository. 
+2. Open the `package.json` file. 
+3. Add a JSON object to `contributions.keybindings` like below. 
+4. Open a PR. 
+
+```json
+{
+    "mac": "<keyboard shortcut for mac>",
+    "linux": "<keyboard shortcut for linux",
+    "win": "<keyboard shortcut for windows",
+    "command": "<name of the command in VS Code"
+}
+```
 
 ## Releases
 
+1.4.0 - Added Windows / Linux key bindings and a number of missing commands. Updated the README. 
+
 1.3.0 - Improved README
+
 1.2.0 - Fixes a number of keybinding changes with [PR #9](https://github.com/Microsoft/vscode-sublime-keybindings/pull/9) and [PR #12](https://github.com/Microsoft/vscode-sublime-keybindings/pull/12) (credit to [securingsincity](https://github.com/Microsoft/vscode-sublime-keybindings/issues?q=is%3Apr+author%3Asecuringsincity) and [benmosher](https://github.com/Microsoft/vscode-sublime-keybindings/issues?q=is%3Apr+author%3Abenmosher)).
 
 ## License
