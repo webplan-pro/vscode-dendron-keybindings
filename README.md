@@ -11,7 +11,7 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 | <kbd>ctrl</kbd>+<kbd>w</kbd> | <kbd>cmd</kbd>+<kbd>w</kbd> | Close file | `workbench.files.action.closeFile` | 
 | <kbd>ctrl</kbd>+<kbd>k</kbd> <kbd>ctrl</kbd>+<kbd>b</kbd> | <kbd>cmd</kbd>+<kbd>k</kbd> <kbd>cmd</kbd>+<kbd>b</kbd> | Toggle sidebar | `workbench.action.toggleSidebarVisibility` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>k</kbd> | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>k</kbd> | Delete Line | `editor.action.deleteLines` | 
-| <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>up</kbd> | <kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>up</kbd> | Move line <kbd>up</kbd> | `editor.action.moveLinesUpAction` | 
+| <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>up</kbd> | <kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>up</kbd> | Move line up | `editor.action.moveLinesUpAction` | 
 | <kbd>ctrl</kbd>+<kbd>shift</kbd>+<kbd>down</kbd> | <kbd>cmd</kbd>+<kbd>shift</kbd>+<kbd>down</kbd> | Move line down | `editor.action.moveLinesDownAction` | 
 | <kbd>ctrl</kbd>+<kbd>l</kbd> | <kbd>cmd</kbd>+<kbd>l</kbd> | Select line (repeat for next lines) | `expandLineSelection` |  
 | <kbd>ctrl</kbd>+<kbd>m</kbd> | <kbd>ctrl</kbd>+<kbd>m</kbd> | Jump to bracket | `editor.action.jumpToBracket` | 
