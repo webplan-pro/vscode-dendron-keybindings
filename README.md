@@ -42,7 +42,7 @@ Want to use the same keybindings in Visual Studio Code that you know for Sublime
 
 Additionally, you can see all of the keyboard shortcuts in the extension's details page in VS Code. 
 
-![extension contributions](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/contributions.png?raw=true)
+![extension contributions](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/contributions_list.png?raw=true)
 
 ## Why doesn't join lines (or another command) work? 
 
