@@ -228,14 +228,6 @@
                 "when": "editorFocus"
             },
             {
-                "mac": "ctrl+shift+up",
-                "win": "ctrl+alt+up",
-                "linux": "ctrl+alt+up",
-                "key": "ctrl+alt+up",
-                "command": "editor.action.copyLinesUpAction",
-                "when": "editorFocus"
-            },
-            {
                 "mac": "cmd+l",
                 "win": "ctrl+l",
                 "linux": "ctrl+l",
