@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "1.5.4",
+    "version": "1.5.5",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
@@ -379,6 +379,14 @@
                 "linux": "alt+9",
                 "key": "alt+9",
                 "command": "workbench.action.openEditorAtIndex9"
+            },
+            {
+                "mac": "cmd+ctrl+g",
+                "win": "alt+f3",
+                "linux": "alt+f3",
+                "key": "alt+f3",
+                "command": "editor.action.selectHighlights",
+                "when": "editorFocus"
             }
         ]
     },
