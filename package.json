@@ -62,7 +62,7 @@
                 "command": "workbench.action.files.saveAll"
             },
             {
-                "mac": "cmd+k cmd+b",-
+                "mac": "cmd+k cmd+b",
                 "win": "ctrl+k ctrl+b",
                 "linux": "ctrl+k ctrl+b",
                 "key": "ctrl+k ctrl+b",
