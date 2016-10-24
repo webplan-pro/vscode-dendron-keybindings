@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "1.5.3",
+    "version": "1.5.4",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
