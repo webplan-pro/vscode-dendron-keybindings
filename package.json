@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime keybindings for VS Code.",
-    "version": "1.5.2",
+    "version": "1.5.3",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
@@ -280,7 +280,7 @@
             }, {
                 "mac": "cmd+-",
                 "key": "ctrl+-",
-                "command": "workbench.action.zoomIn"
+                "command": "workbench.action.zoomOut"
             }, {
                 "mac": "ctrl+shift+up",
                 "win": "alt+shift+up",
