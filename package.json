@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "1.5.8",
+    "version": "1.5.9",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
@@ -16,7 +16,7 @@
     "icon": "sublime_keyboard.svg",
     "repository": {
         "type": "git",
-        "url": "https://github.com/waderyan/vscode-sublime-keybindings.git"
+        "url": "https://github.com/Microsoft/vscode-sublime-keybindings.git"
     },
     "bugs": {
         "url": "https://github.com/Microsoft/vscode-sublime-keybindings/issues"
