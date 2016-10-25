@@ -6,7 +6,7 @@ This extension ports the most popular Sublime Text keyboard shortcuts to Visual 
 
 You can see all the keyboard shortcuts in the extension's contribution list. 
 
-![extension contributions](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/contributions_list.png?raw=true)
+![extension contributions](https://raw.githubusercontent.com/Microsoft/vscode-sublime-keybindings/master/contributions_list.png)
 
 ## Why doesn't join lines or other Sublime Text commands work? 
 
