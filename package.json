@@ -2,13 +2,12 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "1.5.6",
+    "version": "1.5.7",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
     },
     "categories": [
-        "Other",
         "Keymaps"
     ],
     "keywords": [
@@ -80,14 +79,6 @@
                 "key": "ctrl+down",
                 "command": "scrollLineDown",
                 "when": "editorTextFocus"
-            },
-            {
-                "mac": "shift+tab",
-                "win": "shift+tab",
-                "linux": "shift+tab",
-                "key": "shift+tab",
-                "command": "tab",
-                "when": "editorTextFocus && !editorTabMovesFocus"
             },
             {
                 "mac": "cmd+t",
@@ -202,7 +193,7 @@
             },
             {
                 "mac": "cmd+alt+]",
-                "key": "ctrl+shift+[",
+                "key": "ctrl+shift+]",
                 "command": "editor.unfold",
                 "when": "editorFocus"
             },
@@ -216,7 +207,7 @@
             },
             {
                 "mac": "alt+f12",
-                "key": "context_menu",
+                "key": "alt+f12",
                 "command": "editor.action.showContextMenu",
                 "when": "editorTextFocus"
             },
@@ -274,50 +265,52 @@
                 "key": "ctrl+shift+k",
                 "command": "editor.action.deleteLines",
                 "when": "editorFocus"
-            }, {
-                "mac": "cmd++",
-                "key": "ctrl++",
-                "command": "workbench.action.zoomIn"
-            }, {
+            },
+            {
                 "mac": "cmd+-",
                 "key": "ctrl+-",
                 "command": "workbench.action.zoomOut"
-            }, {
+            },
+            {
                 "mac": "ctrl+shift+up",
                 "win": "alt+shift+up",
                 "linux": "alt+shift+up",
                 "key": "alt+shift+up",
                 "command": "cursorColumnSelectUp",
-                "when": "editorTextFocus" 
-            }, {
+                "when": "editorTextFocus"
+            },
+            {
                 "mac": "ctrl+shift+down",
                 "win": "alt+shift+down",
                 "linux": "alt+shift+down",
                 "key": "alt+shift+down",
                 "command": "cursorColumnSelectDown",
-                "when": "editorTextFocus" 
-            }, {
+                "when": "editorTextFocus"
+            },
+            {
                 "mac": "ctrl+shift+pageup",
                 "win": "alt+shift+pageup",
                 "linux": "alt+shift+pageup",
                 "key": "alt+shift+pageup",
                 "command": "cursorColumnSelectPageUp",
-                "when": "editorTextFocus" 
-            }, {
+                "when": "editorTextFocus"
+            },
+            {
                 "mac": "ctrl+shift+pagedown",
                 "win": "alt+shift+pagedown",
                 "linux": "alt+shift+pagedown",
                 "key": "alt+shift+pagedown",
                 "command": "cursorColumnSelectPageDown",
-                "when": "editorTextFocus" 
-            }, {
+                "when": "editorTextFocus"
+            },
+            {
                 "mac": "cmd+shift+l",
                 "win": "ctrl+shift+l",
                 "linux": "ctrl+shift+l",
                 "key": "ctrl+shift+l",
                 "command": "editor.action.insertCursorAtEndOfEachLineSelected",
                 "when": "editorTextFocus"
-            }, 
+            },
             {
                 "mac": "cmd+1",
                 "win": "alt+1",
@@ -388,6 +381,13 @@
                 "key": "alt+f3",
                 "command": "editor.action.selectHighlights",
                 "when": "editorFocus"
+            },
+            {
+                "mac": "cmd+shift+r",
+                "win": "ctrl+shift+r",
+                "linux": "ctrl+shift+r",
+                "key": "ctrl+shift+r",
+                "command": "workbench.action.showAllSymbols"
             }
         ]
     },
