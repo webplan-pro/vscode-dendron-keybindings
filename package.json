@@ -141,7 +141,7 @@
                 "when": "editorTextFocus"
             },
             {
-                "mac": "ctrl+ctrl+up",
+                "mac": "ctrl+cmd+up",
                 "win": "ctrl+shift+up",
                 "linux": "ctrl+shift+up",
                 "key": "ctrl+shift+up",
@@ -149,7 +149,7 @@
                 "when": "editorTextFocus"
             },
             {
-                "mac": "ctrl+ctrl+down",
+                "mac": "ctrl+cmd+down",
                 "win": "ctrl+shift+down",
                 "linux": "ctrl+shift+down",
                 "key": "ctrl+shift+down",
