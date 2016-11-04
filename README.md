@@ -29,7 +29,7 @@ We may have missed a keyboard shortcut. If we did please help us out! It is very
 
 1. Head over to our [GitHub repository](https://github.com/Microsoft/vscode-sublime-keybindings). 
 2. Open the [`package.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json). 
-3. Add a JSON object to [`contributions.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json#L25) as seen below. 
+3. Add a JSON object to [`contributes.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json#L25) as seen below. 
 4. Open a pull request. 
 
 ```json
