@@ -14,10 +14,10 @@ This is because VS Code has not implemented this feature. Head on over to this [
 
 You can install an extension for many of these features:
 
+* [Expand Selection To Scope](https://marketplace.visualstudio.com/items?itemName=vittorioromeo.expand-selection-to-scope)
 * [Join Lines](https://marketplace.visualstudio.com/items?itemName=wmaurer.join-lines)
 * [Paste and Indent](https://marketplace.visualstudio.com/items?itemName=Rubymaniac.vscode-paste-and-indent)
 * [FontSize Shortcuts](https://marketplace.visualstudio.com/items?itemName=peterjuras.fontsize-shortcuts)
-* [Bracket Selection](https://marketplace.visualstudio.com/items?itemName=guosong.bracketselection)
 * [change case](https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case)
 * [expand-region](https://marketplace.visualstudio.com/items?itemName=letrieu.expand-region)
 * [transpose](https://marketplace.visualstudio.com/items?itemName=v4run.transpose)
