@@ -268,11 +268,6 @@
                 "when": "editorFocus"
             },
             {
-                "mac": "cmd+-",
-                "key": "ctrl+-",
-                "command": "workbench.action.zoomOut"
-            },
-            {
                 "mac": "ctrl+shift+up",
                 "win": "alt+shift+up",
                 "linux": "alt+shift+up",
