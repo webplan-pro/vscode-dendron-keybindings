@@ -268,11 +268,6 @@
                 "when": "editorFocus"
             },
             {
-                "mac": "cmd+-",
-                "key": "ctrl+-",
-                "command": "workbench.action.zoomOut"
-            },
-            {
                 "mac": "ctrl+shift+up",
                 "win": "alt+shift+up",
                 "linux": "alt+shift+up",
@@ -428,6 +423,41 @@
                 "linux": "shift+f11",
                 "key": "shift+f11",
                 "command": "workbench.action.toggleZenMode"
+            },
+            {
+                "mac": "cmd+j",
+                "key": "ctrl+j",
+                "command": "editor.action.joinLines",
+                "when": "editorTextFocus"
+            },
+            {
+                "mac": "cmd+k cmd+u",
+                "key": "ctrl+k ctrl+u",
+                "command": "editor.action.transformToUppercase",
+                "when": "editorTextFocus"
+            },
+            {
+                "mac": "cmd+k cmd+l",
+                "key": "ctrl+k ctrl+l",
+                "command": "editor.action.transformToLowercase",
+                "when": "editorTextFocus"
+            },
+            {
+                "mac": "cmd+k a",
+                "key": "ctrl+k a",
+                "command": "workbench.action.showErrorsWarnings"
+            },
+            {
+                "mac": "cmd+k n",
+                "key": "ctrl+k n",
+                "command": "editor.action.marker.next",
+                "when": "editorFocus"
+            },
+            {
+                "mac": "cmd+k p",
+                "key": "ctrl+k p",
+                "command": "editor.action.marker.prev",
+                "when": "editorFocus"
             }
         ]
     },
