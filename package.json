@@ -8,14 +8,6 @@
         "vscode": "^1.6.0"
     },
     "categories": [
-    "categories": [
-    "categories": [
-    "categories": [
-    "categories": [
-    "categories": [
-    "categories": [
-    "categories": [
-    "categories": [
         "Keymaps"
     ],
     "keywords": [
@@ -280,7 +272,7 @@
                 "win": "alt+shift+up",
                 "linux": "alt+shift+up",
                 "key": "alt+shift+up",
-                "command": "cursorColumnSelectUp",
+                "command": "editor.action.insertCursorAbove",
                 "when": "editorTextFocus"
             },
             {
@@ -288,7 +280,7 @@
                 "win": "alt+shift+down",
                 "linux": "alt+shift+down",
                 "key": "alt+shift+down",
-                "command": "cursorColumnSelectDown",
+                "command": "editor.action.insertCursorBelow",
                 "when": "editorTextFocus"
             },
             {
