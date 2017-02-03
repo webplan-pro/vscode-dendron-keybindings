@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "1.9.0",
+    "version": "1.9.1",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
@@ -24,6 +24,13 @@
     },
     "contributes": {
         "keybindings": [
+            {
+                "mac": "cmd+shift+ctrl+f",
+                "win": "shift+f11",
+                "linux": "shift+f11",
+                "key": "shift+f11",
+                "command": "workbench.action.toggleZenMode"
+            },
             {
                 "mac": "cmd+w",
                 "win": "ctrl+w",
