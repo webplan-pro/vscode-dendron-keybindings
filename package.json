@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "1.9.1",
+    "version": "1.9.2",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
@@ -264,7 +264,7 @@
                 "win": "ctrl+h",
                 "linux": "ctrl+h",
                 "key": "ctrl+h",
-                "command": "workbench.action.startFindReplaceAction"
+                "command": "editor.action.startFindReplaceAction"
             },
             {
                 "mac": "ctrl+shift+k",
