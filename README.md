@@ -8,14 +8,13 @@ You can see all the keyboard shortcuts in the extension's contribution list.
 
 ![extension contributions](https://raw.githubusercontent.com/Microsoft/vscode-sublime-keybindings/master/contributions_list.png)
 
-## Why doesn't join lines or other Sublime Text commands work? 
+## Why don't all Sublime Text commands work? 
 
-This is because VS Code has not implemented this feature. Head on over to this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776) and let the VS Code team know what you'd like to see. 
+VS Code has not implemented all features. Head on over to this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776) and let the VS Code team know what you'd like to see. 
 
 You can install an extension for many of these features:
 
 * [Expand Selection To Scope](https://marketplace.visualstudio.com/items?itemName=vittorioromeo.expand-selection-to-scope)
-* [Join Lines](https://marketplace.visualstudio.com/items?itemName=wmaurer.join-lines)
 * [Paste and Indent](https://marketplace.visualstudio.com/items?itemName=Rubymaniac.vscode-paste-and-indent)
 * [FontSize Shortcuts](https://marketplace.visualstudio.com/items?itemName=peterjuras.fontsize-shortcuts)
 * [change case](https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case)
