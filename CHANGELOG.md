@@ -1,5 +1,7 @@
 ## Releases
 
+2.0 - Added settings: minimap, format on paste. 
+
 1.5.0 - New keybindings and nit fixes per [@bhancock8](https://github.com/bhancock8)
 
 1.4.0 - Added Windows / Linux key bindings and a number of missing commands. Updated the README. 
