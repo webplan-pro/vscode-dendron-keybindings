@@ -16,7 +16,7 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./out/src/extension",
+    "main": "./src/extension",
     "preview": true,
     "icon": "sublime_keyboard.png",
     "repository": {
@@ -470,7 +470,18 @@
                 "command": "editor.action.marker.prev",
                 "when": "editorFocus"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Sublime Text Keymap configuration",
+            "properties": {
+                "sublimeTextKeymap.isMultiCursorModifierUpdated": {
+                    "type": ["boolean", "null"],
+                    "default": null,
+                    "description": "Status of Sublime Text Keymap multiple cursor modifier update"
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
