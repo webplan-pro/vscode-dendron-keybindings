@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap",
     "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "2.0.1",
+    "version": "3.0.0",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.6.0"
@@ -41,22 +41,6 @@
                 "linux": "ctrl+w",
                 "key": "ctrl+w",
                 "command": "workbench.action.closeActiveEditor"
-            },
-            {
-                "mac": "f5",
-                "win": "f9",
-                "linux": "f9",
-                "key": "f9",
-                "command": "editor.action.sortLinesAscending",
-                "when": "editorFocus"
-            },
-            {
-                "mac": "ctrl+f5",
-                "win": "ctrl+f9",
-                "linux": "ctrl+f9",
-                "key": "ctrl+f9",
-                "command": "editor.action.sortLinesDescending",
-                "when": "editorFocus"
             },
             {
                 "mac": "shift+cmd+[",
@@ -475,10 +459,10 @@
             "type": "object",
             "title": "Sublime Text Keymap configuration",
             "properties": {
-                "sublimeTextKeymap.isMultiCursorModifierUpdated": {
+                "sublimeTextKeymap.promptV3Features": {
                     "type": ["boolean", "null"],
                     "default": null,
-                    "description": "Status of Sublime Text Keymap multiple cursor modifier update"
+                    "description": "Status of Sublime Text Keymap version three features added."
                 }
             }
         }

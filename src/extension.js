@@ -1,86 +1,94 @@
 const vscode = require('vscode');
 
-const messages = {
-    yes: 'Yes',
-    no: 'No',
-    newSettingInfo: 'Sublime Text Keymap: Visual Studio Code 1.13 introduced option for using CTRL/CMD instead of ALT for multiple cursor modifier key', 
-    update: 'Sublime Text Keymap: Would you like to change default ALT key to CTRL/CMD',
-    updateDefault: 'Sublime Text Keymap: Multiple cursor modifier is using default ALT key',
-    updateChange: 'Sublime Text Keymap: Multiple cursor modifier key was changed to CTRL/CMD',
-};
+const showInformationMessage = vscode.window.showInformationMessage;
+const isGlobalConfigValue = true;
 
-// Visual Studio Code multi cursor modifier related functions and configuration values
-const modifierConfigName = 'multiCursorModifier';
-const modifierConfigKey = 'ctrlCmd';
-const updateEditorConfig = (editorConfig) => editorConfig.update(modifierConfigName, modifierConfigKey, true);
-
-function getEditorConfig() {
-    const editorConfig = vscode.workspace.getConfiguration('editor');
-    const modifierConfigValues = editorConfig.inspect(modifierConfigName);
-    return { 
-        editorConfig,
-        modifierGlobalValue: modifierConfigValues.globalValue, 
-        modifierDefaultValue: modifierConfigValues.defaultValue, 
-    };
+class Setting {
+    constructor(name, value) {
+        this.name = name;
+        this.value = value;
+    }
 }
 
-// Sublime Text Keymap multi cursor modifier related functions and configuration values
-const sublimeConfigName = 'isMultiCursorModifierUpdated';
-const sublimeConfigKeyYes = true;
-const sublimeConfigKeyNo = false;
-const updateSublimeKeymapConfig = (sublimeKeymapConfig, value) => sublimeKeymapConfig.update(sublimeConfigName, value, true);
+const versionThreeSettings = [
+    new Setting('multiCursorModifier', 'ctrlCmd'),
+    new Setting('snippetSuggestions', 'top'),
+    new Setting('formatOnPaste', true)
+];
 
-function getSublimeKeymapConfig() {
-    const sublimeKeymapConfig = vscode.workspace.getConfiguration('sublimeTextKeymap');
-    const sublimeConfigValues = sublimeKeymapConfig.inspect(sublimeConfigName);
-    return { 
-        sublimeKeymapConfig, 
-        sublimeGlobalValue: sublimeConfigValues.globalValue,
-    };
+function updateSettings(editorConfig, settings) {
+    settings.forEach((setting) => {
+        editorConfig.update(setting.name, setting.value, isGlobalConfigValue);
+    });
 }
 
-// 
-// Sublime Text Keymap activate function
-// 
+function isDefaultValueSet(editorConfig, settings) {
+    for (var i = 0; i < settings.length; i++) {
+        var setting = editorConfig.inspect(settings[i].name);
+        const dv = setting ? setting.defaultValue : null;
+        const gv = setting ? setting.globalValue : null;
 
-const activate = () => {
-    const { modifierGlobalValue, modifierDefaultValue, editorConfig } = getEditorConfig();
-    const { sublimeGlobalValue, sublimeKeymapConfig } = getSublimeKeymapConfig();
-
-    const isSublimeModifierUpdated = sublimeGlobalValue !== undefined;
-    const isEditorModifierDefault = modifierGlobalValue === modifierDefaultValue || modifierGlobalValue === undefined;
-    // Show message if keymap config has not yet been updated and multi cursor modifier is set to default
-    if (!isSublimeModifierUpdated && isEditorModifierDefault) {
-        showMessage();
-    }
-
-    // Resolve answer promise and show message with new setting info
-    function showMessage() {    
-        const { yes, no, newSettingInfo, update } = messages;
-        const answer = vscode.window.showInformationMessage(update, yes, no);
-        
-        answer.then(handleAnswer);
-        
-        vscode.window.showInformationMessage(newSettingInfo);
-    }
-
-    function handleAnswer(selectedOption) {
-        if (selectedOption === messages.yes) {
-            updateYes();
-        } else if (selectedOption === messages.no) {
-            updateNo();
+        if (gv === dv || gv === undefined) {
+            return true;
         }
     }
 
-    function updateYes() {
-        updateEditorConfig(editorConfig);
-        updateSublimeKeymapConfig(sublimeKeymapConfig, sublimeConfigKeyYes);
-        vscode.window.showInformationMessage(messages.updateChange);
+    return false;
+}
+
+class VersionThreeUpdateSetting {
+    constructor() {
+        this.name = 'promptV3Features';
+        this.config = vscode.workspace.getConfiguration('sublimeTextKeymap');
+        this.hasPrompted = this.config.get(this.name) || false;
     }
 
-    function updateNo() {
-        updateSublimeKeymapConfig(sublimeKeymapConfig, sublimeConfigKeyNo);
-        vscode.window.showInformationMessage(messages.updateDefault);
+    persist() {
+        this.config.update(this.name, true, isGlobalConfigValue);
+    }
+
+}
+
+class View {
+
+    constructor(updateSetting, editorConfig) {
+        this.updateSetting = updateSetting;
+        this.editorConfig = editorConfig;
+        this.messages = {
+            yes: 'Yes',
+            no: 'No',
+            learnMore: 'Learn More',
+            prompt: 'New features are available for the Sublime Text Keymap 3.0. Do you want to enable the new features?',
+            noChange: 'Sublime Text Keymap: New features have not been enable.',
+            change: 'Sublime Text Keymap: New features have been added.',
+        };
+    }
+
+    showMessage() {
+        const answer = showInformationMessage(this.messages.prompt, this.messages.yes, this.messages.no, this.messages.learnMore);
+        
+        answer.then((selectedOption) => {
+            
+            if (selectedOption === this.messages.yes) {
+                this.updateSetting.persist();
+                updateSettings(this.editorConfig, versionThreeSettings);
+                showInformationMessage(this.messages.change);
+            } else if (selectedOption === this.messages.no) {
+                this.updateSetting.persist();
+                showInformationMessage(this.messages.noChange);
+            } else if (selectedOption === this.messages.learnMore) {
+                vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://marketplace.visualstudio.com/items?itemName=ms-vscode.sublime-keybindings'));
+            }
+        });
+    }
+}
+
+const activate = () => {
+    const editorConfig = vscode.workspace.getConfiguration('editor');
+    const updateSetting = new VersionThreeUpdateSetting();
+
+    if (!updateSetting.hasPrompted && isDefaultValueSet(editorConfig, versionThreeSettings)) {
+        new View(updateSetting, editorConfig).showMessage();
     }
 }
 
