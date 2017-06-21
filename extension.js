@@ -58,7 +58,7 @@ class View {
             yes: 'Yes',
             no: 'No',
             learnMore: 'Learn More',
-            prompt: 'New features are available for the Sublime Text Keymap 3.0. Do you want to enable the new features?',
+            prompt: 'New features are available for Sublime Text Keymap 3.0. Do you want to enable the new features?',
             noChange: 'Sublime Text Keymap: New features have not been enable.',
             change: 'Sublime Text Keymap: New features have been added.',
         };
