@@ -1,4 +1,6 @@
-## 2.0 - Added settings: minimap, format on paste. 
+## 3.0 - Added settings: minimap, format on paste. 
+
+## 2.0 - Numerous small fixes. 
 
 ## 1.5.0 - New keybindings and nit fixes per [@bhancock8](https://github.com/bhancock8)
 
