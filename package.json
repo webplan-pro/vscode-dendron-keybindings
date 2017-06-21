@@ -16,8 +16,8 @@
     "activationEvents": [
         "*"
     ],
-    "main": "./src/extension",
-    "preview": true,
+    "main": "./extension",
+    "preview": false,
     "icon": "sublime_keyboard.png",
     "repository": {
         "type": "git",
