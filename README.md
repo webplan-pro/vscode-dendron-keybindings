@@ -39,7 +39,6 @@ VS Code has not implemented all features. Head on over to this [GitHub issue](ht
 You can install an extension for many of these features:
 
 * [Expand Selection To Scope](https://marketplace.visualstudio.com/items?itemName=vittorioromeo.expand-selection-to-scope)
-* [Paste and Indent](https://marketplace.visualstudio.com/items?itemName=Rubymaniac.vscode-paste-and-indent)
 * [FontSize Shortcuts](https://marketplace.visualstudio.com/items?itemName=peterjuras.fontsize-shortcuts)
 * [change case](https://marketplace.visualstudio.com/items?itemName=wmaurer.change-case)
 * [expand-region](https://marketplace.visualstudio.com/items?itemName=letrieu.expand-region)
