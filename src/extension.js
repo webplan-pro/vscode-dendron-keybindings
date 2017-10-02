@@ -9,9 +9,9 @@ class Extension {
         this.messages = {
             yes: 'Yes',
             no: 'No',
-            userSettings: 'Do you want to import your User Settings from Sublime Text?',
+            userSettings: 'Do you want to import your Global Settings from Sublime Text?',
             projectSettings: 'Do you want to import your Project Settings from Sublime Text?',
-            snippets: 'Do you want to import your Snippets from Sublime?',
+            snippets: 'Do you want to import your Snippets from Sublime Text?',
             finished: 'Import finished. We found',
             skipped: 'Import skipped.'
         }
