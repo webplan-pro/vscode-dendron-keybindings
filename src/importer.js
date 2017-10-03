@@ -62,7 +62,7 @@ class Importer {
         })
     }
 
-    import() {
+    importEverything() {
         return Promise.all([
             this.importGlobalSettings(), 
             this.importProjectSettings(), 

@@ -33,11 +33,14 @@ class Extension {
             text.push('. Want to continue?')
 
             showInformationMessage(text.join(' '), this.messages.yes, this.messages.no).then(result => {
-                this.importer.import().then(results => {
-                    showInformationMessage(this.messages.finished)
-                }).catch(err => {
-                    showInformationMessage(this.messages.failed + '(' + err + ')')
-                })
+                this.importer
+                    .importEverything()
+                    .then(results => {
+                        showInformationMessage(this.messages.finished)
+                    })
+                    .catch(err => {
+                        showInformationMessage(this.messages.failed + '(' + err + ')')
+                    })
             })
         })
     }
