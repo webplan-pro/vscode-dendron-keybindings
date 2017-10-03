@@ -9,65 +9,36 @@ class Extension {
         this.messages = {
             yes: 'Yes',
             no: 'No',
-            userSettings: 'Do you want to import your Global Settings from Sublime Text?',
-            projectSettings: 'Do you want to import your Project Settings from Sublime Text?',
-            snippets: 'Do you want to import your Snippets from Sublime Text?',
-            finished: 'Import finished. We found',
-            skipped: 'Import skipped.'
+            finished: 'Import finished!',
+            failed: 'Import failed :( '
         }
     }
 
     start() {
-        var jobs = []
+        this.importer.analyze().then(analysis => {
+            var text = ['We found']
 
-        Promise.all([
-            showInformationMessage(this.messages.userSettings, this.messages.yes, this.messages.no),
-            showInformationMessage(this.messages.projectSettings, this.messages.yes, this.messages.no),
-            showInformationMessage(this.messages.snippets, this.messages.yes, this.messages.no)
-        ]).then((data) => {
-
-            let user = data[0]
-            let project = data[1]
-            let snippets = data[2]
-
-            if (user === this.messages.yes) {
-                jobs.push(this.importer.importGlobalsettings())
+            if (analysis.globalCount) {
+                text.push(`${analysis.globalCount} Global settings,`)
             }
 
-            if (project === this.messages.yes) {
-                jobs.push(this.importer.importProjectsettings())
+            if (analysis.projectCount) {
+                text.push(`${analysis.globalCount} Project settings,`)
             }
 
-            if (snippets === this.messages.yes) {
-                jobs.push(this.importer.importSnippets())
+            if (analysis.snippetsCount) {
+                text.push(`${analysis.snippetsCount} snippets`)
             }
 
-            if(jobs.length) {
-                Promise.all(jobs).then((stats) => {
+            text.push('. Want to continue?')
 
-                    let snippestStats = stats.find((s) => s.type == 'snippets')
-                    let globalStats = stats.find((s) => s.type == 'global')
-                    let projectStats = stats.find((s) => s.type == 'project')
-
-                    var text = [this.messages.finished]
-                    
-                    if(snippestStats) {
-                        text.push(`${snippestStats.count} snippets,`)
-                    }
-                    
-                    if(globalStats) {
-                        text.push(`${globalStats.count} Global settings,`)
-                    }
-
-                    if(projectStats) {
-                        text.push(`${projectStats.count} Project settings`)
-                    }
-
-                    showInformationMessage(text.join(' '))
+            showInformationMessage(text.join(' '), this.messages.yes, this.messages.no).then(result => {
+                this.importer.import().then(results => {
+                    showInformationMessage(this.messages.finished)
+                }).catch(err => {
+                    showInformationMessage(this.messages.failed + '(' + err + ')')
                 })
-            } else {
-                showInformationMessage(this.messages.skipped)
-            }
+            })
         })
     }
 }

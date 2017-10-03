@@ -62,19 +62,63 @@ class Importer {
         })
     }
 
+    import() {
+        return Promise.all([
+            this.importGlobalSettings(), 
+            this.importProjectSettings(), 
+            this.importSnippets()
+        ])
+    }    
+
     importSnippets() {
-        console.log('importSnippets')
-
         return new Promise((resolve, reject) => {
-            resolve({ type: 'snippets', count: 0 })            
+            resolve()
         })
-
-
     }
 
-    importGlobalsettings() {
-        console.log('importGlobalsettings')
+    importGlobalSettings() {
+        return new Promise((resolve, reject) => {
+            this.analyzeGlobalSettings()
+                .then(mappedSettings => {
+                    if (mappedSettings.length) {
+                        this._updateSettings('global', mappedSettings)
+                    }
+                    resolve()
+                })
+                .catch(reject)
+        })
+    }
 
+    importProjectSettings() {
+        return new Promise((resolve, reject) => {
+            this.analyzeProjectSettings()
+                .then(mappedSettings => {
+                    if (mappedSettings.length) {
+                        this._updateSettings('workspace', mappedSettings)
+                    }
+                    resolve()
+                })
+                .catch(reject)
+        })
+    }
+
+    analyze() {
+        return new Promise((resolve, reject) => {
+            Promise.all([
+                this.analyzeProjectSettings(),
+                this.analyzeGlobalSettings(),
+                this.analyzeSnippets()
+            ]).then(data => {
+                resolve({
+                    projectCount: data[0].length,
+                    globalCount: data[1].length,
+                    snippetsCount: data[2].length
+                })
+            })
+        })
+    }
+
+    analyzeGlobalSettings() {
         var dirs = new AppDirectory('Sublime Text 3')
         var settingsPath = path.resolve(dirs.userData(), 'Packages', 'User', 'Preferences.sublime-settings')
 
@@ -85,20 +129,13 @@ class Importer {
                 } else {
                     var globalSettings = rjson.parse(data.toString())
                     var mappedGlobalSettings = this._mapAllSettings(globalSettings)
-
-                    if (mappedGlobalSettings.length) {
-                        this._updateSettings('global', mappedGlobalSettings)
-                    }
-
-                    resolve({ type: 'global', count: mappedGlobalSettings.length })
+                    resolve(mappedGlobalSettings)
                 }
             })
         })
     }
 
-    importProjectsettings() {
-        console.log('importProjectsettings')
-
+    analyzeProjectSettings() {
         return new Promise((resolve, reject) => {
             // TODO: Handle multi workspaces?
             vscode.workspace.findFiles('*.sublime-project', 2).then(files => {
@@ -118,20 +155,19 @@ class Importer {
                         // Map project settings
                         var mappedProjectSettings = this._mapAllSettings(projectSettings)
 
-                        if (mappedProjectSettings.length) {
-                            this._updateSettings('workspace', mappedProjectSettings)
-                        }
-
-                        resolve({ 
-                            type: 'project', 
-                            count: mappedProjectSettings.length
-                        })
+                        resolve(mappedProjectSettings)
                     }
                 })
             })
-
         })
+    }
 
+    analyzeSnippets() {
+        console.log('importSnippets')
+
+        return new Promise((resolve, reject) => {
+            resolve([])
+        })
     }
 }
 
