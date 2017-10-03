@@ -453,6 +453,30 @@
                 "key": "ctrl+k p",
                 "command": "editor.action.marker.prev",
                 "when": "editorFocus"
+            },
+            {
+                "mac": "ctrl+1",
+                "win": "ctrl+1",
+                "linux": "ctrl+1",
+                "key": "ctrl+1",
+                "command": "workbench.action.focusFirstEditorGroup",
+                "when": "editorFocus"
+            },
+            {
+                "mac": "ctrl+2",
+                "win": "ctrl+2",
+                "linux": "ctrl+2",
+                "key": "ctrl+2",
+                "command": "workbench.action.focusSecondEditorGroup",
+                "when": "editorFocus"
+            },
+            {
+                "mac": "ctrl+3",
+                "win": "ctrl+3",
+                "linux": "ctrl+3",
+                "key": "ctrl+3",
+                "command": "workbench.action.focusThirdEditorGroup",
+                "when": "editorFocus"
             }
         ],
         "configuration": {
