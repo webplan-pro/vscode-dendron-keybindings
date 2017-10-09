@@ -43,10 +43,15 @@ class Extension {
             var text = `We found ${analysisText} from Sublime Text. Want to import them?`
 
             showInformationMessage(text, this.messages.yes, this.messages.no).then(result => {
+                if (result == this.messages.no) {
+                    return
+                }
+
                 this.importer
                     .importEverything()
                     .then(results => {
                         showInformationMessage(this.messages.finished)
+                        // TODO: Store setting so we don't prompt again
                     })
                     .catch(err => {
                         showInformationMessage(`${this.messages.failed} (${err})`)
