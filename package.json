@@ -45,6 +45,7 @@
     },
     "dependencies": {
         "appdirectory": "^0.1.0",
+        "listify": "^1.0.0",
         "relaxed-json": "^1.0.1"
     }
 }

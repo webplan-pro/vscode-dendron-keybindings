@@ -1,6 +1,8 @@
 const vscode = require('vscode')
 const showInformationMessage = vscode.window.showInformationMessage
 const Importer = require('./importer')
+const sublime = require('./sublime')
+const listify = require('listify')
 
 class Extension {
 
@@ -9,37 +11,45 @@ class Extension {
         this.messages = {
             yes: 'Yes',
             no: 'No',
-            finished: 'Import finished!',
+            finished: 'Import from Sublime Text finished!',
             failed: 'Import failed :( '
         }
     }
 
     start() {
         this.importer.analyze().then(analysis => {
-            var text = ['We found']
+            var analysisTextParts = []
 
             if (analysis.globalCount) {
-                text.push(`${analysis.globalCount} Global settings,`)
+                analysisTextParts.push(`${analysis.globalCount} global settings`)
             }
 
             if (analysis.projectCount) {
-                text.push(`${analysis.globalCount} Project settings,`)
+                analysisTextParts.push(`${analysis.globalCount} project settings`)
             }
 
             if (analysis.snippetsCount) {
-                text.push(`${analysis.snippetsCount} snippets`)
+                analysisTextParts.push(`${analysis.snippetsCount} snippets`)
             }
 
-            text.push('. Want to continue?')
+            if (!analysis.globalCount && 
+                !analysis.projectCount && 
+                !analysis.snippetsCount) {
+                return
+            }
 
-            showInformationMessage(text.join(' '), this.messages.yes, this.messages.no).then(result => {
+            var analysisText = listify(analysisTextParts)
+
+            var text = `We found ${analysisText} from Sublime Text. Want to import them?`
+
+            showInformationMessage(text, this.messages.yes, this.messages.no).then(result => {
                 this.importer
                     .importEverything()
                     .then(results => {
                         showInformationMessage(this.messages.finished)
                     })
                     .catch(err => {
-                        showInformationMessage(this.messages.failed + '(' + err + ')')
+                        showInformationMessage(`${this.messages.failed} (${err})`)
                     })
             })
         })
@@ -48,8 +58,14 @@ class Extension {
 
 const activate = (context) => {
 
+    this.extension = new Extension();
+
+    sublime.isInstalled().then(() => {
+        this.extension.start();
+    })
+
     var cmd = vscode.commands.registerCommand('extension.importFromSublime', function (e) {
-        new Extension().start()
+        this.extension.start();
     })
 
     context.subscriptions.push(cmd)
