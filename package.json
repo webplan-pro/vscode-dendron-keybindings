@@ -3,7 +3,7 @@
     "displayName": "Import Sublime Text settings to VS Code",
     "description": "Import Sublime Text settings to VS Code.",
     "version": "1.0.0",
-    "publisher": "ms-vscode",
+    "publisher": "auchenberg",
     "engines": {
         "vscode": "^1.6.0"
     },
