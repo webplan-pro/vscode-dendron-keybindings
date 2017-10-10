@@ -14,6 +14,8 @@ class Extension {
             finished: 'Import from Sublime Text finished!',
             failed: 'Import failed :( '
         }
+        this.extensionConfig = vscode.workspace.getConfiguration('sublimeImporter')
+        this.hasPromptedOnStartup = this.extensionConfig.get('hasPromptedOnStartup') || false
     }
 
     start() {
@@ -59,15 +61,23 @@ class Extension {
             })
         })
     }
+
+    disablePrompt() {
+        this.extensionConfig.update('hasPromptedOnStartup', true, true)
+        this.hasPromptedOnStartup = true
+    }
 }
 
 const activate = (context) => {
 
     this.extension = new Extension();
 
-    sublime.isInstalled().then(() => {
-        this.extension.start();
-    })
+    if(!this.extension.hasPromptedOnStartup) {
+        sublime.isInstalled().then(() => {
+            this.extension.start();
+            this.extension.disablePrompt()
+        })
+    }
 
     var cmd = vscode.commands.registerCommand('extension.importFromSublime', function (e) {
         this.extension.start();

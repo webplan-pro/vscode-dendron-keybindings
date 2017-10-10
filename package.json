@@ -24,7 +24,21 @@
                 "command": "extension.importFromSublime",
                 "title": "Import Sublime Text settings"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Sublime Text Importer configuration",
+            "properties": {
+                "sublimeImporter.hasPromptedOnStartup": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Status of Sublime Text Importer startup prompt."
+                }
+            }
+        }        
     },
     "main": "./src/extension",
     "preview": false,
