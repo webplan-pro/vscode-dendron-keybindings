@@ -79,7 +79,7 @@ const activate = (context) => {
         })
     }
 
-    var cmd = vscode.commands.registerCommand('extension.importFromSublime', function (e) {
+    var cmd = vscode.commands.registerCommand('extension.importFromSublime', (e) => {
         this.extension.start();
     })
 
