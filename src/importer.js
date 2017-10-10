@@ -122,6 +122,8 @@ class Importer {
         var dirs = new AppDirectory('Sublime Text 3')
         var settingsPath = path.resolve(dirs.userData(), 'Packages', 'User', 'Preferences.sublime-settings')
 
+        // TODO: Check if files exists first
+
         return new Promise((resolve, reject) => {
             fs.readFile(settingsPath, (err, data) => {
                 if (err) {
@@ -140,9 +142,11 @@ class Importer {
             // TODO: Handle multi workspaces?
             vscode.workspace.findFiles('*.sublime-project', 2).then(files => {
                 if (!files.length) {
-                    reject('no project files found')
+                    resolve([]) // No files to map
+                    return
                 }
 
+                // Take first file
                 var projectFilePath = files[0].fsPath
 
                 fs.readFile(projectFilePath, (err, data) => {
