@@ -1,3 +1,8 @@
+## 3.0.1 
+
+- Add cmd+p binding for quickOpenPreviousEditor. https://github.com/Microsoft/vscode-sublime-keybindings/commit/e9439790191a3d6c4356912ff6ec094d9ef59380
+
+
 ## 3.0 - Added settings: minimap, format on paste. 
 
 ## 2.0 - Numerous small fixes. 
