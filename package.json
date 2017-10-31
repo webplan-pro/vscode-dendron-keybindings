@@ -477,11 +477,7 @@
                 "key": "ctrl+3",
                 "command": "workbench.action.focusThirdEditorGroup",
                 "when": "editorFocus"
-            },
-            {
-                "key": "cmd+p",
-                "command": "workbench.action.quickOpenPreviousEditor"
-            }            
+            }
         ],
         "configuration": {
             "type": "object",
