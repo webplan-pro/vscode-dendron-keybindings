@@ -1,3 +1,8 @@
+## 3.0.3 
+- Add command to delete from cursor until end of line fixes in https://github.com/Microsoft/vscode-sublime-keybindings/commit/ca4f3e787c8533e67451870b193bdf8bd5609108
+- Bump required VS Code version to 1.18 in https://github.com/Microsoft/vscode-sublime-keybindings/commit/9c8a5547821af06f9e3caa69900e9b9d76fbc15a
+- Make quick open - enter behave like in Sublime in https://github.com/Microsoft/vscode-sublime-keybindings/commit/ff2de479301947f90cf740c3afdfc66832239a4b
+
 ## 3.0 - Added settings: minimap, format on paste. 
 
 ## 2.0 - Numerous small fixes. 
