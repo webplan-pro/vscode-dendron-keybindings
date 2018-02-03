@@ -168,11 +168,25 @@
                 "command": "workbench.action.splitEditor"
             },
             {
+                "mac": "alt+cmd+1",
+                "linux": "alt+shift+1",
+                "win": "alt+shift+1",
+                "key": "alt+shift+1",
+                "command": "workbench.action.joinTwoGroups"
+            },
+            {
                 "mac": "alt+cmd+2",
                 "win": "alt+shift+2",
                 "linux": "alt+shift+2",
                 "key": "alt+shift+2",
                 "command": "workbench.action.splitEditor"
+            },
+            {
+                "mac": "alt+cmd+8",
+                "win": "alt+shift+8",
+                "linux": "alt+shift+8",
+                "key": "alt+shift+8",
+                "command": "workbench.action.toggleEditorGroupLayout"
             },
             {
                 "mac": "cmd+k cmd+down",
@@ -436,7 +450,7 @@
                 "key": "ctrl+k ctrl+l",
                 "command": "editor.action.transformToLowercase",
                 "when": "editorTextFocus"
-            },  
+            },
             {
                 "mac": "cmd+k a",
                 "key": "ctrl+k a",
@@ -492,14 +506,17 @@
                 "command": "deleteAllRight",
                 "key": "ctrl+k ctrl+k",
                 "when": "editorTextFocus && !editorReadonly"
-            }            
+            }
         ],
         "configuration": {
             "type": "object",
             "title": "Sublime Text Keymap configuration",
             "properties": {
                 "sublimeTextKeymap.promptV3Features": {
-                    "type": ["boolean", "null"],
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
                     "default": null,
                     "description": "Status of Sublime Text Keymap version three features added."
                 }
