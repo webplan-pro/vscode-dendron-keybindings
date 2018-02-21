@@ -119,8 +119,8 @@ class Importer {
     }
 
     analyzeGlobalSettings() {
-        var dirs = new AppDirectory('Sublime Text 3')
-        var settingsPath = path.resolve(dirs.userData(), 'Packages', 'User', 'Preferences.sublime-settings')
+        var dirs = 'C:/Users/t-tisali/AppData/Roaming/Sublime Text 3' // new AppDirectory('Sublime Text 3');
+        var settingsPath = path.resolve(dirs, 'Packages', 'User', 'Preferences.sublime-settings')
 
         // TODO: Check if files exists first
 
