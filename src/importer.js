@@ -76,6 +76,17 @@ class Importer {
         })
     }
 
+    // TODO: temp, remove
+    showGlobalSettings() {
+        return new Promise((resolve, reject) => {
+            this.analyzeGlobalSettings()
+                .then(mappedSettings => {
+                    resolve(mappedSettings);
+                })
+                .catch(reject)
+        });
+    }
+
     importGlobalSettings() {
         return new Promise((resolve, reject) => {
             this.analyzeGlobalSettings()
