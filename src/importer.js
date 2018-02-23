@@ -2,7 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const vscode = require('vscode')
 const rjson = require('relaxed-json')
-const AppDirectory = require('appdirectory')
+const promisifier = require('./FileSystem');
 
 const Setting = require('./setting')
 
@@ -64,11 +64,11 @@ class Importer {
 
     importEverything() {
         return Promise.all([
-            this.importGlobalSettings(), 
-            this.importProjectSettings(), 
+            this.importGlobalSettings(),
+            this.importProjectSettings(),
             this.importSnippets()
         ])
-    }    
+    }
 
     importSnippets() {
         return new Promise((resolve, reject) => {
@@ -79,12 +79,12 @@ class Importer {
     // TODO: temp, remove
     showGlobalSettings() {
         return new Promise((resolve, reject) => {
-            this.analyzeGlobalSettings()
+            return this.analyzeGlobalSettings()
                 .then(mappedSettings => {
                     resolve(mappedSettings);
                 })
-                .catch(reject)
-        });
+                
+        }).catch(e => console.error(e));;
     }
 
     importGlobalSettings() {
@@ -126,26 +126,24 @@ class Importer {
                     snippetsCount: data[2].length
                 })
             })
-        })
+        }).catch(e => console.error(e));
     }
 
     analyzeGlobalSettings() {
-        var dirs = 'C:/Users/t-tisali/AppData/Roaming/Sublime Text 3' // new AppDirectory('Sublime Text 3');
-        var settingsPath = path.resolve(dirs, 'Packages', 'User', 'Preferences.sublime-settings')
+        return this.folderPicker().then(sublimePath => {
+            if (!sublimePath) {
+                return undefined;
+            }
+            var settingsPath = path.resolve(sublimePath.fsPath, 'Packages', 'User', 'Preferences.sublime-settings')
 
-        // TODO: Check if files exists first
-
-        return new Promise((resolve, reject) => {
-            fs.readFile(settingsPath, (err, data) => {
-                if (err) {
-                    reject(err)
-                } else {
+            // TODO: Check if files exists first
+            return promisifier.nfcall(fs.readFile, settingsPath)
+                .then(data => {
                     var globalSettings = rjson.parse(data.toString())
                     var mappedGlobalSettings = this._mapAllSettings(globalSettings)
-                    resolve(mappedGlobalSettings)
-                }
-            })
-        })
+                    return mappedGlobalSettings;
+                });
+        });
     }
 
     analyzeProjectSettings() {
@@ -183,6 +181,23 @@ class Importer {
         return new Promise((resolve, reject) => {
             resolve([])
         })
+    }
+
+    // TODO: handle case when user selects wrong folder
+    folderPicker() {
+        return vscode.window.showInformationMessage('Select your Sublime installation folder', {
+            title: 'Browse...',
+            id: 'sublimeFolder'
+        }).then(selected => {
+            if (!selected || selected.id === 'no') {
+                return undefined;
+            } else if (selected.id === 'sublimeFolder') {
+                return vscode.window.showOpenDialog({ canSelectFolders: true })
+                    .then(([folderPath] = []) => {
+                        return folderPath || undefined;
+                    });
+            }
+        });
     }
 }
 

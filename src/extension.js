@@ -1,79 +1,17 @@
-const vscode = require('vscode')
+const vscode = require('vscode');
 const showInformationMessage = vscode.window.showInformationMessage
-const Importer = require('./importer')
-const sublime = require('./sublime')
-const listify = require('listify')
-const { Server: WebSocketServer } = require('ws');
+const Importer = require('./importer');
+const listify = require('listify');
 const fs = require('fs');
+const promisifier = require('./FileSystem');
 
 const previewUri = vscode.Uri.parse('vs-code-html-preview://authority/vs-code-html-preview');
 
-class MyWebSocketsServer {
-
-    constructor(importer) {
-        this.__importer = importer;
-        this.__ws = null;
-    }
-
-    setupWebsocketConnection(context) {
-        return new Promise((resolve, reject) => {
-            // Note that one drawback to the current implementation is that no
-            // authentication is done on the WebSocket, so any user on the local host
-            // can connect to it.
-            var server = new WebSocketServer({ port: 0 });
-            server.on('listening', () => {
-                let port = this.onDidWebSocketServerStartListening(server, context);
-                registerTxtDocumentProvider(context, port);
-                resolve();
-            });
-
-            server.on('error', (e) => {
-                reject(e);
-            });
-
-            context.subscriptions.push(
-                new vscode.Disposable(() => {
-                    server.close();
-                })
-            );
-        });
-    }
-
-    onDidWebSocketServerStartListening(server, context) {
-        // It would be better to find a sanctioned way to get the port.
-        var { port } = server._server.address();
-
-        const that = this;
-        server.on('connection', ws => {
-            this.__ws = ws;
-            // Note that message is always a string, never a Buffer.
-            this.__ws.on('message', message => {
-                const msgObj = JSON.parse(message);
-                if (typeof msgObj === 'string') {
-                    console.log(`Message received in Extension Host: ${msgObj}`);
-                } 
-                else if (msgObj.name && msgObj.value){
-                    that.__importer._updateSettings('global', [{name: msgObj.name, value: msgObj.value}]);
-                } 
-                else {
-                    console.error(`Unhandled message type: ${typeof msgObj}`);
-                }
-            });
-        });
-
-        return port;
-    }
-
-    send(arg) {
-        this.__ws.send(JSON.stringify(arg));
-    }
-}
-
 class Extension {
 
-    constructor(importer, ws) {
+    constructor(importer, textProvider) {
         this.importer = importer;
-        this.__ws = ws;
+        this.textProvider = textProvider;
         this.messages = {
             yes: 'Yes',
             no: 'No',
@@ -85,6 +23,7 @@ class Extension {
     }
 
     start() {
+        const that = this;
         this.importer.analyze().then(analysis => {
             var analysisTextParts = []
 
@@ -119,7 +58,7 @@ class Extension {
                     .showGlobalSettings()
                     .then(results => {
                         for (const result of results) {
-                            this.__ws.send(result);
+                            that.textProvider.update(result);
                         }
                     })
                     // .importEverything()
@@ -141,55 +80,89 @@ class Extension {
 }
 
 const activate = (context) => {
-    let importer = new Importer();
-    let wsServer = new MyWebSocketsServer(importer);
-    this.extension = new Extension(importer, wsServer);   // FIXME: global var
+    const importer = new Importer();
+    const provider = registerTxtDocumentProvider(context);
+    const extension = new Extension(importer, provider);
 
-    if (!this.extension.hasPromptedOnStartup) {
-        sublime.isInstalled().then(() => {
-            this.extension.start();
-            this.extension.disablePrompt()
-        })
-            .catch(e => console.error(e));
-    }
-
-    const promise = wsServer.setupWebsocketConnection(context);
-    var cmd = vscode.commands.registerCommand('extension.importFromSublime', (e) => {
-        this.extension.start();
-        promise.then(() => {
+    // const promise = wsServer.setupWebsocketConnection(context);
+    context.subscriptions.push([
+        vscode.commands.registerCommand('extension.importFromSublime', () => {
+            extension.start();
             vscode.commands.executeCommand(
                 'vscode.previewHtml',
                 previewUri,
                 vscode.ViewColumn.Two,
                 'Sublime Settings Importer'
             ).then(null, error => console.error(error));
-        });
-    });
-
-    context.subscriptions.push(cmd)
+        }),
+        vscode.commands.registerCommand('extension.getResponseFromGUI', (msg) => {
+            console.log('Received:', msg);
+            if (typeof msg === 'string') {
+                console.log(`Message received in Extension Host: ${msg}`);
+            }
+            else if (msg.name && msg.value) {
+                importer._updateSettings('global', [{ name: msg.name, value: msg.value }]);
+                provider.update(msg);
+            }
+            else {
+                console.error(`Unhandled message type: ${typeof msg}`);
+            }
+        })
+    ]);
 }
 
-function registerTxtDocumentProvider(context, port) {
-    var textDocumentContentProvider = {
-        provideTextDocumentContent(uri/*: vscode.Uri*/)/*: string*/ {
-            let htmlPath = vscode.Uri.file(`${context.asAbsolutePath('src/content.html')}`);
-            try {
-                let html = fs.readFileSync(htmlPath.fsPath, 'utf8');
-                html = html
-                    .replace('$$WS_PORT$$', `<script>var WS_PORT = ${port};</script>`)
-                    .replace('$$GUI_JS_PATH$$', `<script src="file://${context.asAbsolutePath('src/gui.js')}"></script>`);
-                return html;
-            } catch (err) {
-                console.error(err);
-                return;
-            }
-        },
-    };
+function registerTxtDocumentProvider(context) {
+    const provider = new TextDocumentContentProvider(context);
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(
             previewUri.scheme,
-            textDocumentContentProvider)
+            provider)
     );
+    return provider;
+}
+
+class TextDocumentContentProvider {
+
+    constructor(context) {
+        this.context = context;
+        // this._onDidChange = new vscode.EventEmitter();
+        this.htmlCache = null;
+        this.callUpdate = null;
+    }
+
+    provideTextDocumentContent() {
+        return new Promise((resolve, reject) => {
+            if (this.htmlCache) {
+                resolve(this.htmlCache);
+                return;
+            } else {
+                let htmlPath = vscode.Uri.file(`${this.context.asAbsolutePath('src/content.html')}`);
+                return promisifier.nfcall(fs.readFile, htmlPath.fsPath, 'utf8').then((html) => {
+                    const htmlWithDeps = html.replace('$$GUI_JS_PATH$$', `<script src="file://${this.context.asAbsolutePath('src/gui.js')}"></script>`);
+                    this.htmlCache = htmlWithDeps;
+                    resolve(htmlWithDeps);
+                })
+                    .catch(err => {
+                        console.error(err);
+                        reject(err);
+                    });
+            }
+        });
+    };
+
+    onDidChange(fn) {
+        this.callUpdate = fn;
+        // return this._onDidChange.event;
+    }
+
+    update(newData) {
+        if (this.htmlCache) {
+            this.htmlCache = this.htmlCache.replace('</ul>', `<li>${newData.name}: ${newData.value}</li></ul>`)
+            // this._onDidChange.fire(previewUri);
+            this.callUpdate(previewUri);
+            // vscode.workspace.provideTextDocumentContent(previewUri.scheme);
+        }
+    }
 }
 
 module.exports = {

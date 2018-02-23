@@ -5,7 +5,7 @@
     "version": "1.0.1",
     "publisher": "auchenberg",
     "engines": {
-        "vscode": "^1.6.0"
+        "vscode": "^1.18.0"
     },
     "categories": [
         "Other"
@@ -16,7 +16,6 @@
         "Sublime Text"
     ],
     "activationEvents": [
-        "*",
         "onCommand:extension.importFromSublime"
     ],
     "contributes": {
@@ -55,13 +54,12 @@
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {
-        "vscode": "^1.0.3",
+        "vscode": "^1.1.5",
         "typescript": "^2.0.3"
     },
     "dependencies": {
         "appdirectory": "^0.1.0",
         "listify": "^1.0.0",
-        "relaxed-json": "^1.0.1",
-        "ws": "1.1.1"
+        "relaxed-json": "^1.0.1"
     }
 }
