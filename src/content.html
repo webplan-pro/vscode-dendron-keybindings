@@ -1,23 +1,13 @@
-<!doctype html>
 <html>
 
 <head>
-    <style>
-        .fakelink {
-            cursor: pointer;
-            text-decoration: underline;
-        }
-    </style>
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src *;">  -->
+    $$IMPORT_CSS_SCRIPTS$$
 </head>
 
 <body>
-    <div id="navbar">
-        <ul id="submlime-settings">
-            <li class="wanted" id="navbar-One">show-line-numbers: true</li>
-            <li class="wanted" id="navbar-Two">show-grid: false</li>
-        </ul>
-    </div>
+    <table id='dynamic-table--sublime-settings' class='greyGridTable'></table>
 </body>
-$$GUI_JS_PATH$$
+$$IMPORT_JS_SCRIPTS$$
 
 </html>

@@ -84,7 +84,7 @@ class Importer {
                     resolve(mappedSettings);
                 })
                 
-        }).catch(e => console.error(e));;
+        }).catch(e => console.error(e));
     }
 
     importGlobalSettings() {
@@ -134,7 +134,7 @@ class Importer {
             if (!sublimePath) {
                 return undefined;
             }
-            var settingsPath = path.resolve(sublimePath.fsPath, 'Packages', 'User', 'Preferences.sublime-settings')
+            var settingsPath = path.resolve(sublimePath.fsPath, 'Packages', 'User', 'Preferences.sublime-settings');    // C:\Users\t-tisali\AppData\Roaming\Sublime Text 3
 
             // TODO: Check if files exists first
             return promisifier.nfcall(fs.readFile, settingsPath)

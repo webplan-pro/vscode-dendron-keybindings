@@ -6,6 +6,14 @@ const fs = require('fs');
 const promisifier = require('./FileSystem');
 
 const previewUri = vscode.Uri.parse('vs-code-html-preview://authority/vs-code-html-preview');
+// // TODO: hardcoded
+const tableTag = `<table id='dynamic-table--sublime-settings' class='greyGridTable'></table>`;
+    
+function getMediaPath(context, mediaFile) {
+    return vscode.Uri.file(context.asAbsolutePath(mediaFile))
+        .with({ scheme: 'vscode-extension-resource' })
+        .toString();
+}
 
 class Extension {
 
@@ -24,7 +32,7 @@ class Extension {
 
     start() {
         const that = this;
-        this.importer.analyze().then(analysis => {
+        return this.importer.analyze().then(analysis => {
             var analysisTextParts = []
 
             if (analysis.globalCount) {
@@ -87,13 +95,14 @@ const activate = (context) => {
     // const promise = wsServer.setupWebsocketConnection(context);
     context.subscriptions.push([
         vscode.commands.registerCommand('extension.importFromSublime', () => {
-            extension.start();
-            vscode.commands.executeCommand(
-                'vscode.previewHtml',
-                previewUri,
-                vscode.ViewColumn.Two,
-                'Sublime Settings Importer'
-            ).then(null, error => console.error(error));
+            extension.start().then(() => {
+                vscode.commands.executeCommand(
+                    'vscode.previewHtml',
+                    previewUri,
+                    vscode.ViewColumn.Two,
+                    'Sublime Settings Importer'
+                ).then(null, error => console.error(error));
+            });
         }),
         vscode.commands.registerCommand('extension.getResponseFromGUI', (msg) => {
             console.log('Received:', msg);
@@ -125,44 +134,58 @@ class TextDocumentContentProvider {
 
     constructor(context) {
         this.context = context;
-        // this._onDidChange = new vscode.EventEmitter();
-        this.htmlCache = null;
+        this.html = null;
         this.callUpdate = null;
+        this._onDidChange = new vscode.EventEmitter();
     }
 
     provideTextDocumentContent() {
         return new Promise((resolve, reject) => {
-            if (this.htmlCache) {
-                resolve(this.htmlCache);
+            if (this.html) {
+                resolve(this.html);
                 return;
             } else {
                 let htmlPath = vscode.Uri.file(`${this.context.asAbsolutePath('src/content.html')}`);
                 return promisifier.nfcall(fs.readFile, htmlPath.fsPath, 'utf8').then((html) => {
-                    const htmlWithDeps = html.replace('$$GUI_JS_PATH$$', `<script src="file://${this.context.asAbsolutePath('src/gui.js')}"></script>`);
-                    this.htmlCache = htmlWithDeps;
-                    resolve(htmlWithDeps);
+                    
+                    this.html = html.replace('$$IMPORT_CSS_SCRIPTS$$', `<link rel="stylesheet" type="text/css" href="file://${this.context.asAbsolutePath('src/style.css')}">`)
+                        .replace('$$IMPORT_JS_SCRIPTS$$', `<script src="file://${this.context.asAbsolutePath('src/gui.js')}"></script>`);
+                    resolve(this.html);
                 })
                     .catch(err => {
                         console.error(err);
                         reject(err);
                     });
             }
-        });
-    };
+        })
+    }
 
-    onDidChange(fn) {
-        this.callUpdate = fn;
-        // return this._onDidChange.event;
+    get onDidChange() {
+        return this._onDidChange.event;
     }
 
     update(newData) {
-        if (this.htmlCache) {
-            this.htmlCache = this.htmlCache.replace('</ul>', `<li>${newData.name}: ${newData.value}</li></ul>`)
-            // this._onDidChange.fire(previewUri);
-            this.callUpdate(previewUri);
-            // vscode.workspace.provideTextDocumentContent(previewUri.scheme);
-        }
+        this.html = this.html.replace(tableTag, createTable(newData));
+        this._onDidChange.fire(previewUri);
     }
+}
+
+function createTable(...newData) {
+    // TODO: hardcoded
+    var tableString = tableTag.replace('</table>', '');
+
+    for (let row of newData) {
+
+        tableString += "<tr>";
+
+        tableString += "<td class='wanted'>" + row.name + "</td>";
+        tableString += "<td class='wanted'>" + row.value + "</td>";
+
+        tableString += "</tr>";
+    }
+
+    tableString += "</table>";
+    return tableString;
 }
 
 module.exports = {

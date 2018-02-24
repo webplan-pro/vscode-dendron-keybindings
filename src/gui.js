@@ -1,11 +1,16 @@
+console.log('gui.js has been launched.');
 start();
 
 function start() {
     document.addEventListener('click', function (e) {
         if (e.target.classList.contains('wanted')) {
-            const [name, value] = e.target.textContent.split(':');
+            const tds = Array.from(e.target.parentElement.getElementsByClassName('td'));
+            console.log('tr: ' + e.target.parentElement);
+            console.log('tds: ' + tds);
+            const [name, value] = [tds[0].textContent, tds[1].textContent];
+            
             sendToExtension({ name, value });
-        } 
+        }
     }, false);
 }
 
