@@ -7,6 +7,27 @@ import { nfcall as promisifier } from './Filesystem';
 import { Setting } from './setting';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 
+export class MappedSetting {
+    public sublime: Setting;
+    public vscode: Setting;
+    private static readonly NO_MATCH: string = '--No Match--';
+
+    constructor(sublime: Setting, vscode?: Setting) {
+        this.sublime = sublime;
+        this.vscode = vscode || { name: MappedSetting.NO_MATCH, value: MappedSetting.NO_MATCH };
+    }
+
+    setVscode(setting: Setting) {
+        this.vscode = setting;
+    }
+
+    public static hasNoMatch(setting: MappedSetting) {
+        if (setting && setting.vscode) {
+            return setting.vscode.name === MappedSetting.NO_MATCH;
+        }
+        return true;
+    }
+}
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
     constructor() {
@@ -15,14 +36,17 @@ export class Importer {
         });
     }
 
-    _mapAllSettings(sourceSettings): Array<Setting> {
-        var mappedSettings = []
+    _mapAllSettings(sourceSettings): MappedSetting[] {
+        var mappedSettings: MappedSetting[] = []
         for (var key in sourceSettings) {
             var setting = sourceSettings[key]
+            let ms: MappedSetting = new MappedSetting(new Setting(key, setting));
+
             var mapped = this._mapSetting(key, setting)
             if (mapped) {
-                mappedSettings.push(mapped);
+                ms.setVscode(mapped);
             }
+            mappedSettings.push(ms);
         }
         return mappedSettings
     }
@@ -74,12 +98,11 @@ export class Importer {
 
     }
 
-    mapGlobalSettings(settingsPath: string): Thenable<Setting[] | undefined> {
-        // TODO: Check if files exists first
+    mapGlobalSettings(settingsPath: string): Thenable<MappedSetting[] | undefined> {
         return promisifier(fs.readFile, settingsPath)
             .then(data => {
-                var globalSettings = rjson.parse(data.toString())
-                var mappedGlobalSettings = this._mapAllSettings(globalSettings)
+                const globalSettings = rjson.parse(data.toString())
+                const mappedGlobalSettings = this._mapAllSettings(globalSettings)
                 return mappedGlobalSettings;
             });
     }
@@ -95,6 +118,9 @@ export class Importer {
         } else if (pick === browseOption) {
             return vscode.window.showOpenDialog({ canSelectFolders: true })
                 .then(([folderPath] = []) => {
+                    if (!folderPath) {
+                        return undefined;
+                    }
                     return path.join(folderPath.fsPath, sublimeFolderFinder.sublimeSettingsPath) || undefined;
                 });
         } else {

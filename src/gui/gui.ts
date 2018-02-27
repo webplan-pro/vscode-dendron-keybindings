@@ -1,11 +1,15 @@
 console.log('gui.js has been launched.');
-registerEventListeners();
+start();
 
 /**
  * Cannot import Setting since gui can't be a commonjs module
  */
 class Setting {
     constructor(public name: string, public value: string) { }
+}
+
+function start() {
+    registerEventListeners();
 }
 
 function registerEventListeners(): void {
@@ -21,7 +25,7 @@ function registerEventListeners(): void {
         }
     });
 
-    // Deselect 'select all checkbox' once another checkbox has been clicked
+    // Deselect master checkbox' once another checkbox has been clicked
     const checkboxes = Array.from(<NodeListOf<HTMLInputElement>>document.querySelectorAll('input.setting_checkbox'));
     for (const chkbox of checkboxes) {
         chkbox.addEventListener('change', function (e: MouseEvent) {
@@ -42,15 +46,33 @@ function getAllSelectedSettings(): NodeListOf<Element> {
     return selectedCheckboxes;
 }
 
-function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
-    Array.from(selectedCheckboxes).forEach(chbox => {
-        const tr = chbox.closest('tr');
-        sendToExtension(new Setting(tr.dataset.name, tr.dataset.value));
-    });
+function getVscodeSettingsFromParentTR(td: Element) {
+    const tr = td.closest('tr');
+    return new Setting(tr.dataset.vscodename, tr.dataset.vscodevalue);
 }
 
-function sendToExtension(setting: Setting): void {
-    const command = encodeURI('command:extension.getResponseFromGUI?' + JSON.stringify(setting));
+function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
+    Array.from(selectedCheckboxes).forEach(chbox => {
+        const setting = getVscodeSettingsFromParentTR(chbox);
+        sendToExtension(setting);
+    });
+
+    const showUserSettingsChkbox = <HTMLInputElement>document.querySelector('#chkbox_show_settings');
+    if (showUserSettingsChkbox.checked) {
+        executeCommand('command:workbench.action.openGlobalSettings');
+    }
+
+    if (selectedCheckboxes.length) {
+        document.querySelector('#success_import_message').textContent = 'Settings import done.';
+    }
+}
+
+function sendToExtension(setting: Setting) {
+    executeCommand('command:extension.getResponseFromGUI?' + JSON.stringify(setting));
+}
+
+function executeCommand(cmd: string): void {
+    const command = encodeURI(cmd);
     console.log(command);
     var anchor = document.createElement('a');
     anchor.href = command;

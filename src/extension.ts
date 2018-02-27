@@ -1,7 +1,7 @@
 import { Importer } from './importer';
 import * as vscode from 'vscode';
 import { Start } from './start';
-import { previewUri, tableTag } from './consts';
+import { previewUri } from './consts';
 import HTMLDocumentContentProvider from './TextDocumentContentProvider';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -26,12 +26,10 @@ export function activate(context: vscode.ExtensionContext) {
 
             if (setting.name && setting.value) {
                 importer.updateSettings([setting]);
-                provider.update([setting]);
             }
             else {
                 console.error(`Unhandled message: ${setting}`);
             }
-
         })
     ]);
 }
