@@ -25,8 +25,10 @@ export class HTMLCreator {
     }
 
     createTR(setting: MappedSetting) {
-        let tr = `<tr data-sublimename='${setting.sublime.name}' data-sublimevalue='${setting.sublime.value}' data-vscodename='${setting.vscode.name}' data-vscodevalue='${setting.vscode.value}'>`;
-        if (MappedSetting.hasNoMatch(setting)) {
+        const hasNoMatch = MappedSetting.hasNoMatch(setting);
+        let tr: string = `<tr ${hasNoMatch ? 'class=no-match' : ''} data-sublimename='${setting.sublime.name}' data-sublimevalue='${setting.sublime.value}' data-vscodename='${setting.vscode.name}' data-vscodevalue='${setting.vscode.value}'>`;
+
+        if (hasNoMatch) {
             tr += this.createTD('');
         } else {
             tr += this.createTD('<input class="setting_checkbox" type="checkbox"/>');
@@ -59,7 +61,7 @@ export class HTMLCreator {
         return sep;
     }
 
-    createTD(val) {
+    createTD(val: string): string {
         return `<td><span>${val}</span></td>`;
     }
 }

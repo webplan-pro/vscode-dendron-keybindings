@@ -35,3 +35,7 @@ table.greyGridTable tfoot {
 table.greyGridTable tfoot td {
   font-size: 14px;
 }
+
+tr.no-match {
+  background-color: #d8d8d8
+}

@@ -64,7 +64,7 @@ export default class HTMLDocumentContentProvider implements vscode.TextDocumentC
     //     });
     // }
 
-    createInitialTable(newData: MappedSetting[]) {
+    createInitialTableAsync(newData: MappedSetting[]) {
         this.html.then(htmlContent => {
             this._html = htmlContent.replace('</table>', this.htmlCreator.createTable(newData));
             this._onDidChange.fire(previewUri);

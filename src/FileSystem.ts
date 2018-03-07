@@ -12,7 +12,7 @@ export async function pathExists(path: string): Promise<boolean> {
     }
 }
 
-export function fsAccess(path: string, checks: number): Promise<any> {
+function fsAccess(path: string, checks: number): Promise<any> {
     return nfcall(fs.access, path, checks);
 }
 

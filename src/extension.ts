@@ -1,37 +1,57 @@
 import { Importer } from './importer';
 import * as vscode from 'vscode';
-import { Start } from './start';
-import { previewUri } from './consts';
 import HTMLDocumentContentProvider from './TextDocumentContentProvider';
+import { previewUri } from './consts';
+
+const enum ProgressMessages {
+    'started' = 'Sublime Settings imported has started',
+    'launchingPreviewTable' = 'Launching preview table',
+    'settingsImported' = 'Settings have been imported'
+}
 
 export function activate(context: vscode.ExtensionContext) {
     const importer: Importer = new Importer();
     const provider: HTMLDocumentContentProvider = registerTxtDocumentProvider(context);
-    const extension = new Start(importer, provider);
-
 
     context.subscriptions.push(...[
-        vscode.commands.registerCommand('extension.importFromSublime', () => {
-            return extension.start().then(() => {
-                vscode.commands.executeCommand(
-                    'vscode.previewHtml',
-                    previewUri,
-                    vscode.ViewColumn.Two,
-                    'Sublime Settings Importer'
-                ).then(null, error => console.error(error));
-            });
-        }),
-        vscode.commands.registerCommand('extension.getResponseFromGUI', (setting: Setting) => {
-            console.log('Received:', setting);
 
+        vscode.commands.registerCommand('extension.importFromSublime', async () => {
+            await vscode.window.withProgress({
+                location: vscode.ProgressLocation.Window,
+                title: ProgressMessages.started
+            }, async (progress) => {
+                startImportAsync(importer, provider, progress);
+            })
+        }),
+
+        vscode.commands.registerCommand('extension.responseFromGUI', (setting: Setting) => {
             if (setting.name && setting.value) {
-                importer.updateSettings([setting]);
+                importer.updateSettingsAsync([setting]);
             }
             else {
                 console.error(`Unhandled message: ${setting}`);
             }
         })
     ]);
+}
+
+async function startImportAsync(importer, provider, progress): Promise<void> {
+    const mappedSettings = await importer.getMatchingGlobalSettings();
+    if (!mappedSettings || !mappedSettings.length) {
+        vscode.window.showInformationMessage(`No matching Sublime Text settings found.`);
+        return undefined;
+    }
+
+    progress.report({ message: ProgressMessages.settingsImported });
+    await provider.createInitialTableAsync(mappedSettings);
+    progress.report({ message: ProgressMessages.launchingPreviewTable });
+
+    return vscode.commands.executeCommand(
+        'vscode.previewHtml',
+        previewUri,
+        vscode.ViewColumn.Active,
+        'Sublime Settings Importer'
+    ).then(null, error => console.error(error));
 }
 
 function registerTxtDocumentProvider(context: vscode.ExtensionContext): HTMLDocumentContentProvider {

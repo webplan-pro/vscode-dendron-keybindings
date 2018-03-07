@@ -13,26 +13,28 @@ function start() {
 }
 
 function registerEventListeners(): void {
-    const submitButton = document.querySelector('#submit');
-    submitButton.addEventListener('click', (e: MouseEvent) => {
-        sendSettings(getAllSelectedSettings());
-    });
+    const selectAllCheckbox = <HTMLInputElement>document.querySelector('input.select_all_checkbox');
 
-    document.querySelector('input.select_all_checkbox').addEventListener('change', function (e: MouseEvent) {
+    // On selectAll click: synchronize state of checkboxes
+    selectAllCheckbox.addEventListener('change', function (e: MouseEvent) {
         const checkboxes = <NodeListOf<HTMLInputElement>>document.querySelectorAll('input.setting_checkbox');
         for (const chkbox of checkboxes) {
             chkbox.checked = this.checked;
         }
     });
 
-    // Deselect master checkbox' once another checkbox has been clicked
+    // Deselect master checkbox once another checkbox has been clicked
     const checkboxes = Array.from(<NodeListOf<HTMLInputElement>>document.querySelectorAll('input.setting_checkbox'));
     for (const chkbox of checkboxes) {
         chkbox.addEventListener('change', function (e: MouseEvent) {
-            const selectAllCheckbox = <HTMLInputElement>document.querySelector('input.select_all_checkbox');
             selectAllCheckbox.checked = false;
         });
     }
+
+    const submitButton = document.querySelector('#submit');
+    submitButton.addEventListener('click', (e: MouseEvent) => {
+        sendSettings(getAllSelectedSettings());
+    });
 }
 
 function getAllSelectedSettings(): NodeListOf<Element> {
@@ -68,7 +70,7 @@ function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
 }
 
 function sendToExtension(setting: Setting) {
-    executeCommand('command:extension.getResponseFromGUI?' + JSON.stringify(setting));
+    executeCommand('command:extension.responseFromGUI?' + JSON.stringify(setting));
 }
 
 function executeCommand(cmd: string): void {

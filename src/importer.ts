@@ -28,21 +28,22 @@ export class MappedSetting {
         return true;
     }
 }
+
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
     constructor() {
-        this._readSettingsMap().then(settings => {
+        this.readSettingsMap().then(settings => {
             this.settingsMap = settings;
         });
     }
 
-    _mapAllSettings(sourceSettings): MappedSetting[] {
+    private mapAllSettings(sourceSettings): MappedSetting[] {
         var mappedSettings: MappedSetting[] = []
         for (var key in sourceSettings) {
             var setting = sourceSettings[key]
             let ms: MappedSetting = new MappedSetting(new Setting(key, setting));
 
-            var mapped = this._mapSetting(key, setting)
+            var mapped = this.mapSetting(key, setting)
             if (mapped) {
                 ms.setVscode(mapped);
             }
@@ -51,7 +52,7 @@ export class Importer {
         return mappedSettings
     }
 
-    _mapSetting(key: string, value: string): Setting {
+    private mapSetting(key: string, value: string): Setting {
         var mappedSetting: string | object = this.settingsMap[key]
         if (mappedSetting) {
             if (typeof mappedSetting === 'string') {
@@ -67,19 +68,29 @@ export class Importer {
         return null
     }
 
-    updateSettings(settings: Setting[]) {
-        settings.forEach(setting => {
-            var namespace = setting.name.split('.')[0]
-            var settingName = setting.name.split('.')[1]
-
-            var config = vscode.workspace.getConfiguration(namespace)
+    async updateSettingsAsync(settings: Setting[]) {
+        for (const setting of settings) {
+            const namespace = setting.name.split('.')[0];
+            const settingName = setting.name.split('.')[1];
+            var config = vscode.workspace.getConfiguration(namespace);
             if (config && settingName) {
-                config.update(settingName, setting.value, true)
+                try {
+                await config.update(settingName, setting.value, vscode.ConfigurationTarget.Global);
+                } catch(e) {
+                    console.log(e);
+                }
+                const exists = config.has(settingName);
+                // const gitConfig = workspace.getConfiguration('git');
+                // gitConfig.update('autofetch', true, ConfigurationTarget.Global);
+                if (!exists) {
+                    console.log(setting.name + ' failed to add to config!');
+                }
+                
             }
-        });
+        };
     }
 
-    _readSettingsMap(): Promise<{ [key: string]: string }> {
+    private readSettingsMap(): Promise<{ [key: string]: string }> {
         var mapPath = path.resolve(__dirname, '..', 'map.json')
 
         return promisifier(fs.readFile, mapPath, 'UTF-8').then(data => {
@@ -98,33 +109,41 @@ export class Importer {
 
     }
 
-    mapGlobalSettings(settingsPath: string): Thenable<MappedSetting[] | undefined> {
+    private mapGlobalSettings(settingsPath: string): Thenable<MappedSetting[] | undefined> {
         return promisifier(fs.readFile, settingsPath)
             .then(data => {
                 const globalSettings = rjson.parse(data.toString())
-                const mappedGlobalSettings = this._mapAllSettings(globalSettings)
+                const mappedGlobalSettings = this.mapAllSettings(globalSettings)
                 return mappedGlobalSettings;
             });
     }
 
-
     // TODO: handle case when user selects wrong folder
-    async folderPicker(): Promise<string | undefined> {
+    private async folderPicker(): Promise<string | undefined> {
         const defaultPaths = await sublimeFolderFinder.findSettingsPathAsync();
         const browseOption = 'Browse...';
-        const pick = await vscode.window.showQuickPick([...defaultPaths.map(p => p.fsPath), browseOption], { 'placeHolder': `Select your settings folder from the list or click on ${browseOption}` });
+        const pick = await vscode.window.showQuickPick([...defaultPaths.map(p => p.fsPath), browseOption],
+            { 'placeHolder': `Select your Sublime-Text folder from the list or click on ${browseOption}` });
         if (!pick) {
             return undefined;
         } else if (pick === browseOption) {
-            return vscode.window.showOpenDialog({ canSelectFolders: true })
-                .then(([folderPath] = []) => {
-                    if (!folderPath) {
-                        return undefined;
-                    }
-                    return path.join(folderPath.fsPath, sublimeFolderFinder.sublimeSettingsPath) || undefined;
-                });
+            return this.browseForSublimeFolder();
         } else {
             return pick;
         }
+    }
+
+    private browseForSublimeFolder() {
+        return vscode.window.showOpenDialog({ canSelectFolders: true })
+            .then(async ([folderPath] = []) => {
+                if (!folderPath) {
+                    return undefined;
+                }
+                const paths = await sublimeFolderFinder.filterForExistingDirsAsync([folderPath.fsPath]);
+                if (!paths.length) {
+                    return undefined;
+                }
+                return paths[0].fsPath;
+            });
     }
 }
