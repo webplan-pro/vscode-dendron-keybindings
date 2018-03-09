@@ -492,7 +492,15 @@
                 "command": "deleteAllRight",
                 "key": "ctrl+k ctrl+k",
                 "when": "editorTextFocus && !editorReadonly"
-            }            
+            },
+            {
+                "mac": "cmd+shift+space",
+                "win": "ctrl+shift+space",
+                "linux": "ctrl+shift+space",
+                "command": "editor.action.smartSelect.grow",
+                "key": "ctrl+shift+space",
+                "when": "editorTextFocus"
+            }
         ],
         "configuration": {
             "type": "object",
