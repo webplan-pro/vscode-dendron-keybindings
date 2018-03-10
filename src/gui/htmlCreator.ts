@@ -1,4 +1,8 @@
-import { MappedSetting } from "../importer";
+import { MappedSetting } from "../mappedSetting";
+import { JSDOM } from 'jsdom';
+import * as vscode from 'vscode';
+import { nfcall as promisifier } from '../filesystem';
+import * as fs from 'fs';
 
 class MappedUnmappedSettings {
     mapped: MappedSetting[] = [];
@@ -6,43 +10,100 @@ class MappedUnmappedSettings {
 }
 
 export class HTMLCreator {
+    private projectRoot: vscode.Uri;
+    private _html: JSDOM;
 
-    replaceInitialHTML(htmlContent: string, context) {
-        return htmlContent.replace('$$IMPORT_CSS_SCRIPTS$$', `<link rel="stylesheet" type="text/css" href="file://${context.asAbsolutePath('resources/style.css')}">`)
-            .replace('$$IMPORT_JS_SCRIPTS$$', `<script src="file://${context.asAbsolutePath('out/gui/gui.js')}"></script>`);
-    }
-    createTable(newData: MappedSetting[]): string {
-        let tableString = this.createTRs(newData);
-        tableString += "</table>";
-        return tableString;
+    constructor(projectRoot: vscode.Uri) {
+        this.projectRoot = projectRoot;
+        this._html = null;
     }
 
-    createTRs(settings: MappedSetting[]) {
-        const { mapped, unmapped } = this.sortMappedSettings(settings);
-        let trs: string = mapped.map(this.createTR, this).join('');
-        trs += unmapped.map(this.createTR, this).join('');
-        return trs;
-    }
-
-    createTR(setting: MappedSetting) {
-        const hasNoMatch = MappedSetting.hasNoMatch(setting);
-        let tr: string = `<tr ${hasNoMatch ? 'class=no-match' : ''} data-sublimename='${setting.sublime.name}' data-sublimevalue='${setting.sublime.value}' data-vscodename='${setting.vscode.name}' data-vscodevalue='${setting.vscode.value}'>`;
-
-        if (hasNoMatch) {
-            tr += this.createTD('');
-        } else {
-            tr += this.createTD('<input class="setting_checkbox" type="checkbox"/>');
+    async getHtmlAsync(reset?: boolean): Promise<JSDOM> {
+        if (this._html && !reset) {
+            return this._html;
         }
-        tr += this.createTD(setting.sublime.name);
-        tr += this.createTD(setting.sublime.value);
-        tr += this.createTD(setting.vscode.name);
-        tr += this.createTD(setting.vscode.value);
-        tr += "</tr>";
+        else {
+            let htmlPath = vscode.Uri.file(this.projectRoot.fsPath + '/resources/content.html');
+            const htmlContent: string = await promisifier<string>(fs.readFile, htmlPath.fsPath, 'utf8');
+            const replacedHTMLContent: string = htmlContent.replace(/\$\$ABS_PATH_TO_ROOT\$\$/g, this.projectRoot.fsPath);
+            this._html = new JSDOM(replacedHTMLContent);
+            return this._html;
+        }
+    }
+
+    createTable(newData: MappedSetting[], doc: JSDOM): JSDOM {
+        let trs: HTMLTableRowElement[] = this.createTRs(newData);
+        const tbody: HTMLTableSectionElement = doc.window.document.querySelector('tbody');
+        for (const tr of trs) {
+            tbody.appendChild(tr);
+        }
+        this._html = doc;
+        return doc;
+    }
+
+    createTRs(settings: MappedSetting[]): HTMLTableRowElement[] {
+        const { mapped, unmapped } = this.sortMappedSettings(settings);
+        let trs: HTMLTableRowElement[] = mapped.map(this.createTR, this);
+        return trs.concat(unmapped.map(this.createTR, this));
+    }
+
+    createTR(setting: MappedSetting): HTMLTableRowElement {
+        let tr = this.createElement<HTMLTableRowElement>('tr');
+        tr.dataset.sublimename = setting.sublime.name;
+        tr.dataset.sublimevalue = setting.sublime.value;
+        tr.dataset.vscodename = setting.vscode.name;
+        tr.dataset.vscodevalue = setting.vscode.value;
+
+        if (MappedSetting.hasNoMatch(setting)) {
+            tr.classList.add('disabled');
+            tr.appendChild(this.createTD());
+        }
+        else {
+            const checkbox: HTMLInputElement = this.createElement<HTMLInputElement>('input');
+            checkbox.type = 'checkbox';
+            checkbox.classList.add('matching_setting_checkbox');
+            const td = this.createTD();
+            td.appendChild(checkbox);
+            tr.appendChild(td);
+            tr.classList.add('clickable_parent');
+        }
+
+        tr.appendChild(this.createTD(setting.sublime.name, 'sublime-name'));
+        tr.appendChild(this.createTD(setting.sublime.value, 'sublime-value'));
+        tr.appendChild(this.createTD(setting.vscode.name, 'vscode-name'));
+        tr.appendChild(this.createTD(setting.vscode.value, 'vscode-value'));
+
+        if (setting.isDuplicate) {
+            this.applyDuplicateStyle(tr, setting.duplicateVscodeSetting);
+        }
+
         return tr;
     }
 
+    private applyDuplicateStyle(tr: HTMLTableRowElement, setting: Setting) {
+        tr.classList.add('warning');
+        const td = tr.querySelector('.vscode-value');
+        const duplicateLabel = this.createElement<HTMLDivElement>('div');
+        this.addClasses(duplicateLabel, 'duplicate-label ui orange horizontal label');
+        duplicateLabel.appendChild(this.createTextNode('Existing setting:'));
+        duplicateLabel.appendChild(this.createElement('br'));
+        duplicateLabel.appendChild(this.createTextNode(`${setting.name}: ${setting.value}`));
+        td.appendChild(duplicateLabel);
+    }
 
-    sortMappedSettings(settings: MappedSetting[]): MappedUnmappedSettings {
+    private createElement<T extends HTMLElement>(name: string): T {
+        return <T>this._html.window.document.createElement(name);
+    }
+
+    private createTextNode(txt: string): Text {
+        return this._html.window.document.createTextNode(txt);
+    }
+
+    private addClasses(el: HTMLElement, classesWhiteSpaceSeparated: string) {
+        classesWhiteSpaceSeparated.split(' ').forEach(cls => el.classList.add(cls));
+    }
+
+    private sortMappedSettings(settings: MappedSetting[]): MappedUnmappedSettings {
         const sep: MappedUnmappedSettings = settings.reduce((prev, curr) => {
             if (MappedSetting.hasNoMatch(curr)) {
                 prev.unmapped.push(curr);
@@ -61,7 +122,14 @@ export class HTMLCreator {
         return sep;
     }
 
-    createTD(val: string): string {
-        return `<td><span>${val}</span></td>`;
+    private createTD(val: string = '', cls?: string): HTMLTableDataCellElement {
+        const td = this.createElement<HTMLTableDataCellElement>('td');
+        if (cls) {
+            td.classList.add(cls);
+        }
+        if (val) {
+            td.appendChild(this._html.window.document.createTextNode(val));
+        }
+        return td;
     }
 }

@@ -24,17 +24,13 @@ export async function findSettingsPathAsync(): Promise<vscode.Uri[]> {
 }
 
 export async function filterForExistingDirsAsync(paths: string[]): Promise<vscode.Uri[]> {
-    const existingDirs = await paths.filter(async (p) => {
-        const exists = await fileSystem.pathExists(p);
-        if (exists) {
-            const settingsPath = path.resolve(p, sublimeSettingsPath);
-            const containsSettings = await fileSystem.pathExists(settingsPath);
-            return containsSettings;
+    const existingDirs: vscode.Uri[] = [];
+    for (const p of paths) {
+        const settingsPath: string = path.resolve(p, sublimeSettingsPath);
+        if (await fileSystem.pathExists(settingsPath)) {
+            existingDirs.push(vscode.Uri.file(settingsPath));
         }
-        return false;
-    }).map(folder => {
-        return vscode.Uri.file(path.resolve(folder, sublimeSettingsPath));
-    });
+    }
 
     return existingDirs;
 }

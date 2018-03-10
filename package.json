@@ -25,7 +25,6 @@
                 "title": "Import Sublime Text settings"
             }
         ],
-
         "menus": {
             "editor/title": [
                 {
@@ -60,16 +59,22 @@
         "url": "https://github.com/Microsoft/vscode-sublime-importer/issues"
     },
     "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./"
     },
     "devDependencies": {
         "vscode": "^1.1.5",
         "typescript": "^2.0.3",
-        "@types/node": ">1.0.0" 
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42",
+        "@types/jsdom": "^11.0.4"
     },
     "dependencies": {
-        "appdirectory": "^0.1.0",
-        "listify": "^1.0.0",
+        "jquery": "^3.3.1",
+        "jsdom": "^11.6.2",
         "relaxed-json": "^1.0.1"
     }
 }
