@@ -38,13 +38,13 @@ export class SettingsTable {
 
         tr.appendChild(this.createSettingsTD(setting.sublime.name, setting.sublime.value, 'sublime-name'));
         const vscodeValueTD = this.createSettingsTD(setting.vscode.name, setting.vscode.value, 'vscode-name');
+
         if (setting.isDuplicate) {
             tr.classList.add('warning');
-            const duplicateSpan = this.dom.createElement('span');
-            this.dom.addClasses(duplicateSpan, 'ui grey');
-            duplicateSpan.textContent = `Current value: ${setting.duplicateVscodeSetting.value}`;
-            vscodeValueTD.appendChild(this.dom.createElement('br'));
-            vscodeValueTD.appendChild(duplicateSpan)
+            const duplicateDiv = this.dom.createElement('div');
+            this.dom.addClasses(duplicateDiv, 'ui warning mini compact message duplicate-label');
+            duplicateDiv.textContent = `Current value: ${setting.duplicateVscodeSetting.value}`;
+            vscodeValueTD.appendChild(duplicateDiv)
         }
         tr.appendChild(vscodeValueTD);
 

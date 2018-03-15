@@ -80,31 +80,25 @@ function getVscodeSettingsFromParentTR(td: Element): Setting {
 }
 
 function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
-    Array.from(selectedCheckboxes).forEach(chbox => {
-        const setting = getVscodeSettingsFromParentTR(chbox);
-        sendToExtension(setting);
-    });
+    const settings = Array.from(selectedCheckboxes).map(chbox => getVscodeSettingsFromParentTR(chbox));
 
     const showUserSettingsChkbox = <HTMLInputElement>document.querySelector('#chkbox_show_settings');
-    if (showUserSettingsChkbox.checked) {
-        executeCommand('command:workbench.action.openGlobalSettings');
-    }
+    const showUserSettingsEditor: boolean = showUserSettingsChkbox.checked;
+    sendSelectedSettingsToExtension(settings, showUserSettingsEditor);
 
     if (selectedCheckboxes.length) {
         document.querySelector('#success_import_message').textContent = 'Settings import done.';
     }
 }
 
-function sendToExtension(setting: Setting) {
-    executeCommand('command:extension.responseFromGUI?' + JSON.stringify(setting));
+function sendSelectedSettingsToExtension(settings: Setting[], showUserSettingsEditor: boolean) {
+    const obj = {
+        settings,
+        showUserSettingsEditor
+    }
+    executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
 }
 
-function executeCommand(cmd: string): void {
-    const command = encodeURI(cmd);
-    console.log(command);
-    var anchor = document.createElement('a');
-    anchor.href = command;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
+function userClickedOnBrowseButtonFromGUI() {
+
 }

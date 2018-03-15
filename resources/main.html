@@ -10,25 +10,15 @@
     <h3 class="ui attached centered header">
         Sublime Settings Importer
     </h3>
-    <div class="ui two column centered grid">
-        <div class="row">
-            <div class="column">
 
-                <div class="ui horizontal segments">
-                    <div class="ui segment">
-                        <div class="item">
-                            <div class="content">Sublime Settings Folder:
-                                <span class="value">C:\SublimeSettingsFolder</span>
-                                <div class="button ui">Browse...</div>
-                                <div class="ui warning message">
-                                    <div class="header">No Sublime Settings Folder was found</div>
-                                    The Sublime Settings folder can usually be found at
-                                    <a href="#" id="sublime_settings_folder_info_popup" class="ui" data-variation="very wide" data-html="
-                                                                                    <p>Windows: %userprofile%\AppData\Roaming\Sublime Text 3
-                                                                                    <br/>macOSX: Library/Application Support/Sublime Text 3
-                                                                                    <br/>Linux: .config/sublime-text-3</p>">these places.</a>
-                                </div>
-                            </div>
+    <div class="ui centered grid">
+        <div class="row">
+            <div class="ui horizontal segments">
+                <div class="ui segment">
+                    <div class="item">
+                        <div class="content">Sublime Settings Folder:
+                            <span id="sublimeFolderPath" class="ui mini message"></span>
+                            <span class="button ui browseButton">Browse...
                         </div>
                     </div>
                 </div>
@@ -61,13 +51,13 @@
             <div class="row">
                 <div class="column">
                     <div id="tableWrapper">
-                        <table id='dynamic-table--sublime-settings' class='ui selectable collapsing striped celled table'>
+                        <table id='dynamic-table--sublime-settings' class='ui selectable collapsing striped celled single line table'>
                             <thead class="ui center aligned">
                                 <th id='select_all_th' class='clickable_parent'>
                                     <input class="select_all_checkbox ui checkbox" type="checkbox">
                                 </th>
                                 <th>Sublime Setting</th>
-                                <th>VSCode Setting</th>
+                                <th>VS Code Setting</th>
                             </thead>
                             <tbody>
                             </tbody>
@@ -75,8 +65,8 @@
                                 <tr>
                                     <th></th>
                                     <th colspan="2">
-                                        <label for="chkbox_show_settings" class="ui small icon button">
-                                            <input type="checkbox" id="chkbox_show_settings" checked=""> Show User Settings After Import
+                                        <label for="chkbox_show_settings" id="show-settings-after-import" class="ui horizontal label">
+                                            <input type="checkbox" id="chkbox_show_settings" checked> Show User Settings After Import
                                         </label>
                                         <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
                                     </th>
@@ -153,14 +143,38 @@
                 <div class="center">
                     <h2 class="ui inverted icon header">
                         <i class="exclamation icon"></i>
-                        No Sublime Settings Folder was found
-                        <div class="sub header">The Sublime Settings folder can usually be found at these places:
-                            <p>Windows: %userprofile%\AppData\Roaming\Sublime Text 3
-                            <br/>macOSX: Library/Application Support/Sublime Text 3
-                            <br/>Linux: .config/sublime-text-3</p>
-                        </div>
+                        No Sublime Settings Folder found
+                        <div class="sub header">The default places for the Sublime settings folder are:</div>
                     </h2>
+
+                    <div class="ui items">
+                        <div class="item">
+                            <div class="content">
+                                <div class="header white">Windows</div>
+                                <div class="meta">
+                                    <span class="folder-path white">%userprofile%\AppData\Roaming\Sublime Text 3</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="content">
+                                <div class="header white">macOSX</div>
+                                <div class="meta">
+                                    <span class="folder-path white">Library/Application Support/Sublime Text 3</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="content">
+                                <div class="header white">Linux</div>
+                                <div class="meta">
+                                    <span class="folder-path white">.config/sublime-text-3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                <div class="button ui browseButton">Browse...</div>
             </div>
         </div>
     </div>
@@ -174,6 +188,5 @@
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/mainFrontend.js"></script>
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/settingsPageFrontend.js"></script>
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/packagesFrontend.js"></script>
-
 
 </html>

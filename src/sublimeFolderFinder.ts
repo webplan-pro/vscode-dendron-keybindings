@@ -14,7 +14,7 @@ const defaultSublimeSettingsPaths: Map<string, string[]> = new Map([
     ['linux', [path.join(os.homedir(), '.config', 'sublime-text-3')]]
 ]);
 
-const sublimeSettingsPath = path.join('Packages', 'User', 'Preferences.sublime-settings');
+const settingsSubfoldersPath = path.join('Packages', 'User', 'Preferences.sublime-settings');
 
 export async function getExistingDefaultPaths(): Promise<SublimeFolders[]> {
     const platform: NodeJS.Platform = os.platform();
@@ -31,11 +31,23 @@ export async function getExistingDefaultPaths(): Promise<SublimeFolders[]> {
 export async function filterForExistingDirsAsync(paths: string[]): Promise<SublimeFolders[]> {
     const existingDirs: SublimeFolders[] = [];
     for (const p of paths) {
-        const settingsPath: string = path.resolve(p, sublimeSettingsPath);
+        const settingsPath: string = path.resolve(p, settingsSubfoldersPath);
         if (await fileSystem.pathExists(settingsPath)) {
-            existingDirs.push({main: vscode.Uri.file(p), settings: vscode.Uri.file(settingsPath)});
+            existingDirs.push({ main: vscode.Uri.file(p), settings: vscode.Uri.file(settingsPath) });
         }
     }
 
     return existingDirs;
+}
+
+export async function folderPicker(): Promise<SublimeFolders | undefined> {
+    const folderPaths = await vscode.window.showOpenDialog({ canSelectFolders: true });
+    if (!folderPaths) {
+        return undefined;
+    }
+    const paths: SublimeFolders[] = await filterForExistingDirsAsync([folderPaths[0].fsPath]);
+    if (!paths.length) {
+        return undefined;
+    }
+    return paths[0];
 }

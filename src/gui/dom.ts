@@ -8,7 +8,7 @@ export class Dom {
     private _origjsdom: JSDOM;
     private projectRoot: vscode.Uri;
 
-    private constructor() {}
+    private constructor() { }
 
     public static async initAsync(projectRoot: vscode.Uri) {
         const instance = new Dom();
@@ -80,5 +80,21 @@ export class Dom {
 
     public addClasses(el: HTMLElement, classesWhiteSpaceSeparated: string): void {
         classesWhiteSpaceSeparated.split(' ').forEach(cls => el.classList.add(cls));
+    }
+
+    public addScript(scriptName: string): void {
+        const scriptEl = this.createElement('script');
+        scriptEl.setAttribute('src', `file://${this.projectRoot.fsPath}/out/frontend/${scriptName}`);
+        this.jsdom.window.document.body.appendChild(scriptEl);
+    }
+
+    public removeScript(scriptName: string): void {
+        try {
+            // querySelectorAll required because there are two body elements in the webview
+            const scriptEls = this.jsdom.window.document.querySelectorAll(`body script[src$='${scriptName}']`);
+            this.jsdom.window.document.body.removeChild(scriptEls[0]);
+        } catch(e) {
+            return undefined;
+        }
     }
 }

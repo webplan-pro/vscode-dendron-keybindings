@@ -5,29 +5,26 @@ import { MappedSetting } from "../mappedSetting";
 
 import { PackageEntry } from '../extensionImporter';
 import { Dom } from './dom';
+import { SublimeFolders } from '../sublimeFolderFinder';
+import { CategorizedSettings } from '../extension';
 
-class CategorizedSettings {
-    mapped: MappedSetting[] = [];
-    unmapped: MappedSetting[] = [];
-}
 export class HTMLCreator {
     private settingsPage: SettingsTable;
     private dom: Dom;
 
     private constructor() { }
 
-    public static async initAsync(projectRoot: vscode.Uri) {
-        const instance: HTMLCreator = new HTMLCreator();
-        instance.init(projectRoot);
-        return instance;
+    public static async initializeAsync(projectRoot: vscode.Uri): Promise<HTMLCreator> {
+        return new HTMLCreator().initAsync(projectRoot);
     }
 
-    private async init(projectRoot: vscode.Uri) {
+    private async initAsync(projectRoot: vscode.Uri): Promise<HTMLCreator> {
         this.dom = await Dom.initAsync(projectRoot);
-        this.settingsPage = new SettingsTable(this.dom);        
+        this.settingsPage = new SettingsTable(this.dom);
+        return this;      
     }
 
-    public async resetHTML() {
+    public async resetHTMLAsync() {
         return this.dom.getHtmlAsync(true);
     }
 
@@ -35,16 +32,24 @@ export class HTMLCreator {
         return this.dom.getHtmlAsync();
     }
 
-    public async onNewSettingsAsync(newData): Promise<void> {
-        const sortedSettings: CategorizedSettings = this.categorizeAndSortSettings(newData);
-        const trs = this.settingsPage.createTableRows(sortedSettings.mapped);
+    public addDimmer() {
+        this.dom.addScript('dimmer.js');
+    }
+
+    public removeDimmer() {
+        this.dom.removeScript('dimmer.js');
+    }
+
+    public async onNewSettingsAsync(newData: CategorizedSettings, sublimeSettingsPath: SublimeFolders): Promise<void> {
+        this.dom.getElementByIDThrows('sublimeFolderPath').textContent = sublimeSettingsPath.settings.fsPath;
+        const trs = this.settingsPage.createTableRows(newData.mapped);
         const settingsPageDiv = this.dom.querySelectorThrows('#import-category-settings');
         const tbody: HTMLTableSectionElement = settingsPageDiv.querySelector<HTMLTableSectionElement>('#dynamic-table--sublime-settings tbody');
         for (const tr of trs) {
             tbody.appendChild(tr);
         }
 
-        const accordion = this.createUnmappedSettingsAccordion(sortedSettings.unmapped);
+        const accordion = this.createUnmappedSettingsAccordion(newData.unmapped);
         settingsPageDiv.querySelector('#tableWrapper').appendChild(accordion);
     }
 
@@ -70,22 +75,6 @@ export class HTMLCreator {
         cards.forEach(card => {
             extPage.appendChild(card);
         });
-    }
-
-    private categorizeAndSortSettings(settings: MappedSetting[]): CategorizedSettings {
-        const sep: CategorizedSettings = settings.reduce((prev, curr) => {
-            if (MappedSetting.hasNoMatch(curr)) {
-                prev.unmapped.push(curr);
-            } else {
-                prev.mapped.push(curr);
-            }
-            return prev;
-        }, new CategorizedSettings());
-
-        sep.mapped.sort((a, b) => a.sublime.name.localeCompare(b.sublime.name));
-        sep.unmapped.sort((a, b) => a.sublime.name.localeCompare(b.sublime.name));
-
-        return sep;
     }
 
     private createUnmappedSettingsAccordion(unmapped: MappedSetting[]): HTMLElement {

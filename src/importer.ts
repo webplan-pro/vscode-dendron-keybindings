@@ -5,8 +5,7 @@ import * as vscode from "vscode";
 import * as fileSystem from "./Filesystem";
 import { MappedSetting } from "./mappedSetting";
 import { Setting } from "./setting";
-import * as sublimeFolderFinder from "./sublimeFolderFinder";
-import { SublimeFolders } from "./sublimeFolderFinder";
+import { SelectedSettings } from "./extension";
 
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
@@ -15,11 +14,6 @@ export class Importer {
         this.readSettingsMapAsync().then((settings) => {
             this.settingsMap = settings;
         });
-    }
-
-    public async getSublimeSettingsFolderAsync(): Promise<SublimeFolders | undefined> {
-        const sublimeFolder: SublimeFolders = await this.showFolderQuickPick();
-        return sublimeFolder || undefined;
     }
 
     public async getMatchingGlobalSettingsAsync(sublimePath: string): Promise<MappedSetting[] | undefined> {
@@ -34,8 +28,8 @@ export class Importer {
         return mappedGlobalSettings;
     }
 
-    public async updateSettingsAsync(settings: Setting[]) {
-        for (const setting of settings) {
+    public async updateSettingsAsync(settings: SelectedSettings): Promise<{} | undefined> {
+        for (const setting of settings.settings) {
             const { namespace, settingName } = setting.getNamespaceAndSettingName();
             const config = vscode.workspace.getConfiguration(namespace);
             if (config && settingName) {
@@ -48,6 +42,12 @@ export class Importer {
                 console.error('getConfiguration failed for namespace: ${namespace}')
             }
         }
+
+        if (settings.showUserSettingsEditor) {
+            return await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
+        }
+        
+        return undefined;
     }
 
     private getExistingVscodeSetting(setting: Setting): {} | undefined {
@@ -63,34 +63,6 @@ export class Importer {
             console.error('getConfiguration failed for namespace: ${namespace}')
             return undefined;
         }
-    }
-
-    private async showFolderQuickPick(): Promise<SublimeFolders | undefined> {
-        const browseOption = 'Browse...';
-        const defaultPaths: SublimeFolders[] = await sublimeFolderFinder.getExistingDefaultPaths();
-        const pick = await vscode.window.showQuickPick([...defaultPaths.map(p => p.main.fsPath), browseOption],
-            { 'placeHolder': `Select your Sublime-Text Settings folder from the list or click on ${browseOption}` });
-        if (!pick) {
-            return undefined;
-        } else if (pick === browseOption) {
-            const folder = await this.folderPicker();
-            return folder;
-        } else {
-            return defaultPaths.find(item => item.main.fsPath === pick);
-        }
-    }
-
-    private async folderPicker(): Promise<sublimeFolderFinder.SublimeFolders | undefined> {
-        const [folderPath] = [] = await vscode.window.showOpenDialog({ canSelectFolders: true });
-        if (!folderPath) {
-            return undefined;
-        }
-        const paths: sublimeFolderFinder.SublimeFolders[] = await sublimeFolderFinder.filterForExistingDirsAsync([folderPath.fsPath]);
-        if (!paths.length) {
-            vscode.window.showErrorMessage(`${folderPath.fsPath} is not a Sublime-Text Settings folder`);
-            return undefined;
-        }
-        return paths[0];
     }
 
     private mapAllSettings(sublimeSettings): MappedSetting[] {
@@ -121,7 +93,11 @@ export class Importer {
             }
             else if (typeof mappedSetting === 'object') {
                 const obj = mappedSetting[value];
-                const newKey = Object.keys(obj)[0];
+                if (!obj) {
+                    throw new ReferenceError(`mapSetting() failed on key: ${key}, value: ${value}, mappedSetting: ${JSON.stringify(mappedSetting)}`);
+                }
+                const keys = Object.keys(obj);
+                const newKey = keys[0];
                 const newValue = obj[newKey];
                 return new Setting(newKey, newValue);
             }

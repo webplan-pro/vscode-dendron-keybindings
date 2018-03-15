@@ -1,86 +1,5 @@
-table.greyGridTable {
-  border: 2px solid;
-  width: 100%;
-  text-align: center;
-  border-collapse: collapse;
-}
-
-table.greyGridTable td, table.greyGridTable th {
-  border: 1px solid;
-  padding: 3px 4px;
-}
-
-table.greyGridTable tbody td {
-  font-size: 13px;
-}
-
-table.greyGridTable thead {
-  border-bottom: 4px solid;
-}
-
-table.greyGridTable thead th {
-  font-size: 15px;
-  font-weight: bold;
-  color: #333333;
-  text-align: center;
-  border-left: 2px solid #333333;
-}
-
-table.greyGridTable thead th:first-child {
-  border-left: none;
-}
-
-table.greyGridTable tfoot {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333333;
-  border-top: 4px solid #333333;
-}
-table.greyGridTable tfoot td {
-  font-size: 14px;
-}
-
-tbody tr.match:hover {
-  background-color: lightyellow;
-}
-
-tbody tr.duplicate {
-  background-color: rgb(218, 108, 108);
-}
-
-.vscode-light table.greyGridTable {
-  border-color: #FFFFFF;
-}
-
-.vscode-light table.greyGridTable td, table.greyGridTable th {
-  border-color: #FFFFFF;
-}
-
-.vscode-light table.greyGridTable thead {
-  background-color: #FFFFFF;
-  border-bottom: #333333;
-}
-
-.vscode-dark table.greyGridTable {
-  border-color: #000000;
-  
-}
-
-.vscode-dark table.greyGridTable td, table.greyGridTable th {
-  border-color: #000000;
-}
-
-.vscode-dark table.greyGridTable thead {
-  background-color: #000000;
-  border-bottom: #333333;
-}
-
-.vscode-high-contrast {
-    border-color: #000000;
-}
-
 .duplicate-label {
-  margin-left: 3em !important;
+  margin-left: 1em !important;
 }
 
 .hidden {
@@ -89,4 +8,12 @@ tbody tr.duplicate {
 
 .addExtensionButton {
   width: 12em;
+}
+
+#show-settings-after-import {
+  float: right;
+}
+
+.white {
+  color: white !important;
 }

@@ -12,16 +12,24 @@
         }
     });
 
-    // if ($('body').data('dimmer') === 'on') {
-    //     // @ts-ignore
-    //     const $clone = $('#dimmerNoSublimeFolderTemplate > .dimmer').clone();
-    //     // @ts-ignore
-    //     $clone.dimmer('set page dimmer');
-    //     $('body').append($clone);
-    //     // @ts-ignore
-    //     $clone.dimmer('show');
-    // }
+    // global listener for browse button since dimmer adds one dynamically.
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target instanceof HTMLElement) {
+            if (e.target.classList.contains('browseButton')) {
+                executeCommand('command:extension.userClickedOnBrowseButtonFromGUI');
+            }
+        }
+    });
 })()
 
 
 
+function executeCommand(cmd: string): void {
+    const command = encodeURI(cmd);
+    console.log(command);
+    var anchor = document.createElement('a');
+    anchor.href = command;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+}
