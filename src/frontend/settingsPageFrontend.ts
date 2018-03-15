@@ -11,6 +11,8 @@ interface Setting {
 
 function start() {
     registerEventListeners();
+    // @ts-ignore
+    $('.ui.accordion').accordion();
 }
 
 function registerEventListeners(): void {
@@ -49,7 +51,7 @@ function registerEventListeners(): void {
         }
     });
 
-    const submitButton = document.querySelector('#submit');
+    const submitButton = document.querySelector('#add-settings-button');
     submitButton.addEventListener('click', () => {
         sendSettings(getAllSelectedSettings());
     });

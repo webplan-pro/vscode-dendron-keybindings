@@ -2,10 +2,11 @@ import * as fs from "fs";
 import * as path from "path";
 import * as rjson from "relaxed-json";
 import * as vscode from "vscode";
-import { nfcall as promisifier } from "./Filesystem";
+import * as fileSystem from "./Filesystem";
 import { MappedSetting } from "./mappedSetting";
 import { Setting } from "./setting";
 import * as sublimeFolderFinder from "./sublimeFolderFinder";
+import { SublimeFolders } from "./sublimeFolderFinder";
 
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
@@ -16,18 +17,18 @@ export class Importer {
         });
     }
 
-    public async getMatchingGlobalSettingsAsync(): Promise<MappedSetting[] | undefined> {
-        const sublimePath = await this.showFolderQuickPick();
-        if (!sublimePath) {
-            return undefined;
-        }
+    public async getSublimeSettingsFolderAsync(): Promise<SublimeFolders | undefined> {
+        const sublimeFolder: SublimeFolders = await this.showFolderQuickPick();
+        return sublimeFolder || undefined;
+    }
 
+    public async getMatchingGlobalSettingsAsync(sublimePath: string): Promise<MappedSetting[] | undefined> {
         const mappedSettings: MappedSetting[] = await this.getMappedSettings(sublimePath);
         return mappedSettings;
     }
 
     public async getMappedSettings(settingsPath: string): Promise<MappedSetting[] | undefined> {
-        const data = await promisifier(fs.readFile, settingsPath);
+        const data = await fileSystem.promisifier(fs.readFile, settingsPath);
         const globalSettings = rjson.parse(data.toString());
         const mappedGlobalSettings = this.mapAllSettings(globalSettings);
         return mappedGlobalSettings;
@@ -49,46 +50,47 @@ export class Importer {
         }
     }
 
-    private vscodeSettingAlreadyExists(setting: Setting): boolean {
+    private getExistingVscodeSetting(setting: Setting): {} | undefined {
         const { namespace, settingName } = setting.getNamespaceAndSettingName();
         const config = vscode.workspace.getConfiguration(namespace);
         if (config && settingName) {
             const info = config.inspect(settingName);
             if (info.globalValue && info.globalValue !== undefined) {
-                return true;
+                return info.globalValue;
             }
-            return false;
+            return undefined;
         } else {
             console.error('getConfiguration failed for namespace: ${namespace}')
-            return false;
+            return undefined;
         }
     }
 
-    private async showFolderQuickPick(): Promise<string | undefined> {
-        const defaultPaths = await sublimeFolderFinder.findSettingsPathAsync();
+    private async showFolderQuickPick(): Promise<SublimeFolders | undefined> {
         const browseOption = 'Browse...';
-        const pick = await vscode.window.showQuickPick([...defaultPaths.map(p => p.fsPath), browseOption],
+        const defaultPaths: SublimeFolders[] = await sublimeFolderFinder.getExistingDefaultPaths();
+        const pick = await vscode.window.showQuickPick([...defaultPaths.map(p => p.main.fsPath), browseOption],
             { 'placeHolder': `Select your Sublime-Text Settings folder from the list or click on ${browseOption}` });
         if (!pick) {
             return undefined;
         } else if (pick === browseOption) {
-            return await this.folderPicker();
+            const folder = await this.folderPicker();
+            return folder;
         } else {
-            return pick;
+            return defaultPaths.find(item => item.main.fsPath === pick);
         }
     }
 
-    private async folderPicker(): Promise<string | undefined> {
+    private async folderPicker(): Promise<sublimeFolderFinder.SublimeFolders | undefined> {
         const [folderPath] = [] = await vscode.window.showOpenDialog({ canSelectFolders: true });
         if (!folderPath) {
             return undefined;
         }
-        const paths = await sublimeFolderFinder.filterForExistingDirsAsync([folderPath.fsPath]);
+        const paths: sublimeFolderFinder.SublimeFolders[] = await sublimeFolderFinder.filterForExistingDirsAsync([folderPath.fsPath]);
         if (!paths.length) {
             vscode.window.showErrorMessage(`${folderPath.fsPath} is not a Sublime-Text Settings folder`);
             return undefined;
         }
-        return paths[0].fsPath;
+        return paths[0];
     }
 
     private mapAllSettings(sublimeSettings): MappedSetting[] {
@@ -100,8 +102,9 @@ export class Importer {
             const vscodeMapping = this.mapSetting(sublimeKey, sublimeSetting)
             if (vscodeMapping) {
                 ms.setVscode(vscodeMapping);
-                if (this.vscodeSettingAlreadyExists(vscodeMapping)) {
-                    ms.markAsDuplicate(vscodeMapping);
+                const existingValue = this.getExistingVscodeSetting(vscodeMapping);
+                if (existingValue) {
+                    ms.markAsDuplicate(new Setting(vscodeMapping.name, existingValue.toString()));
                 }
             }
 
@@ -129,7 +132,7 @@ export class Importer {
 
     private async readSettingsMapAsync(): Promise<{ [key: string]: string }> {
         const mapPath = path.resolve(__dirname, "..", "mappings/settings.json");
-        const data = await promisifier(fs.readFile, mapPath, "UTF-8");
+        const data: string = await fileSystem.readFileAsync(mapPath, 'utf-8');
         return rjson.parse(data.toString());
     }
 }

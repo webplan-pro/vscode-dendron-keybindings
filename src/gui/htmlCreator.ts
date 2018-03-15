@@ -1,135 +1,108 @@
-import { MappedSetting } from "../mappedSetting";
 import { JSDOM } from 'jsdom';
 import * as vscode from 'vscode';
-import { nfcall as promisifier } from '../filesystem';
-import * as fs from 'fs';
+import { SettingsTable } from './settingsTable';
+import { MappedSetting } from "../mappedSetting";
 
-class MappedUnmappedSettings {
+import { PackageEntry } from '../extensionImporter';
+import { Dom } from './dom';
+
+class CategorizedSettings {
     mapped: MappedSetting[] = [];
     unmapped: MappedSetting[] = [];
 }
-
 export class HTMLCreator {
-    private projectRoot: vscode.Uri;
-    private _html: JSDOM;
+    private settingsPage: SettingsTable;
+    private dom: Dom;
 
-    constructor(projectRoot: vscode.Uri) {
-        this.projectRoot = projectRoot;
-        this._html = null;
+    private constructor() { }
+
+    public static async initAsync(projectRoot: vscode.Uri) {
+        const instance: HTMLCreator = new HTMLCreator();
+        instance.init(projectRoot);
+        return instance;
     }
 
-    async getHtmlAsync(reset?: boolean): Promise<JSDOM> {
-        if (this._html && !reset) {
-            return this._html;
-        }
-        else {
-            let htmlPath = vscode.Uri.file(this.projectRoot.fsPath + '/resources/content.html');
-            const htmlContent: string = await promisifier<string>(fs.readFile, htmlPath.fsPath, 'utf8');
-            const replacedHTMLContent: string = htmlContent.replace(/\$\$ABS_PATH_TO_ROOT\$\$/g, this.projectRoot.fsPath);
-            this._html = new JSDOM(replacedHTMLContent);
-            return this._html;
-        }
+    private async init(projectRoot: vscode.Uri) {
+        this.dom = await Dom.initAsync(projectRoot);
+        this.settingsPage = new SettingsTable(this.dom);        
     }
 
-    createTable(newData: MappedSetting[], doc: JSDOM): JSDOM {
-        let trs: HTMLTableRowElement[] = this.createTRs(newData);
-        const tbody: HTMLTableSectionElement = doc.window.document.querySelector('tbody');
+    public async resetHTML() {
+        return this.dom.getHtmlAsync(true);
+    }
+
+    public async getHtmlAsync(): Promise<JSDOM> {
+        return this.dom.getHtmlAsync();
+    }
+
+    public async onNewSettingsAsync(newData): Promise<void> {
+        const sortedSettings: CategorizedSettings = this.categorizeAndSortSettings(newData);
+        const trs = this.settingsPage.createTableRows(sortedSettings.mapped);
+        const settingsPageDiv = this.dom.querySelectorThrows('#import-category-settings');
+        const tbody: HTMLTableSectionElement = settingsPageDiv.querySelector<HTMLTableSectionElement>('#dynamic-table--sublime-settings tbody');
         for (const tr of trs) {
             tbody.appendChild(tr);
         }
-        this._html = doc;
-        return doc;
+
+        const accordion = this.createUnmappedSettingsAccordion(sortedSettings.unmapped);
+        settingsPageDiv.querySelector('#tableWrapper').appendChild(accordion);
     }
 
-    createTRs(settings: MappedSetting[]): HTMLTableRowElement[] {
-        const { mapped, unmapped } = this.sortMappedSettings(settings);
-        let trs: HTMLTableRowElement[] = mapped.map(this.createTR, this);
-        return trs.concat(unmapped.map(this.createTR, this));
-    }
+    public createPackagesList(foundPackages: PackageEntry[], parentElementId: string) {
+        const cards: HTMLDivElement[] = [];
 
-    createTR(setting: MappedSetting): HTMLTableRowElement {
-        let tr = this.createElement<HTMLTableRowElement>('tr');
-        tr.dataset.sublimename = setting.sublime.name;
-        tr.dataset.sublimevalue = setting.sublime.value;
-        tr.dataset.vscodename = setting.vscode.name;
-        tr.dataset.vscodevalue = setting.vscode.value;
+        for (const pkg of foundPackages) {
+            const templateHeader: HTMLDivElement = this.dom.getTemplateCopy('#packageCardHeaderTemplate > .card');
+            templateHeader.querySelector('.sublimePackageName').textContent = pkg.name;
+            for (const vscodeExt of pkg["vscode-extensions"]) {
+                const templateBody: HTMLDivElement = this.dom.getTemplateCopy('#packageCardBodyTemplate > .clone');
+                templateBody.querySelector('.packageName').textContent = vscodeExt.name;
+                templateBody.querySelector('.packageDescription').textContent = vscodeExt.description;
 
-        if (MappedSetting.hasNoMatch(setting)) {
-            tr.classList.add('disabled');
-            tr.appendChild(this.createTD());
-        }
-        else {
-            const checkbox: HTMLInputElement = this.createElement<HTMLInputElement>('input');
-            checkbox.type = 'checkbox';
-            checkbox.classList.add('matching_setting_checkbox');
-            const td = this.createTD();
-            td.appendChild(checkbox);
-            tr.appendChild(td);
-            tr.classList.add('clickable_parent');
+                const button: HTMLButtonElement = templateBody.querySelector('.addExtensionButton') as HTMLButtonElement;
+                button.dataset.extensionid = vscodeExt.id;
+                templateHeader.querySelector('.content').appendChild(templateBody);
+            }
+            cards.push(templateHeader);
         }
 
-        tr.appendChild(this.createTD(setting.sublime.name, 'sublime-name'));
-        tr.appendChild(this.createTD(setting.sublime.value, 'sublime-value'));
-        tr.appendChild(this.createTD(setting.vscode.name, 'vscode-name'));
-        tr.appendChild(this.createTD(setting.vscode.value, 'vscode-value'));
-
-        if (setting.isDuplicate) {
-            this.applyDuplicateStyle(tr, setting.duplicateVscodeSetting);
-        }
-
-        return tr;
+        const extPage = this.dom.getElementByIDThrows<HTMLElement>(parentElementId);
+        cards.forEach(card => {
+            extPage.appendChild(card);
+        });
     }
 
-    private applyDuplicateStyle(tr: HTMLTableRowElement, setting: Setting) {
-        tr.classList.add('warning');
-        const td = tr.querySelector('.vscode-value');
-        const duplicateLabel = this.createElement<HTMLDivElement>('div');
-        this.addClasses(duplicateLabel, 'duplicate-label ui orange horizontal label');
-        duplicateLabel.appendChild(this.createTextNode('Existing setting:'));
-        duplicateLabel.appendChild(this.createElement('br'));
-        duplicateLabel.appendChild(this.createTextNode(`${setting.name}: ${setting.value}`));
-        td.appendChild(duplicateLabel);
-    }
-
-    private createElement<T extends HTMLElement>(name: string): T {
-        return <T>this._html.window.document.createElement(name);
-    }
-
-    private createTextNode(txt: string): Text {
-        return this._html.window.document.createTextNode(txt);
-    }
-
-    private addClasses(el: HTMLElement, classesWhiteSpaceSeparated: string) {
-        classesWhiteSpaceSeparated.split(' ').forEach(cls => el.classList.add(cls));
-    }
-
-    private sortMappedSettings(settings: MappedSetting[]): MappedUnmappedSettings {
-        const sep: MappedUnmappedSettings = settings.reduce((prev, curr) => {
+    private categorizeAndSortSettings(settings: MappedSetting[]): CategorizedSettings {
+        const sep: CategorizedSettings = settings.reduce((prev, curr) => {
             if (MappedSetting.hasNoMatch(curr)) {
                 prev.unmapped.push(curr);
             } else {
                 prev.mapped.push(curr);
             }
             return prev;
-        }, new MappedUnmappedSettings());
+        }, new CategorizedSettings());
 
-        sep.mapped.sort((a, b) => {
-            return a.sublime.name.localeCompare(b.sublime.name);
-        });
-        sep.unmapped.sort((a, b) => {
-            return a.sublime.name.localeCompare(b.sublime.name);
-        });
+        sep.mapped.sort((a, b) => a.sublime.name.localeCompare(b.sublime.name));
+        sep.unmapped.sort((a, b) => a.sublime.name.localeCompare(b.sublime.name));
+
         return sep;
     }
 
-    private createTD(val: string = '', cls?: string): HTMLTableDataCellElement {
-        const td = this.createElement<HTMLTableDataCellElement>('td');
-        if (cls) {
-            td.classList.add(cls);
+    private createUnmappedSettingsAccordion(unmapped: MappedSetting[]): HTMLElement {
+        const accordion: HTMLElement = this.dom.getTemplateCopy('#accordionTemplate > .ui.accordion');
+        accordion.querySelector('.titleText').textContent = 'Settings that could not be mapped';
+
+        const list = this.dom.createElement('div');
+        this.dom.addClasses(list, 'ui list selection');
+
+        for (const setting of unmapped) {
+            const item = this.dom.createElement('div');
+            this.dom.addClasses(item, 'item');
+            item.textContent = setting.sublime.name;
+            list.appendChild(item);
         }
-        if (val) {
-            td.appendChild(this._html.window.document.createTextNode(val));
-        }
-        return td;
+
+        accordion.querySelector('.content').appendChild(list);
+        return accordion;
     }
 }

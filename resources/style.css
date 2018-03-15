@@ -82,3 +82,11 @@ tbody tr.duplicate {
 .duplicate-label {
   margin-left: 3em !important;
 }
+
+.hidden {
+  display: none !important;
+}
+
+.addExtensionButton {
+  width: 12em;
+}

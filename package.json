@@ -66,11 +66,13 @@
         "watch": "tsc -watch -p ./"
     },
     "devDependencies": {
-        "vscode": "^1.1.5",
-        "typescript": "^2.0.3",
-        "@types/node": "^7.0.43",
+        "@types/jquery": "^3.3.1",
+        "@types/jsdom": "^11.0.4",
         "@types/mocha": "^2.2.42",
-        "@types/jsdom": "^11.0.4"
+        "@types/node": "^7.0.43",
+        "typescript": "^2.0.3",
+        "vscode": "^1.1.5",
+        "sax": "^1.2.2"
     },
     "dependencies": {
         "jquery": "^3.3.1",

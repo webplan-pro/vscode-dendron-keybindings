@@ -1,0 +1,179 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/libs/Semantic-UI/semantic.min.css"></link>
+    <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/resources/style.css">
+    <link rel="stylesheet" type="text/css" href="file://C:\vscode_projects\vscode-sublime-importer\libs\Semantic-UI\semantic.min.css"></link>
+</head>
+
+<body>
+    <h3 class="ui attached centered header">
+        Sublime Settings Importer
+    </h3>
+    <div class="ui two column centered grid">
+        <div class="row">
+            <div class="column">
+
+                <div class="ui horizontal segments">
+                    <div class="ui segment">
+                        <div class="item">
+                            <div class="content">Sublime Settings Folder:
+                                <span class="value">C:\SublimeSettingsFolder</span>
+                                <div class="button ui">Browse...</div>
+                                <div class="ui warning message">
+                                    <div class="header">No Sublime Settings Folder was found</div>
+                                    The Sublime Settings folder can usually be found at
+                                    <a href="#" id="sublime_settings_folder_info_popup" class="ui" data-variation="very wide" data-html="
+                                                                                    <p>Windows: %userprofile%\AppData\Roaming\Sublime Text 3
+                                                                                    <br/>macOSX: Library/Application Support/Sublime Text 3
+                                                                                    <br/>Linux: .config/sublime-text-3</p>">these places.</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui two column centered grid">
+        <div class="row centered">
+            <div class="column">
+                <div id='navigation_menu' class="ui secondary pointing menu">
+                    <a class="item active" data-navtype="import-category-settings">
+                        Import Settings
+                    </a>
+                    <a class="item" data-navtype="import-category-extensions">
+                        Import Extensions
+                    </a>
+                    <a class="item" data-navtype="import-category-themes">
+                        Import Themes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Import Settings Tab Start -->
+    <div id='import-category-settings' class='import-category'>
+        <div class="ui two column centered grid">
+            <div class="row">
+                <div class="column">
+                    <div id="tableWrapper">
+                        <table id='dynamic-table--sublime-settings' class='ui selectable collapsing striped celled table'>
+                            <thead class="ui center aligned">
+                                <th id='select_all_th' class='clickable_parent'>
+                                    <input class="select_all_checkbox ui checkbox" type="checkbox">
+                                </th>
+                                <th>Sublime Setting</th>
+                                <th>VSCode Setting</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <tfoot class="full-width">
+                                <tr>
+                                    <th></th>
+                                    <th colspan="2">
+                                        <label for="chkbox_show_settings" class="ui small icon button">
+                                            <input type="checkbox" id="chkbox_show_settings" checked=""> Show User Settings After Import
+                                        </label>
+                                        <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
+                                    </th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 id='success_import_message'></h3>
+    </div>
+    <!-- Import Settings Tab End -->
+
+
+    <!-- Import Packages Tab Start -->
+
+    <div id='import-category-extensions' class='import-category ui doubling stackable three cards centered hidden'></div>
+
+    <!-- Import Packages Tab End -->
+
+
+    <!-- Import Themes Tab Start -->
+
+    <div id='import-category-themes' class='import-category ui doubling stackable three cards centered hidden'></div>
+
+    <!-- Import Themes Tab End -->
+
+
+    <!-- Templates Start -->
+    <div id='packageCardHeaderTemplate' class='hidden'>
+        <div class="ui card">
+            <div class="content">
+                <div class="header sublimePackageName"></div>
+                <div class="ui divider"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id='packageCardBodyTemplate' class='hidden'>
+        <div class="clone">
+            <div class="ui basic label">
+                <h3 class="header packageName">ESLint</h3>
+            </div>
+            <div class="ui labeled button" tabindex="0">
+                <div class="ui green button addExtensionButton">
+                    <i class="add icon"></i>
+                    Add Extension
+                </div>
+            </div>
+            <div class="content">
+                <span class="packageDescription"></span>
+            </div>
+            <div class="ui divider"></div>
+        </div>
+    </div>
+
+    <div id='accordionTemplate' class='hidden'>
+        <div class="ui accordion">
+            <div class="title">
+                <i class="dropdown icon"></i>
+                <span class='titleText'></span>
+            </div>
+            <div class="content">
+                <p class="transition contentText hidden"></p>
+            </div>
+        </div>
+    </div>
+
+
+    <div id='dimmerNoSublimeFolderTemplate' class='hidden'>
+        <div class="ui page dimmer">
+            <div class="content">
+                <div class="center">
+                    <h2 class="ui inverted icon header">
+                        <i class="exclamation icon"></i>
+                        No Sublime Settings Folder was found
+                        <div class="sub header">The Sublime Settings folder can usually be found at these places:
+                            <p>Windows: %userprofile%\AppData\Roaming\Sublime Text 3
+                            <br/>macOSX: Library/Application Support/Sublime Text 3
+                            <br/>Linux: .config/sublime-text-3</p>
+                        </div>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Templates End -->
+
+</body>
+<script src="file://$$ABS_PATH_TO_ROOT$$/node_modules/jquery/dist/jquery.min.js"></script>
+<script src="file://$$ABS_PATH_TO_ROOT$$/libs/Semantic-UI/semantic.js"></script>
+<script src="file://C:\vscode_projects\vscode-sublime-importer\node_modules/jquery/dist/jquery.min.js"></script>
+<script src="file://C:\vscode_projects\vscode-sublime-importer\libs\Semantic-UI\semantic.js"></script>
+<script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/mainFrontend.js"></script>
+<script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/settingsPageFrontend.js"></script>
+<script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/packagesFrontend.js"></script>
+
+
+</html>
