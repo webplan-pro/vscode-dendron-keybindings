@@ -43,6 +43,12 @@ export async function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(...[
 
         vscode.commands.registerCommand('extension.importFromSublime', async () => {
+            // sublime setting someValue
+            // vscode setting to be false <--
+            // "editor.matchBrackets": "true",
+            // const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('editor');
+            // await config.update('matchBrackets', false, vscode.ConfigurationTarget.Global);
+                
             await vscode.window.withProgress(progressOptions, async (progress) => {
 
                 // prevent duplicate HTML content when command is executed several times

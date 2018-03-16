@@ -17,3 +17,7 @@
 .white {
   color: white !important;
 }
+
+.settingName {
+  font-weight: bold;
+}

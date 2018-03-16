@@ -31,7 +31,7 @@ export class Importer {
     public async updateSettingsAsync(settings: SelectedSettings): Promise<{} | undefined> {
         for (const setting of settings.settings) {
             const { namespace, settingName } = setting.getNamespaceAndSettingName();
-            const config = vscode.workspace.getConfiguration(namespace);
+            const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(namespace);
             if (config && settingName) {
                 try {
                     await config.update(settingName, setting.value, vscode.ConfigurationTarget.Global);
@@ -46,7 +46,7 @@ export class Importer {
         if (settings.showUserSettingsEditor) {
             return await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         }
-        
+
         return undefined;
     }
 

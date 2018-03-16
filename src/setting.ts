@@ -1,8 +1,8 @@
 export class Setting {
-  constructor(public name: string, public value: string) {
-    if (typeof this.value === 'boolean') {
-      this.value = String(this.value);
-    }
+  constructor(public name: string, public value: string | boolean) {
+    // if (typeof this.value === 'boolean') {
+    //   this.value = String(this.value);
+    // }
   }
 
   public getNamespaceAndSettingName(): {namespace: string, settingName: string} {
