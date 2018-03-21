@@ -35,9 +35,9 @@ export class SettingsTable {
         tr.appendChild(this.createSettingsTD(`${setting.sublime.name}: `, 'sublime-name setting-name'));
         tr.appendChild(this.createSettingsTD(setting.sublime.value.toString(), 'sublime-value setting-value'));
         const arrowTD = this.dom.createElement('td');
-        const iconI = this.dom.createElement('i');
-        this.dom.addClasses(iconI, 'mapping-arrow long arrow alternate right icon');
-        arrowTD.appendChild(iconI);
+        // const iconI = this.dom.createElement('i');
+        // this.dom.addClasses(iconI, 'mapping-arrow long arrow alternate right icon');
+        // arrowTD.appendChild(iconI);
         tr.appendChild(arrowTD);
 
         const vscodeNameTD = this.createSettingsTD(`${setting.vscode.name}: `, 'vscode-name setting-name');
