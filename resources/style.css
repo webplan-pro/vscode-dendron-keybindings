@@ -37,3 +37,7 @@
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: black;
 }
+
+#sublime-settings-table {
+  margin-bottom: 1em;
+}
