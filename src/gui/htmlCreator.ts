@@ -32,12 +32,10 @@ export class HTMLCreator {
         return this.dom.getHtmlAsync();
     }
 
-    public addDimmer() {
+    public addDimmer(osDefaultPaths: string[]) {
+        const folderPathEl: HTMLElement = this.dom.querySelectorThrows('#dimmerNoSublimeFolderTemplate > .dimmer .folder-path')
+        folderPathEl.textContent = osDefaultPaths.join('</br>');
         this.dom.addScript('dimmer.js');
-    }
-
-    public removeDimmer() {
-        this.dom.removeScript('dimmer.js');
     }
 
     public isValidSublimeSettingsPathSet() {

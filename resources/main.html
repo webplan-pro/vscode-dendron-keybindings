@@ -19,7 +19,8 @@
         </div>
     </div>
 
-    <div class="ui two column centered grid">
+    <!-- Useful for extending to other import types like snippets  -->
+    <!-- <div class="ui two column centered grid">
         <div class="row centered">
             <div class="column">
                 <div id='navigation_menu' class="ui secondary pointing menu">
@@ -35,7 +36,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
 
     <!-- Import Settings Tab Start -->
@@ -55,9 +56,9 @@
                                         <th id='select_all_th' class='clickable_parent'>
                                             <input class="select_all_checkbox ui checkbox" type="checkbox">
                                         </th>
-                                        <th colspan="2" class='center aligned'>Sublime Setting</th>
+                                        <th colspan="2" class='center aligned'>Sublime</th>
                                         <th></th>
-                                        <th colspan="2" class='center aligned'>VS Code Setting</th>
+                                        <th colspan="2" class='center aligned'>VS Code</th>
                                     </thead>
                                     <tbody>
                                     </tbody>
@@ -65,9 +66,6 @@
                             </div>
                         </div>
                         <div id='add-settings-button' class="ui small button primary button disabled">Import Settings</div>
-                        <label for="chkbox_show_settings" id="show-settings-after-import" class="ui horizontal label">
-                            <input type="checkbox" id="chkbox_show_settings" checked> Show User Settings After Import
-                        </label>
                         <h3 id='success_import_message'></h3>
                     </div>
                 </div>
@@ -149,23 +147,7 @@
                             <div class="content">
                                 <div class="header white">Windows</div>
                                 <div class="meta">
-                                    <span class="folder-path white">%userprofile%\AppData\Roaming\Sublime Text 3</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="content">
-                                <div class="header white">macOSX</div>
-                                <div class="meta">
-                                    <span class="folder-path white">Library/Application Support/Sublime Text 3</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="content">
-                                <div class="header white">Linux</div>
-                                <div class="meta">
-                                    <span class="folder-path white">.config/sublime-text-3</span>
+                                    <span class="folder-path white"></span>
                                 </div>
                             </div>
                         </div>

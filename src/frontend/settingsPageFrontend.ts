@@ -57,6 +57,7 @@ function registerEventListeners(): void {
 
     const submitButton = document.querySelector('#add-settings-button');
     submitButton.addEventListener('click', () => {
+        submitButton.classList.add('loading');
         sendSettings(getAllSelectedSettings());
     });
 }
@@ -102,20 +103,16 @@ function getVscodeSettingsFromParentTR(td: Element): Setting {
 
 function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
     const settings = Array.from(selectedCheckboxes).map(chbox => getVscodeSettingsFromParentTR(chbox));
-
-    const showUserSettingsChkbox = <HTMLInputElement>document.querySelector('#chkbox_show_settings');
-    const showUserSettingsEditor: boolean = showUserSettingsChkbox.checked;
-    sendSelectedSettingsToExtension(settings, showUserSettingsEditor);
-
+    
     if (selectedCheckboxes.length) {
         document.querySelector('#success_import_message').textContent = 'Settings import done.';
     }
+    sendSelectedSettingsToExtension(settings);
 }
 
-function sendSelectedSettingsToExtension(settings: Setting[], showUserSettingsEditor: boolean) {
+function sendSelectedSettingsToExtension(settings: Setting[]) {
     const obj = {
-        settings,
-        showUserSettingsEditor
-    }
-    executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
+        data: settings
+    };
+     executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
 }

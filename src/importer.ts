@@ -5,7 +5,6 @@ import * as vscode from "vscode";
 import * as fileSystem from "./fileSystem";
 import { MappedSetting } from "./mappedSetting";
 import { Setting } from "./setting";
-import { SelectedSettings } from "./extension";
 
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
@@ -36,8 +35,8 @@ export class Importer {
         return mappedGlobalSettings;
     }
 
-    public async updateSettingsAsync(settings: SelectedSettings): Promise<{} | undefined> {
-        for (const setting of settings.settings) {
+    public async updateSettingsAsync(settings: Setting[]): Promise<{}> {
+        for (const setting of settings) {
             const { namespace, settingName } = setting.getNamespaceAndSettingName();
             const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(namespace);
             if (config && settingName) {
@@ -51,11 +50,7 @@ export class Importer {
             }
         }
 
-        if (settings.showUserSettingsEditor) {
-            return await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
-        }
-
-        return undefined;
+        return await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
     }
 
     private getExistingVscodeSetting(setting: Setting): {} | undefined {

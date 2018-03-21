@@ -16,16 +16,23 @@ const defaultSublimeSettingsPaths: Map<string, string[]> = new Map([
 
 const settingsSubfoldersPath = path.join('Packages', 'User', 'Preferences.sublime-settings');
 
-export async function getExistingDefaultPaths(): Promise<SublimeFolders[] | undefined> {
+export async function getExistingDefaultPaths(): Promise<SublimeFolders[]> {
+    const foundPaths = await getOSDefaultPaths();
+    if (!foundPaths.length) {
+        return [];
+    }
+    const existingDefaultPaths: SublimeFolders[] = await filterForExistingDirsAsync(foundPaths);
+    return existingDefaultPaths;
+}
+
+export function getOSDefaultPaths(): string[] {
     const platform: NodeJS.Platform = os.platform();
     let foundPaths: string[] | undefined = defaultSublimeSettingsPaths.get(platform);
     if (!foundPaths) {
         console.log('OS could not be identified. No default paths provided.');
-        return Promise.resolve(undefined);
+        return [];
     }
-
-    const existingDefaultPaths: SublimeFolders[] = await filterForExistingDirsAsync(foundPaths);
-    return existingDefaultPaths;
+    return foundPaths;
 }
 
 async function filterForExistingDirsAsync(paths: string[]): Promise<SublimeFolders[]> {

@@ -18,10 +18,10 @@ export class HTMLPreview {
         return mappedSettings;
     }
 
-    public async showPageWithDimmerAsync() {
+    public async showPageWithDimmerAsync(osDefaultPaths: string[]) {
         // create & display Dimmer to browse for sublime settings folder
         await this.htmlCreator.resetHTMLAsync();
-        this.htmlCreator.addDimmer();
+        this.htmlCreator.addDimmer(osDefaultPaths);
         this.provider.update();
         await this.showAsync();
     }
