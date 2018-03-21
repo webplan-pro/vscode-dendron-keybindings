@@ -40,11 +40,17 @@ export class HTMLCreator {
         this.dom.removeScript('dimmer.js');
     }
 
+    public isValidSublimeSettingsPathSet() {
+        return !!this.dom.getElementByIDThrows('sublimeFolderPath').textContent;
+    }
+
     public async onNewSettingsAsync(newData: CategorizedSettings, sublimeSettingsPath: SublimeFolders): Promise<void> {
-        this.dom.getElementByIDThrows('sublimeFolderPath').textContent = sublimeSettingsPath.settings.fsPath;
+        const sublimeFolderPath = this.dom.getElementByIDThrows('sublimeFolderPath');
+        sublimeFolderPath.textContent = sublimeSettingsPath.settings.fsPath;
+        sublimeFolderPath.dataset.tooltip = sublimeSettingsPath.settings.fsPath;
         const trs = this.settingsPage.createTableRows(newData.mapped);
         const settingsPageDiv = this.dom.querySelectorThrows('#import-category-settings');
-        const tbody: HTMLTableSectionElement = settingsPageDiv.querySelector<HTMLTableSectionElement>('#dynamic-table--sublime-settings tbody');
+        const tbody: HTMLTableSectionElement = settingsPageDiv.querySelector('#sublime-settings-table tbody') as HTMLTableSectionElement;
         for (const tr of trs) {
             tbody.appendChild(tr);
         }

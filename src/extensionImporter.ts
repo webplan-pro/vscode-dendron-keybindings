@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fileSystem from './Filesystem';
+import * as fileSystem from './fileSystem';
 import * as rjson from "relaxed-json";
 
 export interface PackageEntry {

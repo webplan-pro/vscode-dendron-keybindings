@@ -3,7 +3,7 @@ import { Dom } from "./dom";
 
 
 export class SettingsTable {
-    
+
     constructor(private dom: Dom) { }
 
     public createTableRows(mappedSettings: MappedSetting[]): HTMLTableRowElement[] {
@@ -32,38 +32,36 @@ export class SettingsTable {
             tr.classList.add('clickable_parent');
         }
 
-        tr.appendChild(this.createSettingsTD(setting.sublime.name, setting.sublime.value.toString(), 'sublime-name'));
-        const vscodeValueTD = this.createSettingsTD(setting.vscode.name, setting.vscode.value.toString(), 'vscode-name');
+        tr.appendChild(this.createSettingsTD(`${setting.sublime.name}: `, 'sublime-name setting-name'));
+        tr.appendChild(this.createSettingsTD(setting.sublime.value.toString(), 'sublime-value setting-value'));
+        const arrowTD = this.dom.createElement('td');
+        const iconI = this.dom.createElement('i');
+        this.dom.addClasses(iconI, 'mapping-arrow long arrow alternate right icon');
+        arrowTD.appendChild(iconI);
+        tr.appendChild(arrowTD);
+
+        const vscodeNameTD = this.createSettingsTD(`${setting.vscode.name}: `, 'vscode-name setting-name');
+        const vscodeValueTD = this.createSettingsTD(setting.vscode.value.toString(), 'vscode-value setting-value');
 
         if (setting.isDuplicate) {
-            // tr.classList.add('warning');
-            const duplicateDiv = this.dom.createElement('div');
-            // this.dom.addClasses(duplicateDiv, 'ui warning mini compact message duplicate-label');
-            this.dom.addClasses(duplicateDiv, 'ui left pointing basic label');
-            duplicateDiv.textContent = `Current value: ${setting.duplicateVscodeSetting.value}`;
-            vscodeValueTD.querySelector('.settingValue').appendChild(duplicateDiv);
+            tr.classList.add('warning');
+            const warningIcon = this.dom.getTemplateCopy('#duplicateVsCodeWarningIconTemplate > .duplicate-label');
+            warningIcon.dataset.tooltip = `Overwrites current value: ${setting.duplicateVscodeSetting.value}`;
+            vscodeValueTD.appendChild(warningIcon);
         }
+
+        tr.appendChild(vscodeNameTD);
         tr.appendChild(vscodeValueTD);
 
         return tr;
     }
 
-    private createSettingsTD(name: string, value: string, cls: string): HTMLTableDataCellElement {
+    private createSettingsTD(txt: string, clsWhitespaceSeparated: string): HTMLTableDataCellElement {
         const td = this.dom.createElement<HTMLTableDataCellElement>('td');
-        td.classList.add(cls);
-        const code = this.dom.createElement<HTMLElement>('div');
-        // const code = this.dom.createElement<HTMLElement>('code');
-        // this.dom.addClasses(code, 'code less');
-        const settingNameEl = this.dom.createElement<HTMLSpanElement>('span');
-        this.dom.addClasses(settingNameEl, 'settingName');
-        settingNameEl.textContent = `${name}: `;
-        const settingValueEl = this.dom.createElement<HTMLSpanElement>('span');
-        this.dom.addClasses(settingValueEl, 'settingValue');
-        settingValueEl.textContent = value;
-
-        code.appendChild(settingNameEl);
-        code.appendChild(settingValueEl);
-        td.appendChild(code);
+        this.dom.addClasses(td, clsWhitespaceSeparated);
+        const span = this.dom.createElement<HTMLSpanElement>('span');
+        span.textContent = txt;
+        td.appendChild(span);
         return td;
     }
 }

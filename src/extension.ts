@@ -7,22 +7,11 @@ import { HTMLCreator } from './gui/htmlCreator';
 import { ExtensionsImporter } from './extensionImporter';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import { SublimeFolders } from './sublimeFolderFinder';
-import { Webview } from './webview';
+import { HTMLPreview } from './htmlPreview';
 import { MappedSetting } from './mappedSetting';
 
-const enum ProgressMessages {
-    'started' = 'Sublime Settings imported has started',
-    'launchingPreviewTable' = 'Launching preview table',
-    'settingsImported' = 'Settings have been imported'
-}
-
-const progressOptions = {
-    location: vscode.ProgressLocation.Window,
-    title: ProgressMessages.started
-};
-
 export interface SelectedSettings {
-    settings: Setting[], 
+    settings: Setting[],
     showUserSettingsEditor: boolean
 }
 
@@ -32,58 +21,48 @@ export class CategorizedSettings {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-    const importer: Importer = new Importer();
+    const importer: Importer = await Importer.initAsync();
     const htmlCreator: HTMLCreator = await HTMLCreator.initializeAsync(vscode.Uri.file(context.asAbsolutePath('')));
     const provider = new HTMLDocumentContentProvider(htmlCreator);
     const extensionsImporter = new ExtensionsImporter();
-    const webview = new Webview(importer, htmlCreator, provider, extensionsImporter);
+    const webview = new HTMLPreview(importer, htmlCreator, provider, extensionsImporter);
 
     let numStarted = 0;
 
     context.subscriptions.push(...[
 
         vscode.commands.registerCommand('extension.importFromSublime', async () => {
-            // sublime setting someValue
-            // vscode setting to be false <--
-            // "editor.matchBrackets": "true",
-            // const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('editor');
-            // await config.update('matchBrackets', false, vscode.ConfigurationTarget.Global);
-                
-            await vscode.window.withProgress(progressOptions, async (progress) => {
+            // prevent duplicate HTML content when command is executed several times
+            if (numStarted++ > 0) {
+                await htmlCreator.resetHTMLAsync();
+            }
 
-                // prevent duplicate HTML content when command is executed several times
-                if (numStarted++ > 0) {
-                    await htmlCreator.resetHTMLAsync();
-                }
-
-                const defaultSublimePaths: SublimeFolders[] | undefined = await sublimeFolderFinder.getExistingDefaultPaths();
-                if (!defaultSublimePaths || !defaultSublimePaths.length) {
-                    await webview.showPageWithDimmerAsync();
-                } else {
-                    await getSettingsAndShowPage(webview, defaultSublimePaths[0]);
-                }
-
-                progress.report({ message: ProgressMessages.launchingPreviewTable });
-            });
+            const defaultSublimePaths: SublimeFolders[] | undefined = await sublimeFolderFinder.getExistingDefaultPaths();
+            if (!defaultSublimePaths || !defaultSublimePaths.length) {
+                await webview.showPageWithDimmerAsync();
+            } else {
+                await getSettingsAndShowPage(webview, defaultSublimePaths[0]);
+            }
         }),
 
-        vscode.commands.registerCommand('extension.selectedSettingsFromGUI', (settings: SelectedSettings) => {
-            if (settings && settings.settings) {
-                settings.settings = settings.settings.map(setting => new Setting(setting.name, setting.value)); // FIMXE: ugly 
-                importer.updateSettingsAsync(settings);
+        vscode.commands.registerCommand('extension.selectedSettingsFromGUI', (selSettings: SelectedSettings) => {
+            if (selSettings && selSettings.settings) {
+                selSettings.settings = selSettings.settings.map(setting => new Setting(setting.name, setting.value)); // TODO: ugly 
+                importer.updateSettingsAsync(selSettings);
             }
             else {
-                console.error(`Unhandled message: ${JSON.stringify(settings)}`);
+                console.error(`Unhandled message: ${JSON.stringify(selSettings)}`);
             }
         }),
 
         vscode.commands.registerCommand('extension.userClickedOnBrowseButtonFromGUI', async () => {
-            const sublimeFolders: SublimeFolders | undefined = await sublimeFolderFinder.folderPicker();
-            if (!sublimeFolders) {
+            const folderPickerResult: sublimeFolderFinder.IFolderPickerResult = await sublimeFolderFinder.folderPicker();
+            if (folderPickerResult.notFound || folderPickerResult.cancelled && !htmlCreator.isValidSublimeSettingsPathSet()) {
                 await webview.showPageWithDimmerAsync();
                 return undefined;
-            } else {
-                getSettingsAndShowPage(webview, sublimeFolders);
+            } 
+            else {
+                getSettingsAndShowPage(webview, folderPickerResult.sublimeFolders);
             }
         }),
 
@@ -91,7 +70,7 @@ export async function activate(context: vscode.ExtensionContext) {
     ]);
 }
 
-async function getSettingsAndShowPage(webview: Webview, sublimeFolder: SublimeFolders) {
+async function getSettingsAndShowPage(webview: HTMLPreview, sublimeFolder: SublimeFolders) {
     const mappedSettings: MappedSetting[] | undefined = await webview.getSettingsAsync(sublimeFolder.settings);
     if (!mappedSettings || !mappedSettings.length) {
         vscode.window.showInformationMessage(`No matching Sublime Text settings found.`);

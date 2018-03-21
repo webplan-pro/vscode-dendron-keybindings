@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as rjson from "relaxed-json";
 import * as vscode from "vscode";
-import * as fileSystem from "./Filesystem";
+import * as fileSystem from "./fileSystem";
 import { MappedSetting } from "./mappedSetting";
 import { Setting } from "./setting";
 import { SelectedSettings } from "./extension";
@@ -10,18 +10,26 @@ import { SelectedSettings } from "./extension";
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
 
-    constructor() {
+    private constructor() { }
+
+    public static async initAsync() {
+        return await new Importer().init();
+    }
+
+    private async init(): Promise<Importer> {
         this.readSettingsMapAsync().then((settings) => {
             this.settingsMap = settings;
         });
+        return this;
     }
 
-    public async getMatchingGlobalSettingsAsync(sublimePath: string): Promise<MappedSetting[] | undefined> {
-        const mappedSettings: MappedSetting[] = await this.getMappedSettings(sublimePath);
-        return mappedSettings;
+    private async readSettingsMapAsync(): Promise<{ [key: string]: string }> {
+        const mapPath = path.resolve(__dirname, "..", "mappings/settings.json");
+        const data: string = await fileSystem.readFileAsync(mapPath, 'utf-8');
+        return rjson.parse(data.toString());
     }
 
-    public async getMappedSettings(settingsPath: string): Promise<MappedSetting[] | undefined> {
+    public async getMappedSettingsAsync(settingsPath: string): Promise<MappedSetting[] | undefined> {
         const data = await fileSystem.promisifier(fs.readFile, settingsPath);
         const globalSettings = rjson.parse(data.toString());
         const mappedGlobalSettings = this.mapAllSettings(globalSettings);
@@ -71,7 +79,7 @@ export class Importer {
             const sublimeSetting = sublimeSettings[sublimeKey]
             const ms: MappedSetting = new MappedSetting(new Setting(sublimeKey, sublimeSetting));
 
-            const vscodeMapping = this.mapSetting(sublimeKey, sublimeSetting)
+            const vscodeMapping = this.mapSetting(sublimeKey, sublimeSetting);
             if (vscodeMapping) {
                 ms.setVscode(vscodeMapping);
                 const existingValue = this.getExistingVscodeSetting(vscodeMapping);
@@ -85,7 +93,7 @@ export class Importer {
         return mappedSettings
     }
 
-    private mapSetting(key: string, value: string): Setting {
+    private mapSetting(key: string, value: string): Setting | undefined {
         let mappedSetting: string | object = this.settingsMap[key];
         if (mappedSetting) {
             if (typeof mappedSetting === 'string') {
@@ -94,7 +102,8 @@ export class Importer {
             else if (typeof mappedSetting === 'object') {
                 const obj = mappedSetting[value];
                 if (!obj) {
-                    throw new ReferenceError(`mapSetting() failed on key: ${key}, value: ${value}, mappedSetting: ${JSON.stringify(mappedSetting)}`);
+                    vscode.window.showErrorMessage(`mapSetting() failed on key: ${key}, value: ${value}, mappedSetting: ${JSON.stringify(mappedSetting)}`);
+                    return undefined;
                 }
                 const keys = Object.keys(obj);
                 const newKey = keys[0];
@@ -104,11 +113,5 @@ export class Importer {
         }
 
         return null
-    }
-
-    private async readSettingsMapAsync(): Promise<{ [key: string]: string }> {
-        const mapPath = path.resolve(__dirname, "..", "mappings/settings.json");
-        const data: string = await fileSystem.readFileAsync(mapPath, 'utf-8');
-        return rjson.parse(data.toString());
     }
 }

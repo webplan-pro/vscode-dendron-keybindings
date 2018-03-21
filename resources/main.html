@@ -1,9 +1,8 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/libs/Semantic-UI/semantic.min.css"></link>
+    <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/semantic/dist/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/resources/style.css">
-    <link rel="stylesheet" type="text/css" href="file://C:\vscode_projects\vscode-sublime-importer\libs\Semantic-UI\semantic.min.css"></link>
 </head>
 
 <body>
@@ -13,15 +12,9 @@
 
     <div class="ui centered grid">
         <div class="row">
-            <div class="ui horizontal segments">
-                <div class="ui segment">
-                    <div class="item">
-                        <div class="content">Sublime Settings Folder:
-                            <span id="sublimeFolderPath" class="ui mini message"></span>
-                            <span class="button ui browseButton">Browse...
-                        </div>
-                    </div>
-                </div>
+            <div class="content">Sublime Settings Folder:
+                <span id="sublimeFolderPath" class="ui mini message"></span>
+                <span class="button ui browseButton">Browse...
             </div>
         </div>
     </div>
@@ -47,37 +40,41 @@
 
     <!-- Import Settings Tab Start -->
     <div id='import-category-settings' class='import-category'>
-        <div class="ui two column centered grid">
-            <div class="row">
+        <div class="ui grid">
+            <div class="three column centered row">
                 <div class="column">
                     <div id="tableWrapper">
-                        <table id='dynamic-table--sublime-settings' class='ui selectable collapsing striped celled single line table'>
-                            <thead class="ui center aligned">
-                                <th id='select_all_th' class='clickable_parent'>
-                                    <input class="select_all_checkbox ui checkbox" type="checkbox">
-                                </th>
-                                <th>Sublime Setting</th>
-                                <th>VS Code Setting</th>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                            <tfoot class="full-width">
-                                <tr>
-                                    <th></th>
-                                    <th colspan="2">
-                                        <label for="chkbox_show_settings" id="show-settings-after-import" class="ui horizontal label">
-                                            <input type="checkbox" id="chkbox_show_settings" checked> Show User Settings After Import
-                                        </label>
-                                        <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
-                                    </th>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        <div class="ui accordion">
+                            <div class="active title">
+                                <i class="dropdown icon"></i>
+                                Mapped Settings
+                            </div>
+                            <div class="active content">
+                                <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table'>
+                                    <thead class="ui">
+                                        <th id='select_all_th' class='clickable_parent'>
+                                            <input class="select_all_checkbox ui checkbox" type="checkbox">
+                                        </th>
+                                        <th colspan="2" class='center aligned'>Sublime Setting</th>
+                                        <th></th>
+                                        <th colspan="2" class='center aligned'>VS Code Setting</th>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div id='add-settings-button' class="ui small button primary button disabled">Import Settings</div>
+                        <label for="chkbox_show_settings" id="show-settings-after-import" class="ui horizontal label">
+                            <input type="checkbox" id="chkbox_show_settings" checked> Show User Settings After Import
+                        </label>
+                        <h3 id='success_import_message'></h3>
                     </div>
                 </div>
+                <div class="column"></div>
+                <div class="column"></div>
             </div>
         </div>
-        <h3 id='success_import_message'></h3>
     </div>
     <!-- Import Settings Tab End -->
 
@@ -178,13 +175,18 @@
             </div>
         </div>
     </div>
+
+
+    <div id='duplicateVsCodeWarningIconTemplate' class='hidden'>
+        <span class='duplicate-label' data-tooltip="">
+            <i class="red exclamation triangle icon"></i>
+        </span>
+    </div>
     <!-- Templates End -->
 
 </body>
 <script src="file://$$ABS_PATH_TO_ROOT$$/node_modules/jquery/dist/jquery.min.js"></script>
-<script src="file://$$ABS_PATH_TO_ROOT$$/libs/Semantic-UI/semantic.js"></script>
-<script src="file://C:\vscode_projects\vscode-sublime-importer\node_modules/jquery/dist/jquery.min.js"></script>
-<script src="file://C:\vscode_projects\vscode-sublime-importer\libs\Semantic-UI\semantic.js"></script>
+<script src="file://$$ABS_PATH_TO_ROOT$$/semantic/dist/semantic.min.js"></script>
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/mainFrontend.js"></script>
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/settingsPageFrontend.js"></script>
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/packagesFrontend.js"></script>

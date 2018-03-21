@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as fileSystem from './Filesystem';
+import * as fileSystem from './fileSystem';
 import * as path from 'path';
 import * as os from 'os';
 
@@ -16,19 +16,19 @@ const defaultSublimeSettingsPaths: Map<string, string[]> = new Map([
 
 const settingsSubfoldersPath = path.join('Packages', 'User', 'Preferences.sublime-settings');
 
-export async function getExistingDefaultPaths(): Promise<SublimeFolders[]> {
+export async function getExistingDefaultPaths(): Promise<SublimeFolders[] | undefined> {
     const platform: NodeJS.Platform = os.platform();
     let foundPaths: string[] | undefined = defaultSublimeSettingsPaths.get(platform);
     if (!foundPaths) {
         console.log('OS could not be identified. No default paths provided.');
-        return Promise.resolve([]);
+        return Promise.resolve(undefined);
     }
 
     const existingDefaultPaths: SublimeFolders[] = await filterForExistingDirsAsync(foundPaths);
     return existingDefaultPaths;
 }
 
-export async function filterForExistingDirsAsync(paths: string[]): Promise<SublimeFolders[]> {
+async function filterForExistingDirsAsync(paths: string[]): Promise<SublimeFolders[]> {
     const existingDirs: SublimeFolders[] = [];
     for (const p of paths) {
         const settingsPath: string = path.resolve(p, settingsSubfoldersPath);
@@ -40,14 +40,30 @@ export async function filterForExistingDirsAsync(paths: string[]): Promise<Subli
     return existingDirs;
 }
 
-export async function folderPicker(): Promise<SublimeFolders | undefined> {
+export interface IFolderPickerResult {
+    cancelled: boolean,
+    notFound: boolean,
+    sublimeFolders: SublimeFolders
+}
+
+export async function folderPicker(): Promise<IFolderPickerResult> {
+    const result: IFolderPickerResult = {
+        cancelled: false,
+        notFound: false,
+        sublimeFolders: null
+    };
+
     const folderPaths = await vscode.window.showOpenDialog({ canSelectFolders: true });
     if (!folderPaths) {
-        return undefined;
+        result.cancelled = true;
+        return result;
     }
     const paths: SublimeFolders[] = await filterForExistingDirsAsync([folderPaths[0].fsPath]);
     if (!paths.length) {
-        return undefined;
+        result.notFound = true;
+        return result;
     }
-    return paths[0];
+
+    result.sublimeFolders = paths[0];
+    return result;
 }

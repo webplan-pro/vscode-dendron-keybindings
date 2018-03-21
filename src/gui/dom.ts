@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import { promisifier as promisifier } from '../filesystem';
+import { promisifier as promisifier } from '../fileSystem';
 import { JSDOM } from "jsdom";
 
 export class Dom {

@@ -1,9 +1,6 @@
 console.log('gui.js has been launched.');
 start();
 
-/**
- * TODO: Cannot import Setting since gui can't be a commonjs module
- */
 interface Setting {
     name: string;
     value: string;
@@ -11,7 +8,6 @@ interface Setting {
 
 function start() {
     registerEventListeners();
-    // @ts-ignore
     $('.ui.accordion').accordion();
 }
 
@@ -29,6 +25,7 @@ function registerEventListeners(): void {
                 for (const chkbox of checkboxes) {
                     chkbox.checked = selectAllCheckbox.checked;
                 }
+                checkActivatedCheckboxesAndSetImportButtonState();
             }
 
             // on matching checkbox
@@ -40,6 +37,7 @@ function registerEventListeners(): void {
                 const tr = e.target.parentElement;
                 if (tr.classList.contains('clickable_parent')) {
                     tr.click();
+                    // checkActivatedCheckboxesAndSetImportButtonState();
                 }
             }
 
@@ -47,15 +45,38 @@ function registerEventListeners(): void {
             else if (classes.contains('clickable_parent')) {
                 const checkbox = e.target.querySelector('input') as HTMLInputElement;
                 checkbox.click();
+                // checkActivatedCheckboxesAndSetImportButtonState();
             }
         }
+    });
+
+    const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
+    checkboxes.forEach(box => {
+        box.addEventListener('change', () => checkActivatedCheckboxesAndSetImportButtonState());
     });
 
     const submitButton = document.querySelector('#add-settings-button');
     submitButton.addEventListener('click', () => {
         sendSettings(getAllSelectedSettings());
     });
+}
 
+function checkActivatedCheckboxesAndSetImportButtonState() {
+    const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
+    if (Array.from(checkboxes).some(chkbox => chkbox.checked)) {
+        setImportButtonState(true);
+    } else {
+        setImportButtonState(false);
+    }
+}
+
+function setImportButtonState(on: boolean) {
+    const submitButton = document.querySelector('#add-settings-button');    
+    if (on) {
+        submitButton.classList.remove('disabled');
+    } else {
+        submitButton.classList.add('disabled');
+    }
 }
 
 function deselectAllCheckbox() {
@@ -97,8 +118,4 @@ function sendSelectedSettingsToExtension(settings: Setting[], showUserSettingsEd
         showUserSettingsEditor
     }
     executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
-}
-
-function userClickedOnBrowseButtonFromGUI() {
-
 }

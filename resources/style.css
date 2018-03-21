@@ -1,5 +1,5 @@
-.duplicate-label {
-  margin-left: 1em !important;
+#sublime-settings-table .duplicate-label {
+  margin-left: 1em;
 }
 
 .hidden {
@@ -11,13 +11,29 @@
 }
 
 #show-settings-after-import {
-  float: right;
+  background-color: white;
 }
 
-.white {
+.dimmer .white {
   color: white !important;
 }
 
-.settingName {
-  font-weight: bold;
+#sublime-settings-table td.setting-name {
+  text-align: right;
+}
+
+.setting-value {
+  color: rgb(108, 108, 108);
+  font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", Inconsolata, "Courier New", monospace, "Droid Sans Fallback";
+}
+
+#sublime-settings-table .mapping-arrow {
+  margin-left: 5em;
+  margin-right: 5em;
+  font-size: 1.5em;
+  /* show only outline of arrow */
+  color: black;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
 }
