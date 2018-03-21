@@ -45,28 +45,21 @@
             <div class="three column centered row">
                 <div class="column">
                     <div id="tableWrapper">
-                        <div class="ui accordion">
-                            <div class="active title">
-                                <i class="dropdown icon"></i>
-                                Mapped Settings
-                            </div>
-                            <div class="active content">
-                                <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table'>
-                                    <thead class="ui">
-                                        <th id='select_all_th' class='clickable_parent'>
-                                            <input class="select_all_checkbox ui checkbox" type="checkbox">
-                                        </th>
-                                        <th colspan="2" class='center aligned'>Sublime</th>
-                                        <th><i class="mapping-arrow long arrow alternate right icon"></i></th>
-                                        <th colspan="2" class='center aligned'>VS Code</th>
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table'>
+                            <thead class="ui">
+                                <th id='select_all_th' class='clickable_parent'>
+                                    <input class="select_all_checkbox ui checkbox" type="checkbox">
+                                </th>
+                                <th colspan="2" class='center aligned'>Sublime</th>
+                                <th>
+                                    <i class="mapping-arrow long arrow alternate right icon"></i>
+                                </th>
+                                <th colspan="2" class='center aligned'>VS Code</th>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                         <div id='add-settings-button' class="ui small button primary button disabled">Import Settings</div>
-                        <h3 id='success_import_message'></h3>
                     </div>
                 </div>
                 <div class="column"></div>

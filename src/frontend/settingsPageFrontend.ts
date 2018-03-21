@@ -103,10 +103,6 @@ function getVscodeSettingsFromParentTR(td: Element): Setting {
 
 function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
     const settings = Array.from(selectedCheckboxes).map(chbox => getVscodeSettingsFromParentTR(chbox));
-    
-    if (selectedCheckboxes.length) {
-        document.querySelector('#success_import_message').textContent = 'Settings import done.';
-    }
     sendSelectedSettingsToExtension(settings);
 }
 

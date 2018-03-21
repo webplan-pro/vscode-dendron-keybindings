@@ -53,8 +53,8 @@ export class HTMLCreator {
             tbody.appendChild(tr);
         }
 
-        const accordion = this.createUnmappedSettingsAccordion(newData.unmapped);
-        settingsPageDiv.querySelector('#tableWrapper').appendChild(accordion);
+        // const accordion = this.createUnmappedSettingsAccordion(newData.unmapped);
+        // settingsPageDiv.querySelector('#tableWrapper').appendChild(accordion);
     }
 
     public createPackagesList(foundPackages: PackageEntry[], parentElementId: string) {
