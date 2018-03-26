@@ -48,7 +48,7 @@
         }
     },
     "find_selected_text": "editor.find.seedSearchStringFromSelection", // Boolean
-    "word_separators": "editor.wordSeparators",
+    "word_separators": "editor.wordSeparators", // String
     "ensure_newline_at_eof_on_save": "files.insertFinalNewline", // Boolean
     "auto_indent": "editor.autoIndent", // Boolean
     "tab_size": "editor.tabSize", // Number
@@ -94,7 +94,7 @@
         }
     },
     "scroll_past_end": "editor.scrollBeyondLastLine", // Boolean
-    "word_wrap": "editor.wordWrap",
+    "word_wrap": "editor.wordWrap", // String
     "indent_subsequent_lines": {
         "yes": {
             "editor.wrappingIndent": "none"

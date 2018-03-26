@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import * as rjson from "relaxed-json";
 import * as vscode from "vscode";
-import * as fileSystem from "./fileSystem";
+import * as fileSystem from "./fsWrapper";
 import { MappedSetting } from "./mappedSetting";
 import { Setting } from "./setting";
 

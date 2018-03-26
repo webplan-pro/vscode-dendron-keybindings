@@ -9,70 +9,47 @@ interface Setting {
 function start() {
     registerEventListeners();
     initUI();
-    $('.ui.accordion').accordion();
 }
 
 function initUI() {
     checkActivatedCheckboxesAndSetImportButtonState();
-    const {total, numChecked} = numCheckboxesChecked();
+    const { total, numChecked } = numCheckboxesChecked();
     setSelectAllCheckboxState(total === numChecked);
 }
 
 function registerEventListeners(): void {
-    const table = document.querySelector('table');
+    const selectAllCheckbox = document.querySelector('#selectAllCheckbox');
 
-    table.addEventListener('click', function (e: MouseEvent) {
-        if (e.target instanceof HTMLElement) {
-            const classes: DOMTokenList = e.target.classList;
-
-            // On selectAll click: synchronize state of checkboxes
-            if (classes.contains('select_all_checkbox')) {
-                const selectAllCheckbox = document.querySelector('input.select_all_checkbox') as HTMLInputElement;
-                const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
-                for (const chkbox of checkboxes) {
-                    chkbox.checked = selectAllCheckbox.checked;
-                }
-                checkActivatedCheckboxesAndSetImportButtonState();
-            }
-
-            // on matching checkbox
-            else if (classes.contains('matching_setting_checkbox')) {
-                setSelectAllCheckboxState(false);
-            }
-
-            else if (e.target.tagName.toLowerCase() === 'td') {
-                const tr = e.target.parentElement;
-                if (tr.classList.contains('clickable_parent')) {
-                    tr.click();
-                    // checkActivatedCheckboxesAndSetImportButtonState();
-                }
-            }
-
-            // parent elements of checkboxes
-            else if (classes.contains('clickable_parent')) {
-                const checkbox = e.target.querySelector('input') as HTMLInputElement;
-                checkbox.click();
-                // checkActivatedCheckboxesAndSetImportButtonState();
-            }
+    selectAllCheckbox.addEventListener('click', function () {
+        const selectAllCheckbox = document.querySelector('input.select_all_checkbox') as HTMLInputElement;
+        const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
+        for (const chkbox of checkboxes) {
+            chkbox.checked = selectAllCheckbox.checked;
         }
+        checkActivatedCheckboxesAndSetImportButtonState();
     });
 
     const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
     checkboxes.forEach(box => {
         box.addEventListener('change', () => checkActivatedCheckboxesAndSetImportButtonState());
+        setSelectAllCheckboxState(false);
     });
 
     const submitButton = document.querySelector('#add-settings-button');
     submitButton.addEventListener('click', () => {
-        submitButton.classList.add('loading');
+        // submitButton.classList.add('loading');
         sendSettings(getAllSelectedSettings());
+    });
+
+    document.querySelector('.browseButton').addEventListener('click', () => {
+        executeCommand('command:extension.userClickedOnBrowseButtonFromGUI');
     });
 }
 
 function numCheckboxesChecked() {
     const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
     const numChecked = Array.from(checkboxes).filter((box) => box.checked).length;
-    return {total: checkboxes.length, numChecked};
+    return { total: checkboxes.length, numChecked };
 }
 
 function checkActivatedCheckboxesAndSetImportButtonState() {
@@ -82,8 +59,10 @@ function checkActivatedCheckboxesAndSetImportButtonState() {
 function setImportButtonState(on: boolean) {
     const submitButton = document.querySelector('#add-settings-button');
     if (on) {
+        submitButton.removeAttribute('disabled');
         submitButton.classList.remove('disabled');
     } else {
+        submitButton.setAttribute('disabled', '');
         submitButton.classList.add('disabled');
     }
 }
@@ -104,13 +83,12 @@ function getAllSelectedSettings(): NodeListOf<Element> {
     return selectedCheckboxes;
 }
 
-function getVscodeSettingsFromParentTR(td: Element): Setting {
-    const tr: HTMLTableRowElement = td.closest('tr') as HTMLTableRowElement;
-    return { name: tr.dataset.vscodename, value: tr.dataset.vscodevalue };
+function getVscodeSettingsFromParentTR(td: HTMLElement): Setting {
+    return { name: td.parentElement.parentElement.dataset.vscodename, value: td.parentElement.parentElement.dataset.vscodevalue };
 }
 
 function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
-    const settings = Array.from(selectedCheckboxes).map(chbox => getVscodeSettingsFromParentTR(chbox));
+    const settings = Array.from(selectedCheckboxes).map(chbox => getVscodeSettingsFromParentTR(chbox as HTMLElement));
     sendSelectedSettingsToExtension(settings);
 }
 
@@ -119,4 +97,14 @@ function sendSelectedSettingsToExtension(settings: Setting[]) {
         data: settings
     };
     executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
+}
+
+function executeCommand(cmd: string): void {
+    const command = encodeURI(cmd);
+    console.log(command);
+    var anchor = document.createElement('a');
+    anchor.href = command;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
 }

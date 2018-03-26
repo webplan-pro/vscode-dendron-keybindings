@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { HTMLCreator } from './gui/htmlCreator'
+import { HTMLCreator } from './htmlCreation/htmlCreator'
 import { JSDOM } from 'jsdom';
 import { previewUri } from './consts';
 

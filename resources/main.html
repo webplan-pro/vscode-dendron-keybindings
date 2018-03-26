@@ -1,121 +1,38 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/semantic/dist/semantic.min.css">
     <link rel="stylesheet" type="text/css" href="file://$$ABS_PATH_TO_ROOT$$/resources/style.css">
 </head>
 
 <body>
+    <div id="sublimeSettingsImporter">
 
-    <div class="ui grid">
-        <div class="row">
-            <div class="column"></div>
-            <div class="fifteen wide column">
-                <h3 class="ui header margin-bottom-1em margin-top-1em">Import Settings from Sublime Text</h3>
-                <div class="content">Sublime Settings Folder:
-                    <span id="sublimeFolderPath" class="ui mini message"></span>
-                    <span class="button ui browseButton">Browse...
-                </div>
-            </div>
+        <h3>Import Settings from Sublime Text</h3>
+        <div class="selectFolder">
+            <div class='folderSettingsLabel'>Sublime Settings Folder:</div>
+            <div id="settingsPathContainer" class='settingsPathContainer'></div>
+            <button class="browseButton">Browse...</button>
         </div>
-    </div>
 
-    <!-- Useful for extending to other import types like snippets  -->
-    <!-- <div class="ui two column centered grid">
-        <div class="row centered">
-            <div class="column">
-                <div id='navigation_menu' class="ui secondary pointing menu">
-                    <a class="item active" data-navtype="import-category-settings">
-                        Import Settings
-                    </a>
-                    <a class="item" data-navtype="import-category-extensions">
-                        Import Extensions
-                    </a>
-                    <a class="item" data-navtype="import-category-themes">
-                        Import Themes
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-
-    <!-- Import Settings Tab Start -->
-    <div id='import-category-settings' class='import-category'>
-        <div class="ui grid">
-            <div class="row">
-                <div class="column"></div>
-                <div class="fifteen wide column">
-                    <div class="column">
-                        <div id="tableWrapper">
-                            <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table margin-bottom-1em'>
-                                <thead class="ui">
-                                    <th id='select_all_th' class='clickable_parent'>
-                                        <input class="select_all_checkbox ui checkbox" type="checkbox">
-                                    </th>
-                                    <th colspan="2" class='center aligned'>Sublime</th>
-                                    <th>
-                                        <i class="mapping-arrow long arrow alternate right icon"></i>
-                                    </th>
-                                    <th colspan="2" class='center aligned'>VS Code</th>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                            <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
-                        </div>
+        <!-- Import Settings Tab Start -->
+        <div id='settingsTableMapper'>
+            <div class="settingsTable">
+                <div class="headerRow">
+                    <div id='selectAllCheckbox' class="checkbox">
+                        <input class="select_all_checkbox ui checkbox" type="checkbox">
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Import Settings Tab End -->
-
-
-    <!-- Import Packages Tab Start -->
-
-    <!-- <div id='import-category-extensions' class='import-category ui doubling stackable three cards centered hidden'></div> -->
-
-    <!-- Import Packages Tab End -->
-
-
-    <!-- Import Themes Tab Start -->
-
-    <!-- <div id='import-category-themes' class='import-category ui doubling stackable three cards centered hidden'></div> -->
-
-    <!-- Import Themes Tab End -->
-
-    <div id='dimmerNoSublimeFolderTemplate' class='hidden'>
-        <div class="ui page dimmer">
-            <div class="content">
-                <div class="center">
-                    <h2 class="ui inverted icon header">
-                        <i class="exclamation icon"></i>
-                        No Sublime Settings Folder found
-                        <div class="sub header">The default places for the Sublime settings folder are:</div>
-                    </h2>
-
-                    <div class="ui items">
-                        <div class="item">
-                            <div class="content">
-                                <div class="header white">Windows</div>
-                                <div class="meta">
-                                    <span class="folder-path white"></span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="title">Sublime</div>
+                    <div>
+                        <i class="mapping-arrow long arrow alternate right icon"></i>
                     </div>
+                    <div class="title">VS Code</div>
                 </div>
-                <div class="button ui browseButton">Browse...</div>
+                <div id="mappedSettings" class="mappedSettings">
+                </div>
             </div>
+            <button id='add-settings-button' class="import-button">Import Settings</button>
         </div>
     </div>
-
 </body>
-<script src="file://$$ABS_PATH_TO_ROOT$$/node_modules/jquery/dist/jquery.min.js"></script>
-<script src="file://$$ABS_PATH_TO_ROOT$$/semantic/dist/semantic.min.js"></script>
-<script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/mainFrontend.js"></script>
 <script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/settingsPageFrontend.js"></script>
-<script src="file://$$ABS_PATH_TO_ROOT$$/out/frontend/packagesFrontend.js"></script>
-
 </html>

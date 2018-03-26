@@ -1,26 +1,8 @@
-#sublime-settings-table .duplicate-label {
-  margin-left: 1em;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.addExtensionButton {
-  width: 12em;
-}
-
-#show-settings-after-import {
-  background-color: white;
-}
-
-.dimmer .white {
-  color: white !important;
-}
-
-.setting-value {
-  color: rgb(108, 108, 108);
-  font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", Inconsolata, "Courier New", monospace, "Droid Sans Fallback";
+.warning {
+  width: 18px;
+  height: 18px;
+  background: url('./icons/status-warning.svg') center center no-repeat;
+  display: inline-block;
 }
 
 #sublime-settings-table .mapping-arrow {
@@ -34,10 +16,101 @@
   -webkit-text-stroke-color: black;
 }
 
-.margin-bottom-1em {
-  margin-bottom: 1em !important;
+button {
+  font-size: 13px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
 }
 
-.margin-top-1em {
-  margin-top: 1em !important;
+.hidden {
+  display: none;
+}
+
+.selectFolder {
+  display: flex;
+}
+
+.folderSettingsLabel {
+  padding: 5px;
+}
+
+.settingsPathContainer {
+  padding: 5px;
+  flex: 1;
+  border: 1px solid #ddd;
+  margin: 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis
+}
+
+.settingsTable {
+  margin-top: 14px;
+  min-width: 820px;
+  cursor: default;
+}
+
+.settingsTable .headerRow {
+  display: flex;
+  font-weight: 700;
+  height: 30px;
+  align-items: center;
+}
+
+.settingsTable .headerRow .title {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.settingsTable .mappedSettings .settingRow {
+  display: flex;
+  height: 24px;
+  align-items: center;
+}
+
+.settingsTable .mappedSettings .settingRow .mappedSetting, .settingsTable .mappedSettings .settingRow .mappedSetting .sublimeSetting, .settingsTable .mappedSettings .settingRow .mappedSetting .vscodeSetting, .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value {
+  display: flex;
+  flex: 1;
+}
+
+.settingsTable .mappedSettings .settingRow:hover {
+  background-color: #e8e8e8;
+}
+
+.settingsTable .mappedSettings .settingRow.odd:not(:hover) {
+  background-color: hsla(0, 0%, 51%, .04);
+}
+
+.settingsTable .mappedSettings .settingRow .matching_setting_checkbox {
+  margin-right: 12px;
+  vertical-align: middle;
+}
+
+.settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-name {
+  flex: .6;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
+  flex: 0.4;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  color: rgb(108, 108, 108);
+  font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", Inconsolata, "Courier New", monospace, "Droid Sans Fallback";
+  padding-top: 2px;
+}
+
+.import-button {
+  margin-top: 10px;
+  border: none;
+}
+
+.import-button:not(.disabled) {
+  color: rgb(255, 255, 255);
+  background-color: rgb(0, 122, 204);
+}
+
+.settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value .warning {
+  position: absolute;
 }
