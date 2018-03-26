@@ -6,15 +6,16 @@
 </head>
 
 <body>
-    <h3 class="ui attached centered header margin-bottom-1em">
-        Sublime Settings Importer
-    </h3>
 
-    <div class="ui centered grid">
+    <div class="ui grid">
         <div class="row">
-            <div class="content">Sublime Settings Folder:
-                <span id="sublimeFolderPath" class="ui mini message"></span>
-                <span class="button ui browseButton">Browse...
+            <div class="column"></div>
+            <div class="fifteen wide column">
+                <h3 class="ui header margin-bottom-1em margin-top-1em">Import Settings from Sublime Text</h3>
+                <div class="content">Sublime Settings Folder:
+                    <span id="sublimeFolderPath" class="ui mini message"></span>
+                    <span class="button ui browseButton">Browse...
+                </div>
             </div>
         </div>
     </div>
@@ -42,28 +43,29 @@
     <!-- Import Settings Tab Start -->
     <div id='import-category-settings' class='import-category'>
         <div class="ui grid">
-            <div class="three column centered row">
-                <div class="column">
-                    <div id="tableWrapper">
-                        <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table margin-bottom-1em'>
-                            <thead class="ui">
-                                <th id='select_all_th' class='clickable_parent'>
-                                    <input class="select_all_checkbox ui checkbox" type="checkbox">
-                                </th>
-                                <th colspan="2" class='center aligned'>Sublime</th>
-                                <th>
-                                    <i class="mapping-arrow long arrow alternate right icon"></i>
-                                </th>
-                                <th colspan="2" class='center aligned'>VS Code</th>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                        <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
+            <div class="row">
+                <div class="column"></div>
+                <div class="fifteen wide column">
+                    <div class="column">
+                        <div id="tableWrapper">
+                            <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table margin-bottom-1em'>
+                                <thead class="ui">
+                                    <th id='select_all_th' class='clickable_parent'>
+                                        <input class="select_all_checkbox ui checkbox" type="checkbox">
+                                    </th>
+                                    <th colspan="2" class='center aligned'>Sublime</th>
+                                    <th>
+                                        <i class="mapping-arrow long arrow alternate right icon"></i>
+                                    </th>
+                                    <th colspan="2" class='center aligned'>VS Code</th>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
+                        </div>
                     </div>
                 </div>
-                <div class="column"></div>
-                <div class="column"></div>
             </div>
         </div>
     </div>
@@ -92,7 +94,7 @@
                         No Sublime Settings Folder found
                         <div class="sub header">The default places for the Sublime settings folder are:</div>
                     </h2>
-    
+
                     <div class="ui items">
                         <div class="item">
                             <div class="content">
