@@ -1,7 +1,7 @@
 import { JSDOM } from 'jsdom';
 import * as vscode from 'vscode';
 import { SettingsTable } from './settingsTable';
-import { MappedSetting } from "../mappedSetting";
+// import { MappedSetting } from "../mappedSetting";
 
 import { PackageEntry } from '../extensionImporter';
 import { Dom } from './dom';
@@ -53,8 +53,8 @@ export class HTMLCreator {
             tbody.appendChild(tr);
         }
 
-        // const accordion = this.createUnmappedSettingsAccordion(newData.unmapped);
-        // settingsPageDiv.querySelector('#tableWrapper').appendChild(accordion);
+/*         const accordion = this.createUnmappedSettingsAccordion(newData.unmapped);
+        settingsPageDiv.querySelector('#tableWrapper').appendChild(accordion); */
     }
 
     public createPackagesList(foundPackages: PackageEntry[], parentElementId: string) {
@@ -81,7 +81,7 @@ export class HTMLCreator {
         });
     }
 
-    private createUnmappedSettingsAccordion(unmapped: MappedSetting[]): HTMLElement {
+/*     private createUnmappedSettingsAccordion(unmapped: MappedSetting[]): HTMLElement {
         const accordion: HTMLElement = this.dom.getTemplateCopy('#accordionTemplate > .ui.accordion');
         accordion.querySelector('.titleText').textContent = 'Settings that could not be mapped';
 
@@ -97,5 +97,5 @@ export class HTMLCreator {
 
         accordion.querySelector('.content').appendChild(list);
         return accordion;
-    }
+    } */
 }

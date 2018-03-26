@@ -18,10 +18,6 @@
   color: white !important;
 }
 
-#sublime-settings-table td.setting-name {
-  text-align: right;
-}
-
 .setting-value {
   color: rgb(108, 108, 108);
   font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", Inconsolata, "Courier New", monospace, "Droid Sans Fallback";
@@ -38,6 +34,6 @@
   -webkit-text-stroke-color: black;
 }
 
-#sublime-settings-table {
-  margin-bottom: 1em;
+.margin-bottom-1em {
+  margin-bottom: 1em !important;
 }

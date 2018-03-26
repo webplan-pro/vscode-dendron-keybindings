@@ -6,7 +6,7 @@
 </head>
 
 <body>
-    <h3 class="ui attached centered header">
+    <h3 class="ui attached centered header margin-bottom-1em">
         Sublime Settings Importer
     </h3>
 
@@ -45,7 +45,7 @@
             <div class="three column centered row">
                 <div class="column">
                     <div id="tableWrapper">
-                        <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table'>
+                        <table id='sublime-settings-table' class='ui selectable collapsing striped single line unstackable table margin-bottom-1em'>
                             <thead class="ui">
                                 <th id='select_all_th' class='clickable_parent'>
                                     <input class="select_all_checkbox ui checkbox" type="checkbox">
@@ -59,7 +59,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <div id='add-settings-button' class="ui small button primary button disabled">Import Settings</div>
+                        <div id='add-settings-button' class="ui small button primary button">Import Settings</div>
                     </div>
                 </div>
                 <div class="column"></div>
@@ -72,58 +72,16 @@
 
     <!-- Import Packages Tab Start -->
 
-    <div id='import-category-extensions' class='import-category ui doubling stackable three cards centered hidden'></div>
+    <!-- <div id='import-category-extensions' class='import-category ui doubling stackable three cards centered hidden'></div> -->
 
     <!-- Import Packages Tab End -->
 
 
     <!-- Import Themes Tab Start -->
 
-    <div id='import-category-themes' class='import-category ui doubling stackable three cards centered hidden'></div>
+    <!-- <div id='import-category-themes' class='import-category ui doubling stackable three cards centered hidden'></div> -->
 
     <!-- Import Themes Tab End -->
-
-
-    <!-- Templates Start -->
-    <div id='packageCardHeaderTemplate' class='hidden'>
-        <div class="ui card">
-            <div class="content">
-                <div class="header sublimePackageName"></div>
-                <div class="ui divider"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id='packageCardBodyTemplate' class='hidden'>
-        <div class="clone">
-            <div class="ui basic label">
-                <h3 class="header packageName">ESLint</h3>
-            </div>
-            <div class="ui labeled button" tabindex="0">
-                <div class="ui green button addExtensionButton">
-                    <i class="add icon"></i>
-                    Add Extension
-                </div>
-            </div>
-            <div class="content">
-                <span class="packageDescription"></span>
-            </div>
-            <div class="ui divider"></div>
-        </div>
-    </div>
-
-    <div id='accordionTemplate' class='hidden'>
-        <div class="ui accordion">
-            <div class="title">
-                <i class="dropdown icon"></i>
-                <span class='titleText'></span>
-            </div>
-            <div class="content">
-                <p class="transition contentText hidden"></p>
-            </div>
-        </div>
-    </div>
-
 
     <div id='dimmerNoSublimeFolderTemplate' class='hidden'>
         <div class="ui page dimmer">
@@ -134,7 +92,7 @@
                         No Sublime Settings Folder found
                         <div class="sub header">The default places for the Sublime settings folder are:</div>
                     </h2>
-
+    
                     <div class="ui items">
                         <div class="item">
                             <div class="content">
@@ -150,14 +108,6 @@
             </div>
         </div>
     </div>
-
-
-    <div id='duplicateVsCodeWarningIconTemplate' class='hidden'>
-        <span class='duplicate-label' data-tooltip="">
-            <i class="red exclamation triangle icon"></i>
-        </span>
-    </div>
-    <!-- Templates End -->
 
 </body>
 <script src="file://$$ABS_PATH_TO_ROOT$$/node_modules/jquery/dist/jquery.min.js"></script>

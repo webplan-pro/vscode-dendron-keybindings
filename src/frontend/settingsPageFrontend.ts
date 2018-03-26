@@ -8,7 +8,14 @@ interface Setting {
 
 function start() {
     registerEventListeners();
+    initUI();
     $('.ui.accordion').accordion();
+}
+
+function initUI() {
+    checkActivatedCheckboxesAndSetImportButtonState();
+    const {total, numChecked} = numCheckboxesChecked();
+    setSelectAllCheckboxState(total === numChecked);
 }
 
 function registerEventListeners(): void {
@@ -30,7 +37,7 @@ function registerEventListeners(): void {
 
             // on matching checkbox
             else if (classes.contains('matching_setting_checkbox')) {
-                deselectAllCheckbox();
+                setSelectAllCheckboxState(false);
             }
 
             else if (e.target.tagName.toLowerCase() === 'td') {
@@ -62,17 +69,18 @@ function registerEventListeners(): void {
     });
 }
 
-function checkActivatedCheckboxesAndSetImportButtonState() {
+function numCheckboxesChecked() {
     const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
-    if (Array.from(checkboxes).some(chkbox => chkbox.checked)) {
-        setImportButtonState(true);
-    } else {
-        setImportButtonState(false);
-    }
+    const numChecked = Array.from(checkboxes).filter((box) => box.checked).length;
+    return {total: checkboxes.length, numChecked};
+}
+
+function checkActivatedCheckboxesAndSetImportButtonState() {
+    setImportButtonState(numCheckboxesChecked().numChecked > 0);
 }
 
 function setImportButtonState(on: boolean) {
-    const submitButton = document.querySelector('#add-settings-button');    
+    const submitButton = document.querySelector('#add-settings-button');
     if (on) {
         submitButton.classList.remove('disabled');
     } else {
@@ -80,9 +88,9 @@ function setImportButtonState(on: boolean) {
     }
 }
 
-function deselectAllCheckbox() {
+function setSelectAllCheckboxState(on: boolean) {
     const selectAllCheckbox = document.querySelector('input.select_all_checkbox') as HTMLInputElement;
-    selectAllCheckbox.checked = false;
+    selectAllCheckbox.checked = on;
 }
 
 function getAllSelectedSettings(): NodeListOf<Element> {
@@ -110,5 +118,5 @@ function sendSelectedSettingsToExtension(settings: Setting[]) {
     const obj = {
         data: settings
     };
-     executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
+    executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
 }

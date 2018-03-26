@@ -4,7 +4,6 @@ import HTMLDocumentContentProvider from './HTMLDocumentContentProvider';
 import { previewUri } from './consts';
 import { Setting } from './setting';
 import { HTMLCreator } from './gui/htmlCreator';
-import { ExtensionsImporter } from './extensionImporter';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import { SublimeFolders } from './sublimeFolderFinder';
 import { HTMLPreview } from './htmlPreview';
@@ -24,8 +23,7 @@ export async function activate(context: vscode.ExtensionContext) {
     const importer: Importer = await Importer.initAsync();
     const htmlCreator: HTMLCreator = await HTMLCreator.initializeAsync(vscode.Uri.file(context.asAbsolutePath('')));
     const provider = new HTMLDocumentContentProvider(htmlCreator);
-    const extensionsImporter = new ExtensionsImporter();
-    const webview = new HTMLPreview(importer, htmlCreator, provider, extensionsImporter);
+    const webview = new HTMLPreview(importer, htmlCreator, provider);
 
     let numStarted = 0;
 

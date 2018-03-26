@@ -7,6 +7,7 @@ export class Dom {
     private jsdom: JSDOM;
     private _origjsdom: JSDOM;
     private projectRoot: vscode.Uri;
+    private templates: JSDOM;
 
     private constructor() { }
 
@@ -19,6 +20,7 @@ export class Dom {
     private async init(projectRoot: vscode.Uri) {
         this.projectRoot = projectRoot;
         this.jsdom = await this.getHtmlPageAsync('main.html');
+        this.templates = new JSDOM(await this.loadHTMLFileFromDisk('templates.html'));
     }
 
     public setDom(dom: JSDOM) {
@@ -35,14 +37,17 @@ export class Dom {
         }
     }
 
+    private async loadHTMLFileFromDisk(filename: string): Promise<string> {
+        let htmlPath = vscode.Uri.file(`${this.projectRoot.fsPath}/resources/${filename}`);
+        return await promisifier<string>(fs.readFile, htmlPath.fsPath, 'utf8');
+    }
+
     private async getHtmlPageAsync(page: string) {
         if (this._origjsdom) {
             return new JSDOM(this._origjsdom.serialize());
         } else {
-            let htmlPath = vscode.Uri.file(`${this.projectRoot.fsPath}/resources/${page}`);
-            const htmlContent: string = await promisifier<string>(fs.readFile, htmlPath.fsPath, 'utf8');
+            const htmlContent = await this.loadHTMLFileFromDisk(page);
             const replacedHTMLContent: string = htmlContent.replace(/\$\$ABS_PATH_TO_ROOT\$\$/g, this.projectRoot.fsPath);
-
             this._origjsdom = new JSDOM(replacedHTMLContent);
             return new JSDOM(replacedHTMLContent);
         }
@@ -50,7 +55,12 @@ export class Dom {
 
 
     public getTemplateCopy<T extends HTMLDivElement>(selector: string): T {
-        const clone = this.jsdom.window.document.querySelector(selector).cloneNode(true) as T;
+        const clone = this.templates.window.document.querySelector(selector).cloneNode(true) as T;
+        return clone;
+    }
+
+    public editTemplate<T extends HTMLDivElement>(selector: string): T {
+        const clone = this.templates.window.document.querySelector(selector) as T;
         return clone;
     }
 
