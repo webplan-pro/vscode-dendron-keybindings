@@ -31,11 +31,12 @@ export class HTMLCreator {
     public async onNewSettingsAsync(newData: CategorizedSettings, sublimeSettingsPath: vscode.Uri, isValid: boolean): Promise<void> {
         if (sublimeSettingsPath) {
             const sublimeSettingsPathContainer = this.dom.getElementByIDThrows('settingsPathContainer');
-            sublimeSettingsPathContainer.textContent = sublimeSettingsPath.fsPath;
             sublimeSettingsPathContainer.title = sublimeSettingsPath.fsPath;
             const reloadIcon = this.dom.createElement('div');
             reloadIcon.classList.add('reloadIcon');
             sublimeSettingsPathContainer.appendChild(reloadIcon);
+            const pathTxt = this.dom.createTextNode(sublimeSettingsPath.fsPath);
+            sublimeSettingsPathContainer.appendChild(pathTxt);
             
             if (isValid && newData.mapped.length) {
                 const mappedSettingsContainer = this.dom.querySelectorThrows('#mappedSettings');
