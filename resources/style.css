@@ -5,17 +5,6 @@
   display: inline-block;
 }
 
-#sublime-settings-table .mapping-arrow {
-  margin-left: 5em;
-  margin-right: 5em;
-  font-size: 1.5em;
-  /* show only outline of arrow */
-  color: black;
-  -webkit-text-fill-color: white;
-  -webkit-text-stroke-width: 1px;
-  -webkit-text-stroke-color: black;
-}
-
 button {
   font-size: 13px;
   font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
@@ -73,8 +62,12 @@ button {
   flex: 1;
 }
 
-.settingsTable .mappedSettings .settingRow:hover {
+body.vscode-light .settingsTable .mappedSettings .settingRow:hover {
   background-color: #e8e8e8;
+}
+
+body.vscode-dark .settingsTable .mappedSettings .settingRow:hover {
+  background-color: #3f3f46;
 }
 
 .settingsTable .mappedSettings .settingRow.odd:not(:hover) {
@@ -92,11 +85,18 @@ button {
   overflow: hidden;
 }
 
+body.vscode-light .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
+  color: rgb(108, 108, 108);
+}
+
+body.vscode-dark .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
+  color: #cccccc;
+}
+
 .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
   flex: 0.4;
   text-overflow: ellipsis;
   overflow: hidden;
-  color: rgb(108, 108, 108);
   font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", Inconsolata, "Courier New", monospace, "Droid Sans Fallback";
   padding-top: 2px;
 }
