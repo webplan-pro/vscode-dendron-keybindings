@@ -33,7 +33,7 @@ export class HTMLCreator {
             const sublimeSettingsPathContainer = this.dom.getElementByIDThrows('settingsPathContainer');
             sublimeSettingsPathContainer.textContent = sublimeSettingsPath.fsPath;
             sublimeSettingsPathContainer.title = sublimeSettingsPath.fsPath;
-            if (isValid) {
+            if (isValid && newData.mapped.length) {
                 const mappedSettingsContainer = this.dom.querySelectorThrows('#mappedSettings');
                 const mappedSettings = this.settingsPage.renderMappedSettings(newData.mapped);
                 for (const mappedSetting of mappedSettings) {
@@ -43,9 +43,13 @@ export class HTMLCreator {
                 const settingsImporter = this.dom.querySelectorThrows('#sublimeSettingsImporter');
                 const noSettingsFoundContainer = this.dom.createElement('h4');
                 this.dom.addClasses(noSettingsFoundContainer, 'noSettingsFound');
-                noSettingsFoundContainer.textContent = `No Sublime settings folder found.`;
+                if (newData && newData.mapped.length === 0) {
+                    noSettingsFoundContainer.textContent = `No settings to import`;
+                } else {
+                    noSettingsFoundContainer.textContent = `No Sublime settings folder found`;                    
+                }
+
                 settingsImporter.appendChild(noSettingsFoundContainer);
-    
                 const settingsTable = this.dom.querySelectorThrows('#settingsTableMapper');
                 settingsTable.classList.add('hidden');
             }
