@@ -1,13 +1,15 @@
 .warning {
   width: 18px;
   height: 18px;
-  background: url('./icons/status-warning.svg') center center no-repeat;
   display: inline-block;
 }
 
-button {
-  font-size: 13px;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe WPC, Segoe UI, HelveticaNeue-Light, Ubuntu, Droid Sans, sans-serif;
+body.vscode-light .warning {
+  background: url('./icons/light/status-warning.svg') center center no-repeat;
+}
+
+body.vscode-dark .warning {
+  background: url('./icons/dark/status-warning-inverse.svg') center center no-repeat;
 }
 
 .hidden {
