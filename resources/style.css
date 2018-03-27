@@ -43,7 +43,7 @@ body.vscode-dark .warning {
   padding: 5px;
 }
 
-.settingsPathContainer {
+#settingsPathContainer {
   padding: 5px;
   flex: 1;
   border: 1px solid #ddd;
