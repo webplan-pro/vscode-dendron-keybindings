@@ -33,6 +33,10 @@ export class HTMLCreator {
             const sublimeSettingsPathContainer = this.dom.getElementByIDThrows('settingsPathContainer');
             sublimeSettingsPathContainer.textContent = sublimeSettingsPath.fsPath;
             sublimeSettingsPathContainer.title = sublimeSettingsPath.fsPath;
+            const reloadIcon = this.dom.createElement('div');
+            reloadIcon.classList.add('reloadIcon');
+            sublimeSettingsPathContainer.appendChild(reloadIcon);
+            
             if (isValid && newData.mapped.length) {
                 const mappedSettingsContainer = this.dom.querySelectorThrows('#mappedSettings');
                 const mappedSettings = this.settingsPage.renderMappedSettings(newData.mapped);

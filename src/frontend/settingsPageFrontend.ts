@@ -37,12 +37,15 @@ function registerEventListeners(): void {
 
     const submitButton = document.querySelector('#add-settings-button');
     submitButton.addEventListener('click', () => {
-        // submitButton.classList.add('loading');
         sendSettings(getAllSelectedSettings());
     });
 
     document.querySelector('.browseButton').addEventListener('click', () => {
         executeCommand('command:extension.userClickedOnBrowseButtonFromGUI');
+    });
+
+    document.querySelector('.reloadIcon').addEventListener('click', () => {
+        executeCommand('command:extension.reload?' + JSON.stringify(document.getElementById('settingsPathContainer').textContent));
     });
 }
 

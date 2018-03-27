@@ -8,6 +8,8 @@ export interface SublimeFolders {
     settings: vscode.Uri
 }
 
+export const sublimeSettingsFilename = 'Preferences.sublime-settings';
+
 const defaultSublimeSettingsPaths: Map<string, string[]> = new Map([
     ['win32', [path.join(os.homedir(), 'AppData', 'Roaming', 'Sublime Text 3')]],
     ['darwin', [path.join(os.homedir(), 'Library', 'Application Support', 'Sublime Text 3')]],

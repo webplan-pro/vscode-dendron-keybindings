@@ -60,12 +60,17 @@ export async function activate(context: vscode.ExtensionContext) {
             }
         }),
 
+        vscode.commands.registerCommand('extension.reload', async (settingsPath: string) => {
+            const settingsUri = settingsPath.endsWith(sublimeFolderFinder.sublimeSettingsFilename) ? vscode.Uri.file(settingsPath) : null;
+            await getSettingsAndShowPage(webview, settingsUri, !!settingsUri);
+        }),
+
         vscode.workspace.registerTextDocumentContentProvider(previewUri.scheme, provider)
     ]);
 }
 
 async function getSettingsAndShowPage(webview: HTMLPreview, path: vscode.Uri, isValid: boolean) {
-    const mappedSettings: MappedSetting[] | undefined = isValid && path ? await webview.getSettingsAsync(path): [];
+    const mappedSettings: MappedSetting[] | undefined = isValid && path ? await webview.getSettingsAsync(path) : [];
     return await webview.showPage(categorizeAndSortSettings(mappedSettings || []), path, isValid);
 }
 

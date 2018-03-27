@@ -4,12 +4,30 @@
   display: inline-block;
 }
 
+.reloadIcon {
+  width: 1em;
+  height: 1em;
+  float: right;
+}
+
+body.vscode-light .reloadIcon {
+  background: url('./icons/light/refresh.svg') center center no-repeat;
+}
+
+body.vscode-dark .reloadIcon {
+  background: url('./icons/dark/refresh.svg') center center no-repeat;
+}
+
 body.vscode-light .warning {
   background: url('./icons/light/status-warning.svg') center center no-repeat;
 }
 
 body.vscode-dark .warning {
   background: url('./icons/dark/status-warning-inverse.svg') center center no-repeat;
+}
+
+.settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value .warning {
+  position: absolute;
 }
 
 .hidden {
@@ -87,20 +105,20 @@ body.vscode-dark .settingsTable .mappedSettings .settingRow:hover {
   overflow: hidden;
 }
 
-body.vscode-light .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
-  color: rgb(108, 108, 108);
-}
-
-body.vscode-dark .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
-  color: #cccccc;
-}
-
 .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
   flex: 0.4;
   text-overflow: ellipsis;
   overflow: hidden;
   font-family: Monaco, Menlo, Consolas, "Droid Sans Mono", Inconsolata, "Courier New", monospace, "Droid Sans Fallback";
   padding-top: 2px;
+}
+
+body.vscode-light .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
+  color: rgb(108, 108, 108);
+}
+
+body.vscode-dark .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
+  color: #cccccc;
 }
 
 .import-button {
@@ -111,8 +129,4 @@ body.vscode-dark .settingsTable .mappedSettings .settingRow .mappedSetting .sett
 .import-button:not(.disabled) {
   color: rgb(255, 255, 255);
   background-color: rgb(0, 122, 204);
-}
-
-.settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value .warning {
-  position: absolute;
 }
