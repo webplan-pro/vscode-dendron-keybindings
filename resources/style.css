@@ -6,9 +6,9 @@
 
 .reloadIcon {
   width: 1em;
-  height: 1em;
   display: inline-block;
-  margin-right: 5px;
+  border: 1px solid;
+  padding: 5px;
 }
 
 body.vscode-light .reloadIcon {

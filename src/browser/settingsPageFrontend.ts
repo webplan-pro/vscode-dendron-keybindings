@@ -45,7 +45,8 @@ function registerEventListeners(): void {
     });
 
     document.querySelector('.reloadIcon').addEventListener('click', () => {
-        executeCommand('command:extension.reload?' + JSON.stringify(document.getElementById('settingsPathContainer').textContent));
+        const settingsPathContainer = document.getElementById('settingsPathContainer') as HTMLInputElement;
+        executeCommand('command:extension.reload?' + JSON.stringify(settingsPathContainer.value));
     });
 }
 

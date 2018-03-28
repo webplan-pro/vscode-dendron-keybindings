@@ -1,6 +1,5 @@
-import { MappedSetting } from "../mappedSetting";
 import { Dom } from "./dom";
-import { Setting } from '../setting';
+import { Setting, MappedSetting } from '../settings';
 
 
 export class SettingsTable {
@@ -18,9 +17,9 @@ export class SettingsTable {
             this.dom.addClasses(settingRow, 'odd');
         }
         settingRow.dataset.sublimename = setting.sublime.name;
-        settingRow.dataset.sublimevalue = setting.sublime.value.toString();
+        settingRow.dataset.sublimevalue = JSON.stringify(setting.sublime.value);
         settingRow.dataset.vscodename = setting.vscode.name;
-        settingRow.dataset.vscodevalue = setting.vscode.value.toString();
+        settingRow.dataset.vscodevalue = JSON.stringify(setting.vscode.value);
 
         settingRow.appendChild(this.renderCheckbox(setting));
         settingRow.appendChild(this.renderSetting(setting));
@@ -61,7 +60,7 @@ export class SettingsTable {
         return setting;
     }
 
-    private renderSettingNameAndValue(name: string, value: string | boolean, currVal?: string | boolean): HTMLElement {
+    private renderSettingNameAndValue(name: string, value: string | boolean | number, currVal?: string | boolean | number): HTMLElement {
         const setting = this.dom.createElement('div');
         this.dom.addClasses(setting, 'setting-name-value');
         const nameContainer = this.dom.createElement('div');
