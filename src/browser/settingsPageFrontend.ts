@@ -1,114 +1,94 @@
 console.log('gui.js has been launched.');
-start();
 
 interface Setting {
     name: string;
     value: string;
 }
 
-function start() {
-    registerEventListeners();
-    initUI();
-}
+class Frontend {
+    private selectAllCheckbox: HTMLInputElement = document.querySelector('#selectAllCheckbox input') as HTMLInputElement;
+    private checkboxes: HTMLInputElement[] = Array.from(document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>);
+    private submitButton: HTMLButtonElement = document.querySelector('#add-settings-button') as HTMLButtonElement;
+    private browseButton: HTMLButtonElement = document.querySelector('.browseButton') as HTMLButtonElement;
+    private reloadIcon: HTMLDivElement = document.querySelector('.reloadIcon') as HTMLDivElement;
+    private settingsPathContainer: HTMLInputElement = document.getElementById('settingsPathContainer') as HTMLInputElement;
 
-function initUI() {
-    checkActivatedCheckboxesAndSetImportButtonState();
-    const { total, numChecked } = numCheckboxesChecked();
-    setSelectAllCheckboxState(total === numChecked);
-}
+    constructor() {
+        this.registerEventListeners();
+        this.initUI();
+    }
 
-function registerEventListeners(): void {
-    const selectAllCheckbox = document.querySelector('#selectAllCheckbox');
+    private registerEventListeners(): void {
+        this.selectAllCheckbox.addEventListener('click', () => this.onDidClickSelectAllCheckbox());
 
-    selectAllCheckbox.addEventListener('click', function () {
-        const selectAllCheckbox = document.querySelector('input.select_all_checkbox') as HTMLInputElement;
-        const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
-        for (const chkbox of checkboxes) {
-            chkbox.checked = selectAllCheckbox.checked;
+        this.checkboxes.forEach(box => box.addEventListener('change', () => this.refreshStates()));
+
+        this.submitButton.addEventListener('click', () => this.sendSettings(this.checkboxes.filter(chkbox => chkbox.checked)));
+
+        this.browseButton.addEventListener('click', () => this.executeCommand('command:extension.userClickedOnBrowseButtonFromGUI'));
+
+        this.reloadIcon.addEventListener('click', () => this.executeCommand('command:extension.reload?' + JSON.stringify(this.settingsPathContainer.value)));
+    }
+
+    private onDidClickSelectAllCheckbox() {
+        for (const chkbox of this.checkboxes) {
+            chkbox.checked = this.selectAllCheckbox.checked;
         }
-        checkActivatedCheckboxesAndSetImportButtonState();
-    });
+        this.refreshStates();
+    }
 
-    const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
-    checkboxes.forEach(box => {
-        box.addEventListener('change', () => checkActivatedCheckboxesAndSetImportButtonState());
-        setSelectAllCheckboxState(false);
-    });
+    private initUI() {
+        this.refreshStates();
+        const { total, numChecked } = this.numCheckboxesChecked();
+        this.selectAllCheckbox.checked = total === numChecked;
+    }
 
-    const submitButton = document.querySelector('#add-settings-button');
-    submitButton.addEventListener('click', () => {
-        sendSettings(getAllSelectedSettings());
-    });
+    private numCheckboxesChecked() {
+        const numChecked = this.checkboxes.filter((box) => box.checked).length;
+        return { total: this.checkboxes.length, numChecked };
+    }
 
-    document.querySelector('.browseButton').addEventListener('click', () => {
-        executeCommand('command:extension.userClickedOnBrowseButtonFromGUI');
-    });
+    private refreshStates() {
+        const chkboxStates = this.numCheckboxesChecked();
+        this.setImportButtonState(chkboxStates.numChecked > 0);
+        this.selectAllCheckbox.checked = chkboxStates.numChecked === chkboxStates.total;
+    }
 
-    document.querySelector('.reloadIcon').addEventListener('click', () => {
-        const settingsPathContainer = document.getElementById('settingsPathContainer') as HTMLInputElement;
-        executeCommand('command:extension.reload?' + JSON.stringify(settingsPathContainer.value));
-    });
-}
+    private setImportButtonState(on: boolean) {
+        if (on) {
+            this.submitButton.removeAttribute('disabled');
+            this.submitButton.classList.remove('disabled');
+        } else {
+            this.submitButton.setAttribute('disabled', '');
+            this.submitButton.classList.add('disabled');
+        }
+    }
 
-function numCheckboxesChecked() {
-    const checkboxes = document.querySelectorAll('input.matching_setting_checkbox') as NodeListOf<HTMLInputElement>;
-    const numChecked = Array.from(checkboxes).filter((box) => box.checked).length;
-    return { total: checkboxes.length, numChecked };
-}
+    private getVscodeSettingsFromParentTR(td: HTMLElement): Setting {
+        return { name: td.parentElement.parentElement.dataset.vscodename, value: td.parentElement.parentElement.dataset.vscodevalue };
+    }
 
-function checkActivatedCheckboxesAndSetImportButtonState() {
-    setImportButtonState(numCheckboxesChecked().numChecked > 0);
-}
+    private sendSettings(selectedCheckboxes: HTMLInputElement[]): void {
+        const settings = selectedCheckboxes.map(chbox => this.getVscodeSettingsFromParentTR(chbox as HTMLElement));
+        this.sendSelectedSettingsToExtension(settings);
+    }
 
-function setImportButtonState(on: boolean) {
-    const submitButton = document.querySelector('#add-settings-button');
-    if (on) {
-        submitButton.removeAttribute('disabled');
-        submitButton.classList.remove('disabled');
-    } else {
-        submitButton.setAttribute('disabled', '');
-        submitButton.classList.add('disabled');
+    private sendSelectedSettingsToExtension(settings: Setting[]) {
+        const obj = {
+            data: settings
+        };
+        this.executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
+    }
+
+    private executeCommand(cmd: string): void {
+        const command = encodeURI(cmd);
+        console.log(command);
+        var anchor = document.createElement('a');
+        anchor.href = command;
+        document.body.appendChild(anchor);
+        anchor.click();
+        document.body.removeChild(anchor);
     }
 }
 
-function setSelectAllCheckboxState(on: boolean) {
-    const selectAllCheckbox = document.querySelector('input.select_all_checkbox') as HTMLInputElement;
-    selectAllCheckbox.checked = on;
-}
-
-function getAllSelectedSettings(): NodeListOf<Element> {
-    const selectAllCheckbox = <HTMLInputElement>document.querySelector('input.select_all_checkbox');
-    let selectedCheckboxes;
-    if (selectAllCheckbox.checked) {
-        selectedCheckboxes = document.querySelectorAll('input.matching_setting_checkbox');
-    } else {
-        selectedCheckboxes = document.querySelectorAll('input.matching_setting_checkbox:checked');
-    }
-    return selectedCheckboxes;
-}
-
-function getVscodeSettingsFromParentTR(td: HTMLElement): Setting {
-    return { name: td.parentElement.parentElement.dataset.vscodename, value: td.parentElement.parentElement.dataset.vscodevalue };
-}
-
-function sendSettings(selectedCheckboxes: NodeListOf<Element>): void {
-    const settings = Array.from(selectedCheckboxes).map(chbox => getVscodeSettingsFromParentTR(chbox as HTMLElement));
-    sendSelectedSettingsToExtension(settings);
-}
-
-function sendSelectedSettingsToExtension(settings: Setting[]) {
-    const obj = {
-        data: settings
-    };
-    executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
-}
-
-function executeCommand(cmd: string): void {
-    const command = encodeURI(cmd);
-    console.log(command);
-    var anchor = document.createElement('a');
-    anchor.href = command;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-}
+new Frontend();
