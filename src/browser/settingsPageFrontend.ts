@@ -31,7 +31,6 @@ class Frontend {
     }
 
     private onDidClickSelectAllCheckbox() {
-        document.body.appendChild(document.createTextNode('fjdhfjdhfd'));
         for (const chkbox of this.checkboxes) {
             chkbox.checked = this.selectAllCheckbox.checked;
         }

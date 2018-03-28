@@ -1,7 +1,5 @@
 import * as vscode from 'vscode';
-let start = new Date().getTime();
 import { HTMLCreator } from "./htmlCreation/htmlCreator";
-console.log(new Date().getTime() - start);
 import { Importer } from "./importer";
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import { JSDOM } from 'jsdom';

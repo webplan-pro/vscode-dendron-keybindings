@@ -1,9 +1,7 @@
 import { JSDOM } from 'jsdom';
 import * as vscode from 'vscode';
 import { SettingsTable } from './settingsTable';
-let start = new Date().getTime();
 import { Dom } from './dom';
-console.log(new Date().getTime() - start);
 import { MappedSetting } from '../settings';
 
 export class HTMLCreator {
