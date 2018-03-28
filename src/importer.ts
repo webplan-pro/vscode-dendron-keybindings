@@ -3,8 +3,7 @@ import * as path from "path";
 import * as rjson from "relaxed-json";
 import * as vscode from "vscode";
 import * as fileSystem from "./fsWrapper";
-import { MappedSetting } from "./mappedSetting";
-import { Setting } from "./setting";
+import { Setting, MappedSetting } from "./settings";
 
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
@@ -37,35 +36,21 @@ export class Importer {
 
     public async updateSettingsAsync(settings: Setting[]): Promise<{}> {
         for (const setting of settings) {
-            const { namespace, settingName } = setting.getNamespaceAndSettingName();
-            const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration(namespace);
-            if (config && settingName) {
-                try {
-                    await config.update(settingName, setting.value, vscode.ConfigurationTarget.Global);
-                } catch (e) {
-                    console.error(e);
-                }
-            } else {
-                console.error('getConfiguration failed for namespace: ${namespace}')
+            const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration();
+            try {
+                await config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global);
+            } catch (e) {
+                console.error(e);
             }
         }
 
         return await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
     }
 
-    private getExistingVscodeSetting(setting: Setting): {} | undefined {
-        const { namespace, settingName } = setting.getNamespaceAndSettingName();
-        const config = vscode.workspace.getConfiguration(namespace);
-        if (config && settingName) {
-            const info = config.inspect(settingName);
-            if (info.globalValue && info.globalValue !== undefined) {
-                return info.globalValue;
-            }
-            return undefined;
-        } else {
-            console.error('getConfiguration failed for namespace: ${namespace}')
-            return undefined;
-        }
+    private getExistingValue(setting: Setting): any | undefined {
+        const config = vscode.workspace.getConfiguration();
+        const info = config.inspect(setting.name);
+        return info.globalValue === undefined ? undefined : info.globalValue;
     }
 
     private mapAllSettings(sublimeSettings): MappedSetting[] {
@@ -77,7 +62,7 @@ export class Importer {
             const vscodeMapping = this.mapSetting(sublimeKey, sublimeSetting);
             if (vscodeMapping) {
                 ms.setVscode(vscodeMapping);
-                const existingValue = this.getExistingVscodeSetting(vscodeMapping);
+                const existingValue = this.getExistingValue(vscodeMapping);
                 if (existingValue) {
                     ms.markAsDuplicate(new Setting(vscodeMapping.name, existingValue.toString()));
                 }

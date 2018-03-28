@@ -1,17 +1,14 @@
 import { Importer } from './importer';
 import * as vscode from 'vscode';
-import HTMLDocumentContentProvider from './HTMLDocumentContentProvider';
-import { previewUri } from './consts';
-import { Setting } from './setting';
+import { Setting, MappedSetting } from './settings';
 import { HTMLCreator } from './htmlCreation/htmlCreator';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import { SublimeFolders } from './sublimeFolderFinder';
-import { HTMLPreview } from './htmlPreview';
-import { MappedSetting } from './mappedSetting';
+import { HTMLPreview, scheme } from './htmlPreview';
 
 
 interface ISettingsPacket {
-    data: Setting[]
+    data: [{name: string, value: string}];
 }
 
 export class CategorizedSettings {
@@ -22,8 +19,7 @@ export class CategorizedSettings {
 export async function activate(context: vscode.ExtensionContext) {
     const importer: Importer = await Importer.initAsync();
     const htmlCreator: HTMLCreator = await HTMLCreator.initializeAsync(vscode.Uri.file(context.asAbsolutePath('')));
-    const provider = new HTMLDocumentContentProvider(htmlCreator);
-    const webview = new HTMLPreview(importer, htmlCreator, provider);
+    const webview = new HTMLPreview(importer, htmlCreator);
 
     let numStarted = 0;
 
@@ -47,12 +43,11 @@ export async function activate(context: vscode.ExtensionContext) {
                 }
                 await getSettingsAndShowPage(webview, folderPickerResult.sublimeSettingsPath ? folderPickerResult.sublimeSettingsPath : folderPickerResult.path, !!folderPickerResult.sublimeSettingsPath);
             }
-
         }),
 
         vscode.commands.registerCommand('extension.selectedSettingsFromGUI', (packet: ISettingsPacket) => {
             if (packet.data) {
-                const settings: Setting[] = packet.data.map(setting => new Setting(setting.name, setting.value));
+                const settings: Setting[] = packet.data.map(setting => new Setting(setting.name, JSON.parse(setting.value)));
                 importer.updateSettingsAsync(settings);
             }
             else {
@@ -65,7 +60,7 @@ export async function activate(context: vscode.ExtensionContext) {
             await getSettingsAndShowPage(webview, settingsUri, !!settingsUri);
         }),
 
-        vscode.workspace.registerTextDocumentContentProvider(previewUri.scheme, provider)
+        vscode.workspace.registerTextDocumentContentProvider(scheme, webview.contentProvider)
     ]);
 }
 
