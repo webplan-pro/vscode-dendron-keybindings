@@ -90,7 +90,7 @@ export class Dom {
             // querySelectorAll required because there are two body elements in the webview
             const scriptEls = this.jsdom.window.document.querySelectorAll(`body script[src$='${scriptName}']`);
             this.jsdom.window.document.body.removeChild(scriptEls[0]);
-        } catch(e) {
+        } catch (e) {
             return undefined;
         }
     }

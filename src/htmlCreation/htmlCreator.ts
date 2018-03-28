@@ -1,8 +1,10 @@
 import { JSDOM } from 'jsdom';
 import * as vscode from 'vscode';
 import { SettingsTable } from './settingsTable';
+let start = new Date().getTime();
 import { Dom } from './dom';
-import { CategorizedSettings } from '../extension';
+console.log(new Date().getTime() - start);
+import { MappedSetting } from '../settings';
 
 export class HTMLCreator {
     private settingsPage: SettingsTable;
@@ -28,15 +30,15 @@ export class HTMLCreator {
         return this.dom.getHtmlAsync();
     }
 
-    public async onNewSettingsAsync(newData: CategorizedSettings, sublimeSettingsPath: vscode.Uri, isValid: boolean): Promise<void> {
+    public async onNewSettingsAsync(mapped: MappedSetting[], sublimeSettingsPath: vscode.Uri, isValid: boolean): Promise<void> {
         if (sublimeSettingsPath) {
             const sublimeSettingsPathContainer = this.dom.getElementByIDThrows<HTMLInputElement>('settingsPathContainer');
             sublimeSettingsPathContainer.title = sublimeSettingsPath.fsPath;
             sublimeSettingsPathContainer.setAttribute('value', sublimeSettingsPath.fsPath);
-            
-            if (isValid && newData.mapped.length) {
+
+            if (isValid && mapped.length) {
                 const mappedSettingsContainer = this.dom.querySelectorThrows('#mappedSettings');
-                const mappedSettings = this.settingsPage.renderMappedSettings(newData.mapped);
+                const mappedSettings = this.settingsPage.renderMappedSettings(mapped);
                 for (const mappedSetting of mappedSettings) {
                     mappedSettingsContainer.appendChild(mappedSetting);
                 }
@@ -44,10 +46,10 @@ export class HTMLCreator {
                 const settingsImporter = this.dom.querySelectorThrows('#sublimeSettingsImporter');
                 const noSettingsFoundContainer = this.dom.createElement('h4');
                 this.dom.addClasses(noSettingsFoundContainer, 'noSettingsFound');
-                if (newData && newData.mapped.length === 0) {
+                if (mapped.length === 0) {
                     noSettingsFoundContainer.textContent = `No settings to import`;
                 } else {
-                    noSettingsFoundContainer.textContent = `No Sublime settings folder found`;                    
+                    noSettingsFoundContainer.textContent = `No Sublime settings folder found`;
                 }
 
                 settingsImporter.appendChild(noSettingsFoundContainer);
