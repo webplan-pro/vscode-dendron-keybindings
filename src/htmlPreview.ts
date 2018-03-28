@@ -1,10 +1,7 @@
 import * as vscode from 'vscode';
-let start = new Date().getTime();
 import { HTMLCreator } from "./htmlCreation/htmlCreator";
-console.log(new Date().getTime() - start);
 import { Importer } from "./importer";
 import * as sublimeFolderFinder from './sublimeFolderFinder';
-import { JSDOM } from 'jsdom';
 import { MappedSetting, Setting } from './settings';
 
 export const scheme = 'vs-code-html-preview';
@@ -37,14 +34,8 @@ export class HTMLPreviewEditor {
         const htmlCreator = await this.getHTMLCreator();
         const path = await this.getSettingsPath();
         const settings: MappedSetting[] | undefined = this.isValid && path ? await this.getSettings(path.fsPath) : [];
-
-        await htmlCreator.resetHTMLAsync();
-
-        // create & display HTML Table
-        await htmlCreator.onNewSettingsAsync(settings, path, this.isValid);
-
-        const htmlDoc: JSDOM = await htmlCreator.getHtmlAsync();
-        return htmlDoc.serialize();
+        const html: string = await htmlCreator.getHTMLAsync(settings, path, this.isValid);
+        return html;
     }
 
     private open() {
@@ -101,7 +92,7 @@ export class HTMLPreviewEditor {
 
     private async getHTMLCreator(): Promise<HTMLCreator> {
         if (!this._htmlCreator) {
-            this._htmlCreator = await HTMLCreator.initializeAsync(vscode.Uri.file(this.context.asAbsolutePath('')));
+            this._htmlCreator = new HTMLCreator(vscode.Uri.file(this.context.asAbsolutePath('')));
         }
         return this._htmlCreator;
     }

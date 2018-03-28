@@ -1,64 +1,24 @@
-import { JSDOM } from 'jsdom';
 import * as vscode from 'vscode';
-import { SettingsTable } from './settingsTable';
-let start = new Date().getTime();
-import { Dom } from './dom';
-console.log(new Date().getTime() - start);
 import { MappedSetting } from '../settings';
+import { promisifier } from '../fsWrapper';
+import * as fs from 'fs';
 
 export class HTMLCreator {
-    private settingsPage: SettingsTable;
-    private dom: Dom;
+    constructor(private projectRoot: vscode.Uri) { }
 
-    private constructor() { }
-
-    public static async initializeAsync(projectRoot: vscode.Uri): Promise<HTMLCreator> {
-        return new HTMLCreator().initAsync(projectRoot);
+    public async getHTMLAsync(mapped: MappedSetting[], sublimeSettingsPath: vscode.Uri, isValid: boolean): Promise<string> {
+        const htmlContent = await this.loadHTMLFileFromDisk('main.html');
+        const replacedHTMLContent: string = htmlContent.replace(/\$\$ABS_PATH_TO_ROOT\$\$/g, this.projectRoot.fsPath)
+            .replace('$$BACKEND-DATA$$', JSON.stringify({
+                'mappedSettings': mapped,
+                'sublimeSettingsPath': encodeURI(sublimeSettingsPath.fsPath),
+                'isValid': isValid
+            }));
+        return replacedHTMLContent;
     }
 
-    private async initAsync(projectRoot: vscode.Uri): Promise<HTMLCreator> {
-        this.dom = await Dom.initAsync(projectRoot);
-        this.settingsPage = new SettingsTable(this.dom);
-        return this;
-    }
-
-    public async resetHTMLAsync() {
-        return this.dom.getHtmlAsync(true);
-    }
-
-    public async getHtmlAsync(): Promise<JSDOM> {
-        return this.dom.getHtmlAsync();
-    }
-
-    public async onNewSettingsAsync(mapped: MappedSetting[], sublimeSettingsPath: vscode.Uri, isValid: boolean): Promise<void> {
-        if (sublimeSettingsPath) {
-            const sublimeSettingsPathContainer = this.dom.getElementByIDThrows<HTMLInputElement>('settingsPathContainer');
-            sublimeSettingsPathContainer.title = sublimeSettingsPath.fsPath;
-            sublimeSettingsPathContainer.setAttribute('value', sublimeSettingsPath.fsPath);
-
-            if (isValid && mapped.length) {
-                const mappedSettingsContainer = this.dom.querySelectorThrows('#mappedSettings');
-                const mappedSettings = this.settingsPage.renderMappedSettings(mapped);
-                for (const mappedSetting of mappedSettings) {
-                    mappedSettingsContainer.appendChild(mappedSetting);
-                }
-            } else {
-                const settingsImporter = this.dom.querySelectorThrows('#sublimeSettingsImporter');
-                const noSettingsFoundContainer = this.dom.createElement('h4');
-                this.dom.addClasses(noSettingsFoundContainer, 'noSettingsFound');
-                if (mapped.length === 0) {
-                    noSettingsFoundContainer.textContent = `No settings to import`;
-                } else {
-                    noSettingsFoundContainer.textContent = `No Sublime settings folder found`;
-                }
-
-                settingsImporter.appendChild(noSettingsFoundContainer);
-                const settingsTable = this.dom.querySelectorThrows('#settingsTableMapper');
-                settingsTable.classList.add('hidden');
-            }
-        } else {
-            const settingsTable = this.dom.querySelectorThrows('#settingsTableMapper');
-            settingsTable.classList.add('hidden');
-        }
+    private async loadHTMLFileFromDisk(filename: string): Promise<string> {
+        let htmlPath = vscode.Uri.file(`${this.projectRoot.fsPath}/resources/${filename}`);
+        return await promisifier<string>(fs.readFile, htmlPath.fsPath, 'utf8');
     }
 }
