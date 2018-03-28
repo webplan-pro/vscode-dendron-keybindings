@@ -15,7 +15,7 @@ body.vscode-light .reloadIcon {
   background: url('./icons/light/refresh.svg') center center no-repeat;
 }
 
-body.vscode-dark .reloadIcon {
+body.vscode-high-contrast .reloadIcon, body.vscode-dark .reloadIcon {
   background: url('./icons/dark/refresh.svg') center center no-repeat;
 }
 
@@ -23,7 +23,7 @@ body.vscode-light .warning {
   background: url('./icons/light/status-warning.svg') center center no-repeat;
 }
 
-body.vscode-dark .warning {
+body.vscode-high-contrast .warning, body.vscode-dark .warning {
   background: url('./icons/dark/status-warning-inverse.svg') center center no-repeat;
 }
 
@@ -87,6 +87,7 @@ body.vscode-light .settingsTable .mappedSettings .settingRow:hover {
   background-color: #e8e8e8;
 }
 
+body.vscode-high-contrast .settingsTable .mappedSettings .settingRow:hover,
 body.vscode-dark .settingsTable .mappedSettings .settingRow:hover {
   background-color: #3f3f46;
 }
@@ -118,6 +119,7 @@ body.vscode-light .settingsTable .mappedSettings .settingRow .mappedSetting .set
   color: rgb(108, 108, 108);
 }
 
+body.vscode-high-contrast .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value,
 body.vscode-dark .settingsTable .mappedSettings .settingRow .mappedSetting .setting-name-value .setting-value {
   color: #cccccc;
 }
