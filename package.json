@@ -58,14 +58,12 @@
         "watch": "tsc -watch -p ./"
     },
     "devDependencies": {
-        "@types/jsdom": "^11.0.4",
         "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
         "typescript": "^2.0.3",
         "vscode": "^1.1.5"
     },
     "dependencies": {
-        "jsdom": "^11.6.2",
         "relaxed-json": "^1.0.1"
     }
 }

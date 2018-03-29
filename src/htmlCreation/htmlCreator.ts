@@ -9,11 +9,11 @@ export class HTMLCreator {
     public async getHTMLAsync(mapped: MappedSetting[], sublimeSettingsPath: vscode.Uri, isValid: boolean): Promise<string> {
         const htmlContent = await this.loadHTMLFileFromDisk('main.html');
         const replacedHTMLContent: string = htmlContent.replace(/\$\$ABS_PATH_TO_ROOT\$\$/g, this.projectRoot.fsPath)
-            .replace('$$BACKEND-DATA$$', JSON.stringify({
+            .replace('$$BACKEND-DATA$$', encodeURI(JSON.stringify({
                 'mappedSettings': mapped,
-                'sublimeSettingsPath': encodeURI(sublimeSettingsPath.fsPath),
+                'sublimeSettingsPath': sublimeSettingsPath.fsPath,
                 'isValid': isValid
-            }));
+            })));
         return replacedHTMLContent;
     }
 

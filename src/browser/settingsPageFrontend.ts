@@ -1,9 +1,6 @@
-console.log('gui.js has been launched.');
-
 function addClasses(el: HTMLElement, classesWhiteSpaceSeparated: string): void {
     classesWhiteSpaceSeparated.split(' ').forEach(cls => el.classList.add(cls));
 }
-
 class Setting {
     constructor(readonly name: string, readonly value: any) { }
 }
@@ -36,7 +33,6 @@ class MappedSetting {
         this.duplicateVscodeSetting = vscodeSetting;
     }
 }
-
 
 class SettingsTable {
 
@@ -127,43 +123,8 @@ class Frontend {
     private settingsPathContainer: HTMLInputElement = document.getElementById('settingsPathContainer') as HTMLInputElement;
 
     constructor() {
-        this.onNewSettings();
         this.registerEventListeners();
         this.initUI();
-    }
-
-    private onNewSettings() {
-        const { mapped, sublimeSettingsPath, isValid } = JSON.parse(document.getElementById('backendData').dataset.backend);
-        
-        if (sublimeSettingsPath) {
-            const sublimeSettingsPathContainer = document.getElementById('settingsPathContainer');
-            sublimeSettingsPathContainer.title = decodeURI(sublimeSettingsPath);
-            sublimeSettingsPathContainer.setAttribute('value', decodeURI(sublimeSettingsPath));
-
-            if (isValid && mapped.length) {
-                const mappedSettingsContainer = document.querySelector('#mappedSettings');
-                const mappedSettings = new SettingsTable().renderMappedSettings(mapped);
-                for (const mappedSetting of mappedSettings) {
-                    mappedSettingsContainer.appendChild(mappedSetting);
-                }
-            } else {
-                const settingsImporter = document.querySelector('#sublimeSettingsImporter');
-                const noSettingsFoundContainer = document.createElement('h4');
-                addClasses(noSettingsFoundContainer, 'noSettingsFound');
-                if (mapped.length === 0) {
-                    noSettingsFoundContainer.textContent = `No settings to import`;
-                } else {
-                    noSettingsFoundContainer.textContent = `No Sublime settings folder found`;
-                }
-
-                settingsImporter.appendChild(noSettingsFoundContainer);
-                const settingsTable = document.querySelector('#settingsTableMapper');
-                settingsTable.classList.add('hidden');
-            }
-        } else {
-            const settingsTable = document.querySelector('#settingsTableMapper');
-            settingsTable.classList.add('hidden');
-        }
     }
 
     private registerEventListeners(): void {
@@ -179,7 +140,6 @@ class Frontend {
     }
 
     private onDidClickSelectAllCheckbox() {
-        document.body.appendChild(document.createTextNode('fjdhfjdhfd'));
         for (const chkbox of this.checkboxes) {
             chkbox.checked = this.selectAllCheckbox.checked;
         }
@@ -231,7 +191,6 @@ class Frontend {
 
     private executeCommand(cmd: string): void {
         const command = encodeURI(cmd);
-        console.log(command);
         var anchor = document.createElement('a');
         anchor.href = command;
         document.body.appendChild(anchor);
@@ -240,4 +199,38 @@ class Frontend {
     }
 }
 
+function onNewSettings(settingsTable: SettingsTable) {
+    const { mappedSettings, sublimeSettingsPath, isValid } = JSON.parse(decodeURI(document.getElementById('backendData').dataset.backend));
+    if (sublimeSettingsPath) {
+        const sublimeSettingsPathContainer = document.getElementById('settingsPathContainer');
+        sublimeSettingsPathContainer.title = sublimeSettingsPath;
+        sublimeSettingsPathContainer.setAttribute('value', sublimeSettingsPath);
+
+        if (isValid && mappedSettings.length) {
+            const mappedSettingsContainer = document.querySelector('#mappedSettings');
+            const mappedSettingsEls = settingsTable.renderMappedSettings(mappedSettings);
+            for (const mappedSetting of mappedSettingsEls) {
+                mappedSettingsContainer.appendChild(mappedSetting);
+            }
+        } else {
+            const settingsImporter = document.querySelector('#sublimeSettingsImporter');
+            const noSettingsFoundContainer = document.createElement('h4');
+            addClasses(noSettingsFoundContainer, 'noSettingsFound');
+            if (mappedSettings.length === 0) {
+                noSettingsFoundContainer.textContent = `No settings to import`;
+            } else {
+                noSettingsFoundContainer.textContent = `No Sublime settings folder found`;
+            }
+
+            settingsImporter.appendChild(noSettingsFoundContainer);
+            const settingsTable = document.querySelector('#settingsTableMapper');
+            settingsTable.classList.add('hidden');
+        }
+    } else {
+        const settingsTable = document.querySelector('#settingsTableMapper');
+        settingsTable.classList.add('hidden');
+    }
+}
+
+onNewSettings(new SettingsTable());
 new Frontend();
