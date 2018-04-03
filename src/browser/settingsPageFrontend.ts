@@ -134,7 +134,7 @@ class Frontend {
 
         this.submitButton.addEventListener('click', () => this.sendSettings(this.checkboxes.filter(chkbox => chkbox.checked)));
 
-        this.browseButton.addEventListener('click', () => this.executeCommand('command:extension.userClickedOnBrowseButtonFromGUI'));
+        this.browseButton.addEventListener('click', () => this.executeCommand('command:extension.onBrowseButtonClicked'));
 
         this.reloadIcon.addEventListener('click', () => this.executeCommand('command:extension.reload?' + JSON.stringify(this.settingsPathContainer.value)));
     }
@@ -186,7 +186,7 @@ class Frontend {
         const obj = {
             data: settings
         };
-        this.executeCommand('command:extension.selectedSettingsFromGUI?' + JSON.stringify(obj));
+        this.executeCommand('command:extension.onImportSelectedSettings?' + JSON.stringify(obj));
     }
 
     private executeCommand(cmd: string): void {
@@ -200,7 +200,7 @@ class Frontend {
 }
 
 function onNewSettings(settingsTable: SettingsTable) {
-    const { mappedSettings, sublimeSettingsPath, isValid } = JSON.parse(decodeURI(document.getElementById('backendData').dataset.backend));
+    const { mappedSettings, sublimeSettingsPath, isValid } = JSON.parse(decodeURI(document.getElementById('frontendData').dataset.frontend));
     if (sublimeSettingsPath) {
         const sublimeSettingsPathContainer = document.getElementById('settingsPathContainer');
         sublimeSettingsPathContainer.title = sublimeSettingsPath;

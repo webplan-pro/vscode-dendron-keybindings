@@ -1,20 +1,17 @@
-"use strict";
-
 import * as fs from 'fs';
 import * as path from 'path';
 
-
-export async function pathExists(path: string): Promise<boolean> {
+export async function pathExists(stringPath: string): Promise<boolean> {
     try {
-        await fsAccess(path, fs.constants.F_OK);
+        await fsAccess(stringPath, fs.constants.F_OK);
         return true;
     } catch (e) {
         return false;
     }
 }
 
-function fsAccess(path: string, checks: number): Promise<any> {
-    return promisifier(fs.access, path, checks);
+function fsAccess(stringPath: string, checks: number): Promise<any> {
+    return promisifier(fs.access, stringPath, checks);
 }
 
 // adapted from vs/base/common/async

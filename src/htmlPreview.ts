@@ -1,14 +1,19 @@
 import * as vscode from 'vscode';
-import { HTMLCreator } from "./htmlCreation/htmlCreator";
-import { Importer } from "./importer";
-import * as sublimeFolderFinder from './sublimeFolderFinder';
+import { Importer } from './importer';
 import { MappedSetting, Setting } from './settings';
+import * as sublimeFolderFinder from './sublimeFolderFinder';
 
 export const scheme = 'vs-code-html-preview';
 const previewUri = vscode.Uri.parse(`${scheme}://authority/vs-code-html-preview`);
 
 interface ISettingsPacket {
     data: [{ name: string, value: string }];
+}
+
+interface IFrontendData {
+    mappedSettings: MappedSetting[];
+    sublimeSettingsPath: string;
+    isValid: boolean;
 }
 
 export class HTMLPreviewEditor {
@@ -18,24 +23,25 @@ export class HTMLPreviewEditor {
     private userSelectedPath: vscode.Uri;
     private isValid: boolean = true;
 
-    private _htmlCreator: HTMLCreator;
     private _importer: Importer;
 
     constructor(private context: vscode.ExtensionContext) {
         context.subscriptions.push(this._onDidChange);
         context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => this.open()));
         context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider(scheme, this));
-        context.subscriptions.push(vscode.commands.registerCommand('extension.userClickedOnBrowseButtonFromGUI', () => this.pickFolder()));
-        context.subscriptions.push(vscode.commands.registerCommand('extension.selectedSettingsFromGUI', (packet: ISettingsPacket) => this.onDidSettingSelected(packet)));
+        context.subscriptions.push(vscode.commands.registerCommand('extension.onBrowseButtonClicked', () => this.pickFolder()));
+        context.subscriptions.push(vscode.commands.registerCommand('extension.onImportSelectedSettings', (packet: ISettingsPacket) => this.onImportSelectedSettings(packet)));
         context.subscriptions.push(vscode.commands.registerCommand('extension.reload', () => this._onDidChange.fire(previewUri)));
     }
 
-    async provideTextDocumentContent(): Promise<string> {
-        const htmlCreator = await this.getHTMLCreator();
+    public async provideTextDocumentContent(): Promise<string> {
         const path = await this.getSettingsPath();
         const settings: MappedSetting[] | undefined = this.isValid && path ? await this.getSettings(path.fsPath) : [];
-        const html: string = await htmlCreator.getHTMLAsync(settings, path, this.isValid);
-        return html;
+        return this.getHTML({
+            mappedSettings: settings,
+            sublimeSettingsPath: path.fsPath,
+            isValid: this.isValid,
+        });
     }
 
     private open() {
@@ -54,13 +60,12 @@ export class HTMLPreviewEditor {
         }
     }
 
-    private async onDidSettingSelected(packet: ISettingsPacket) {
+    private async onImportSelectedSettings(packet: ISettingsPacket) {
         if (packet.data) {
-            const settings: Setting[] = packet.data.map(setting => new Setting(setting.name, JSON.parse(setting.value)));
+            const settings: Setting[] = packet.data.map((setting) => new Setting(setting.name, JSON.parse(setting.value)));
             const importer = await this.getImporter();
             importer.updateSettingsAsync(settings);
-        }
-        else {
+        } else {
             console.error(`Unhandled message: ${JSON.stringify(packet.data)}`);
         }
     }
@@ -68,7 +73,7 @@ export class HTMLPreviewEditor {
     private async getSettings(path: string): Promise<MappedSetting[]> {
         const importer = await this.getImporter();
         let settings: MappedSetting[] | undefined = await importer.getMappedSettingsAsync(path);
-        settings = settings.filter(s => !MappedSetting.hasNoMatch(s));
+        settings = settings.filter((s) => !MappedSetting.hasNoMatch(s));
         settings.sort((a, b) => {
             if (a.isDuplicate && b.isDuplicate) {
                 return a.sublime.name.localeCompare(b.sublime.name);
@@ -77,7 +82,7 @@ export class HTMLPreviewEditor {
             } else if (b.isDuplicate) {
                 return 1;
             }
-            return a.sublime.name.localeCompare(b.sublime.name)
+            return a.sublime.name.localeCompare(b.sublime.name);
         });
         return settings;
     }
@@ -90,18 +95,57 @@ export class HTMLPreviewEditor {
         return defaultSublimePaths && defaultSublimePaths.length ? defaultSublimePaths[0].settings : null;
     }
 
-    private async getHTMLCreator(): Promise<HTMLCreator> {
-        if (!this._htmlCreator) {
-            this._htmlCreator = new HTMLCreator(vscode.Uri.file(this.context.asAbsolutePath('')));
-        }
-        return this._htmlCreator;
-    }
-
     private async getImporter(): Promise<Importer> {
         if (!this._importer) {
             this._importer = await Importer.initAsync();
         }
         return this._importer;
     }
-}
 
+    private getHTML(frontendData: IFrontendData): string {
+        const projectRoot: string = vscode.Uri.file(this.context.asAbsolutePath('')).fsPath;
+
+        return `
+            <html>
+
+            <head>
+                <link rel="stylesheet" type="text/css" href="file://${projectRoot}/resources/style.css">
+            </head>
+
+            <body>
+                <div id="frontendData" data-frontend=${encodeURI(JSON.stringify(frontendData))}></div>
+                <div id="sublimeSettingsImporter">
+
+                    <h3>Import Settings from Sublime Text</h3>
+                    <div class="selectFolder">
+                        <div class="reloadIcon"></div>
+                        <input id="settingsPathContainer" name="settingsPathContainer" placeholder="Sublime Settings Folder required." readonly>
+                        <button class="browseButton">Browse...</button>
+                    </div>
+
+                    <!-- Import Settings Tab Start -->
+                    <div id='settingsTableMapper'>
+                        <div class="settingsTable">
+                            <div class="headerRow">
+                                <div id='selectAllCheckbox' class="checkbox">
+                                    <input class="select_all_checkbox ui checkbox" type="checkbox">
+                                </div>
+                                <div class="title">Sublime</div>
+                                <div>
+                                    <i class="mapping-arrow long arrow alternate right icon"></i>
+                                </div>
+                                <div class="title">VS Code</div>
+                            </div>
+                            <div id="mappedSettings" class="mappedSettings">
+                            </div>
+                        </div>
+                        <button id='add-settings-button' class="import-button">Import</button>
+                    </div>
+                </div>
+            </body>
+            <script src="file://${projectRoot}/out/browser/settingsPageFrontend.js"></script>
+
+            </html>
+        `;
+    }
+}

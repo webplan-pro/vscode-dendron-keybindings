@@ -1,20 +1,20 @@
-import * as fs from "fs";
-import * as path from "path";
-import * as rjson from "relaxed-json";
-import * as vscode from "vscode";
-import * as fileSystem from "./fsWrapper";
-import { Setting, MappedSetting } from "./settings";
+import * as fs from 'fs';
+import * as path from 'path';
+import * as rjson from 'relaxed-json';
+import * as vscode from 'vscode';
+import * as fileSystem from './fsWrapper';
+import { MappedSetting, Setting } from './settings';
 
 export class Importer {
+    public static async initAsync(mappingsPath = path.resolve(__dirname, '..', 'mappings/settings.json')) {
+        const data: string = await fileSystem.readFileAsync(mappingsPath, 'utf-8');
+        return new Importer(data.toString());
+    }
+
     private settingsMap: { [key: string]: string } = {};
 
     private constructor(data: string) {
         this.settingsMap = rjson.parse(data);
-    }
-
-    public static async initAsync(mappingsPath = path.resolve(__dirname, "..", "mappings/settings.json")) {
-        const data: string = await fileSystem.readFileAsync(mappingsPath, 'utf-8');
-        return new Importer(data.toString());
     }
 
     public async getMappedSettingsAsync(settingsPath: string): Promise<MappedSetting[] | undefined> {
@@ -44,8 +44,8 @@ export class Importer {
 
     private mapAllSettings(sublimeSettings): MappedSetting[] {
         const mappedSettings: MappedSetting[] = [];
-        for (const sublimeKey in sublimeSettings) {
-            const sublimeSetting = sublimeSettings[sublimeKey]
+        for (const sublimeKey of sublimeSettings) {
+            const sublimeSetting = sublimeSettings[sublimeKey];
             const ms: MappedSetting = new MappedSetting(new Setting(sublimeKey, sublimeSetting));
 
             const vscodeMapping = this.mapSetting(sublimeKey, sublimeSetting);
@@ -59,16 +59,15 @@ export class Importer {
 
             mappedSettings.push(ms);
         }
-        return mappedSettings
+        return mappedSettings;
     }
 
     private mapSetting(key: string, value: string): Setting | undefined {
-        let mappedSetting: string | object = this.settingsMap[key];
+        const mappedSetting: string | object = this.settingsMap[key];
         if (mappedSetting) {
             if (typeof mappedSetting === 'string') {
                 return new Setting(mappedSetting, value);
-            }
-            else if (typeof mappedSetting === 'object') {
+            } else if (typeof mappedSetting === 'object') {
                 const obj = mappedSetting[value];
                 if (!obj) {
                     vscode.window.showErrorMessage(`mapSetting() failed on key: ${key}, value: ${value}, mappedSetting: ${JSON.stringify(mappedSetting)}`);
@@ -81,6 +80,6 @@ export class Importer {
             }
         }
 
-        return null
+        return null;
     }
 }

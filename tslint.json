@@ -17,6 +17,12 @@
             "always"
         ],
         "triple-equals": true,
+        "quotemark": [
+            true,
+            "single",
+            "avoid-escape",
+            "avoid-template"
+        ],
         "no-unexternalized-strings": [
             true,
             {
@@ -28,8 +34,5 @@
                 "messageIndex": 1
             }
         ]
-    },
-    "rulesDirectory": [
-        "tslint"
-    ],
+    }
 }
