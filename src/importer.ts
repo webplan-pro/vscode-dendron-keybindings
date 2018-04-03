@@ -18,9 +18,8 @@ export class Importer {
     }
 
     public async getMappedSettingsAsync(settingsPath: string): Promise<MappedSetting[] | undefined> {
-        const data = await fileSystem.promisifier(fs.readFile, settingsPath);
-        const globalSettings = rjson.parse(data.toString());
-        return this.mapAllSettings(globalSettings);
+        const settingsTxt: string = await fileSystem.promisifier<string>(fs.readFile, settingsPath, 'utf-8');
+        return this.mapAllSettings(rjson.parse(settingsTxt));
     }
 
     public async updateSettingsAsync(settings: Setting[]): Promise<{}> {
@@ -44,7 +43,7 @@ export class Importer {
 
     private mapAllSettings(sublimeSettings): MappedSetting[] {
         const mappedSettings: MappedSetting[] = [];
-        for (const sublimeKey of sublimeSettings) {
+        Object.keys(sublimeSettings).forEach((sublimeKey) => {
             const sublimeSetting = sublimeSettings[sublimeKey];
             const ms: MappedSetting = new MappedSetting(new Setting(sublimeKey, sublimeSetting));
 
@@ -56,9 +55,8 @@ export class Importer {
                     ms.markAsDuplicate(new Setting(vscodeMapping.name, existingValue.toString()));
                 }
             }
-
             mappedSettings.push(ms);
-        }
+        });
         return mappedSettings;
     }
 

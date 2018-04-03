@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { Importer } from './importer';
 import { MappedSetting, Setting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
+import { ISublimeSettingsPickerResult } from './sublimeFolderFinder';
 
 export const scheme = 'vs-code-html-preview';
 const previewUri = vscode.Uri.parse(`${scheme}://authority/vs-code-html-preview`);
@@ -49,12 +50,13 @@ export class HTMLPreviewEditor {
     }
 
     private async pickFolder() {
-        const folderPickerResult: sublimeFolderFinder.ISublimeSettingsPickerResult = await sublimeFolderFinder.pickSublimeSettings();
+        const folderPickerResult: ISublimeSettingsPickerResult = await sublimeFolderFinder.pickSublimeSettings();
         if (folderPickerResult) {
-            if (!folderPickerResult.sublimeSettingsPath) {
+            if (folderPickerResult.sublimeSettingsPath) {
+                this.userSelectedPath = folderPickerResult.sublimeSettingsPath;
+            } else {
                 vscode.window.showWarningMessage('No settings folder found');
             }
-            this.userSelectedPath = folderPickerResult.path;
             this.isValid = !!folderPickerResult.sublimeSettingsPath;
             this._onDidChange.fire(previewUri);
         }
