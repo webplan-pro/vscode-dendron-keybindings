@@ -82,7 +82,6 @@ class Frontend {
 
     private executeCommand(cmd: string): void {
         const command = encodeURI(cmd);
-        console.log(command);
         var anchor = document.createElement('a');
         anchor.href = command;
         document.body.appendChild(anchor);
