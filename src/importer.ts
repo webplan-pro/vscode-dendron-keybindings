@@ -8,30 +8,19 @@ import { Setting, MappedSetting } from "./settings";
 export class Importer {
     private settingsMap: { [key: string]: string } = {};
 
-    private constructor() { }
-
-    public static async initAsync() {
-        return await new Importer().init();
+    private constructor(data: string) {
+        this.settingsMap = rjson.parse(data);
     }
 
-    private async init(): Promise<Importer> {
-        this.readSettingsMapAsync().then((settings) => {
-            this.settingsMap = settings;
-        });
-        return this;
-    }
-
-    private async readSettingsMapAsync(): Promise<{ [key: string]: string }> {
-        const mapPath = path.resolve(__dirname, "..", "mappings/settings.json");
-        const data: string = await fileSystem.readFileAsync(mapPath, 'utf-8');
-        return rjson.parse(data.toString());
+    public static async initAsync(mappingsPath = path.resolve(__dirname, "..", "mappings/settings.json")) {
+        const data: string = await fileSystem.readFileAsync(mappingsPath, 'utf-8');
+        return new Importer(data.toString());
     }
 
     public async getMappedSettingsAsync(settingsPath: string): Promise<MappedSetting[] | undefined> {
         const data = await fileSystem.promisifier(fs.readFile, settingsPath);
         const globalSettings = rjson.parse(data.toString());
-        const mappedGlobalSettings = this.mapAllSettings(globalSettings);
-        return mappedGlobalSettings;
+        return this.mapAllSettings(globalSettings);
     }
 
     public async updateSettingsAsync(settings: Setting[]): Promise<{}> {
