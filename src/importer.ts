@@ -1,23 +1,15 @@
-import * as fs from 'fs';
-import { resolve } from 'path';
 import * as rjson from 'relaxed-json';
 import * as vscode from 'vscode';
-import * as fileSystem from './fsWrapper';
 import { MappedSetting, Setting } from './settings';
 
 export class Importer {
-    public static async initAsync(mappingsFilePath: string = resolve(__dirname, '..', 'mappings/settings.json')): Promise<Importer> {
-        const data: string = await fileSystem.readFileAsync(mappingsFilePath, 'utf-8');
-        return new Importer(data);
-    }
     private settingsMappings: Map<string, any> = new Map();
-    private constructor(data: string) {
-        this.settingsMappings = this.json2Map(data);
+    public constructor(mappings: string) {
+        this.settingsMappings = this.json2Map(mappings);
     }
 
-    public async getMappedSettingsAsync(settingsPath: string): Promise<MappedSetting[] | undefined> {
-        const settingsTxt: string = await fileSystem.promisifier<string>(fs.readFile, settingsPath, 'utf-8');
-        return this.mapAllSettings(this.json2Map(settingsTxt));
+    public async getMappedSettingsAsync(sublimeSettings: string): Promise<MappedSetting[] | undefined> {
+        return this.mapAllSettings(this.json2Map(sublimeSettings));
     }
 
     public async updateSettingsAsync(settings: Setting[]): Promise<void> {

@@ -1,28 +1,27 @@
 import * as assert from 'assert';
-import * as temp from 'temp';
-import * as vscode from 'vscode';
-// import { promisifier } from '../fsWrapper';
+import { resolve } from 'path';
+import { readFileAsync } from '../fsWrapper';
+import { Importer } from '../importer';
+import {MappedSetting, Setting} from '../settings';
+import * as testData from './testData';
 
-suite('Extension Tests', async () => {
-    test('Something 1', async () => {
-        temp.track(); // Automatically track and cleanup files at exit
-        // const tempFile: temp.OpenFile = await promisifier<temp.OpenFile>(temp.open);
-        const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('editor');
-        let result: boolean = config.has('matchBrackets2');
-        assert.ok(result);
-        return result;
+suite('Importer Tests', async () => {
+
+    test('Import different types', async () => {
+        const expected = new Map<string, MappedSetting>([
+            ['numberSetting', new MappedSetting(new Setting('tab_size', 12), new Setting('editor.tabSize', 12))],
+            ['stringSetting', new MappedSetting(new Setting('word_separators', '-/_'), new Setting('editor.wordSeparators', '-/_'))],
+            ['boolSetting', new MappedSetting(new Setting('ensure_newline_at_eof_on_save', false), new Setting('files.insertFinalNewline', false))],
+            ['complexSetting', new MappedSetting(new Setting('draw_white_space', 'boundary'), new Setting('editor.renderWhitespace', 'boundary'))],
+        ]);
+
+        const importer: Importer = new Importer(await readFileAsync(resolve(__dirname, '..', '..', 'mappings/settings.json'), 'utf-8'));
+        const mappedSettings: MappedSetting[] = await importer.getMappedSettingsAsync(JSON.stringify(testData.sublimeSettings));
+        assert.ok(mappedSettings.length === 4);
+        expected.forEach((expSetting) => {
+            const setting = mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
+            assert.ok(setting.vscode.name === expSetting.vscode.name
+                && setting.vscode.value === expSetting.vscode.value);
+        });
     });
-
 });
-//     /**
-//      * 1. Read all mappings from file
-//      * 2. Move all existing settings to safe place
-//      * 3. Add each mapping with each possible value to settings
-//      * 4. Check if valid
-//      * 5. Restore orig settings
-//      */
-//     test("Something 1", () => {
-//         const importer = new Importer();
-//         // importer.getMappedSettings();
-//     });
-// });

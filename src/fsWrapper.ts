@@ -30,11 +30,15 @@ export async function getFilenamesInFolderAsync(folderPath: string): Promise<str
     return validFilenames;
 }
 
-async function isFileAsync(p: string) {
+async function isFileAsync(p: string): Promise<boolean> {
     const stats = await promisifier<fs.Stats>(fs.lstat, p);
     return stats.isFile();
 }
 
-export async function readFileAsync(filePath: string, encoding?: string) {
+export async function readFileAsync(filePath: string, encoding?: string): Promise<string> {
     return await promisifier<string>(fs.readFile, filePath, encoding);
+}
+
+export async function writeFileAsync(filePath: string, data: any, encoding?: string): Promise<void> {
+    return await promisifier<void>(fs.writeFile, filePath, data, encoding);
 }

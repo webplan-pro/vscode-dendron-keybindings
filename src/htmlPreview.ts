@@ -3,7 +3,8 @@ import { Importer } from './importer';
 import { MappedSetting, Setting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import { ISublimeSettingsPickerResult } from './sublimeFolderFinder';
-
+import { resolve } from 'path';
+import { readFileAsync} from './fsWrapper';
 export const scheme = 'vs-code-html-preview';
 const previewUri = vscode.Uri.parse(`${scheme}://authority/vs-code-html-preview`);
 
@@ -73,9 +74,9 @@ export class HTMLPreviewEditor {
         }
     }
 
-    private async getSettings(path: string): Promise<MappedSetting[]> {
+    private async getSettings(sublimeSettingsPath: string): Promise<MappedSetting[]> {
         const importer = await this.getImporter();
-        let settings: MappedSetting[] | undefined = await importer.getMappedSettingsAsync(path);
+        let settings: MappedSetting[] | undefined = await importer.getMappedSettingsAsync(await readFileAsync(sublimeSettingsPath, 'utf-8'));
         settings = settings.filter((s) => !MappedSetting.hasNoMatch(s));
         settings.sort((a, b) => {
             if (a.isDuplicate && b.isDuplicate) {
@@ -100,7 +101,8 @@ export class HTMLPreviewEditor {
 
     private async getImporter(): Promise<Importer> {
         if (!this._importer) {
-            this._importer = await Importer.initAsync();
+            const mappingsFilePath = resolve(__dirname, '..', 'mappings/settings.json');
+            this._importer = new Importer(await readFileAsync(mappingsFilePath, 'utf-8'));
         }
         return this._importer;
     }

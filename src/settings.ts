@@ -25,7 +25,7 @@ export class MappedSetting {
     this.vscode = setting;
   }
 
-  public markAsDuplicate(vscodeSetting: Setting) {
+  public markAsDuplicate(vscodeSetting: Setting): void {
     this.isDuplicate = true;
     this.duplicateVscodeSetting = vscodeSetting;
   }

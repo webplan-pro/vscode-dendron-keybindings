@@ -22,7 +22,7 @@
         ],
         "max-line-length": [
             true,
-            160
+            150
         ],
         "no-console": [
             true,
