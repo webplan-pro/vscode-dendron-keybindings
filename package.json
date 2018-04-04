@@ -29,7 +29,7 @@
     "contributes": {
         "keybindings": [
             {
-                "mac": "cmd+shift+ctrl+f",
+                "mac": "ctrl+shift+cmd+f",
                 "win": "shift+f11",
                 "linux": "shift+f11",
                 "key": "shift+f11",
@@ -411,13 +411,6 @@
                 "key": "ctrl+alt+shift+right",
                 "command": "cursorWordEndRightSelect",
                 "when": "editorTextFocus"
-            },
-            {
-                "mac": "cmd+ctrl+shift+f",
-                "win": "shift+f11",
-                "linux": "shift+f11",
-                "key": "shift+f11",
-                "command": "workbench.action.toggleZenMode"
             },
             {
                 "mac": "cmd+j",
