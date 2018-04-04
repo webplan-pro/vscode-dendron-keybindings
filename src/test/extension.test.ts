@@ -1,12 +1,12 @@
 import * as assert from 'assert';
 import * as temp from 'temp';
 import * as vscode from 'vscode';
-import { promisifier } from '../fsWrapper';
+// import { promisifier } from '../fsWrapper';
 
-suite("Extension Tests", async () => {
-    test("Something 1", async () => {
+suite('Extension Tests', async () => {
+    test('Something 1', async () => {
         temp.track(); // Automatically track and cleanup files at exit
-        const tempFile: temp.OpenFile = await promisifier<temp.OpenFile>(temp.open);
+        // const tempFile: temp.OpenFile = await promisifier<temp.OpenFile>(temp.open);
         const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration('editor');
         let result: boolean = config.has('matchBrackets2');
         assert.ok(result);

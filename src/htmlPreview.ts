@@ -20,7 +20,7 @@ interface IFrontendData {
 export class HTMLPreviewEditor {
 
     private _onDidChange: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
-    readonly onDidChange: vscode.Event<vscode.Uri> = this._onDidChange.event;
+    public readonly onDidChange: vscode.Event<vscode.Uri> = this._onDidChange.event;
     private userSelectedPath: vscode.Uri;
     private isValid: boolean = true;
 
@@ -62,11 +62,12 @@ export class HTMLPreviewEditor {
         }
     }
 
-    private async onImportSelectedSettings(packet: ISettingsPacket) {
+    private async onImportSelectedSettings(packet: ISettingsPacket): Promise<void> {
         if (packet.data) {
             const settings: Setting[] = packet.data.map((setting) => new Setting(setting.name, JSON.parse(setting.value)));
             const importer = await this.getImporter();
-            importer.updateSettingsAsync(settings);
+            await importer.updateSettingsAsync(settings);
+            await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         } else {
             console.error(`Unhandled message: ${JSON.stringify(packet.data)}`);
         }

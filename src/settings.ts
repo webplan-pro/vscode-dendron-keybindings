@@ -10,7 +10,7 @@ export class MappedSetting {
     return true;
   }
 
-  private static readonly NO_MATCH: string = "--No Match--";
+  private static readonly NO_MATCH: string = '--No Match--';
   public sublime: Setting;
   public vscode: Setting;
   public isDuplicate: boolean = false;

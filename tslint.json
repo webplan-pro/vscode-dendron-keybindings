@@ -12,6 +12,22 @@
         "no-duplicate-variable": true,
         "curly": true,
         "class-name": true,
+        "arrow-parens": false,
+        "max-classes-per-file": false,
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "member-variable-declaration"
+        ],
+        "max-line-length": [
+            true,
+            160
+        ],
+        "no-console": [
+            true,
+            "log"
+        ],
         "semicolon": [
             true,
             "always"
