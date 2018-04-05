@@ -4,14 +4,14 @@ import { Importer } from './importer';
 import { MappedSetting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 
-export class HTMLPreviewEditor {
+export class MultiQuickpick {
 
     private browseLabel: string = 'Browse...';
     constructor(context: vscode.ExtensionContext, private importer: Importer) {
-        context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => this.open()));
+        context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => this.openAsync()));
     }
 
-    private async open(sublimeSettingsPath?: vscode.Uri): Promise<void> {
+    private async openAsync(sublimeSettingsPath?: vscode.Uri): Promise<void> {
         sublimeSettingsPath = sublimeSettingsPath || await sublimeFolderFinder.getExistingDefaultPaths();
         if (!sublimeSettingsPath) {
             return this.showBrowseButtonAsync({
@@ -21,11 +21,11 @@ export class HTMLPreviewEditor {
             });
         }
 
-        const mappedSettings: MappedSetting[] = await this.getSettings(sublimeSettingsPath.fsPath);
+        const mappedSettings: MappedSetting[] = await this.getSettingsAsync(sublimeSettingsPath.fsPath);
         if (!mappedSettings.length) {
             return await this.showBrowseButtonAsync({
                 label: this.browseLabel,
-                description: 'No new settings to import from:',
+                description: '$(issue-opened) No new settings to import from:',
                 detail: sublimeSettingsPath.fsPath,
             });
         }
@@ -34,7 +34,7 @@ export class HTMLPreviewEditor {
             .map(this.setting2QuickPickItem), { canPickMany: true });
         if (pickedSettingNames) {
             const selSettings = pickedSettingNames.map(name => mappedSettings.find(set => this.setting2QuickPickItem(set).label === name.label)) as MappedSetting[];
-            this.importSelectedSettings(selSettings);
+            this.importSelectedSettingsAsync(selSettings);
         }
     }
 
@@ -45,34 +45,40 @@ export class HTMLPreviewEditor {
         }
 
         if (selectedItem.label === this.browseLabel) {
-            this.pickFolder();
+            this.pickFolderAsync();
         }
     }
 
     private setting2QuickPickItem(setting: MappedSetting): vscode.QuickPickItem {
         return {
             detail: setting.isDuplicate
-            ? `$(issue-opened) Overwrites existing value: ${setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value}`
-            : '',
+                ? `$(issue-opened) Overwrites existing value: ${setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value}`
+                : '',
             label: `${setting.sublime.name} $(arrow-right) ${setting.vscode.name}`,
             picked: !setting.isDuplicate,
         };
     }
-    private async pickFolder(): Promise<void> {
+    private async pickFolderAsync(): Promise<void> {
         const sublimeSettingsPath: vscode.Uri | undefined = await sublimeFolderFinder.pickSublimeSettings();
         if (sublimeSettingsPath) {
-            this.open(sublimeSettingsPath);
+            this.openAsync(sublimeSettingsPath);
+        } else {
+            await this.showBrowseButtonAsync({
+                label: this.browseLabel,
+                description: '$(issue-opened) Invalid Sublime settings path',
+                detail: 'Note that the settings path is different from the installation path',
+            });
         }
     }
 
-    private async importSelectedSettings(selectedSettings: MappedSetting[]): Promise<void> {
+    private async importSelectedSettingsAsync(selectedSettings: MappedSetting[]): Promise<void> {
         if (selectedSettings.length) {
             await this.importer.updateSettingsAsync(selectedSettings.map(selSettings => selSettings.vscode));
             await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         }
     }
 
-    private async getSettings(sublimeSettingsPath: string): Promise<MappedSetting[]> {
+    private async getSettingsAsync(sublimeSettingsPath: string): Promise<MappedSetting[]> {
         const importer = await this.importer;
         let settings: MappedSetting[] | undefined = await importer.getMappedSettingsAsync(await readFileAsync(sublimeSettingsPath, 'utf-8'));
         settings = settings.filter((s) => !MappedSetting.hasNoMatch(s));
