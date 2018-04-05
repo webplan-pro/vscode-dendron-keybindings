@@ -8,7 +8,7 @@ export class Importer {
         this.settingsMappings = this.json2Map(mappings);
     }
 
-    public async getMappedSettingsAsync(sublimeSettings: string): Promise<MappedSetting[] | undefined> {
+    public async getMappedSettingsAsync(sublimeSettings: string): Promise<MappedSetting[]> {
         return this.mapAllSettings(this.json2Map(sublimeSettings));
     }
 
@@ -25,36 +25,37 @@ export class Importer {
 
     private json2Map(toParse: string): Map<string, any> {
         const map = new Map<string, any>();
-        const parsed = rjson.parse(toParse);
+        const parsed: any = rjson.parse(toParse);
         Object.keys(parsed).forEach(key => map.set(key, parsed[key]));
         return map;
-    }
-    private getExistingValue(setting: Setting): any | undefined {
-        const config = vscode.workspace.getConfiguration();
-        const info = config.inspect(setting.name);
-        return info.globalValue === undefined ? undefined : info.globalValue;
     }
 
     private mapAllSettings(sublimeSettings: Map<string, any>): MappedSetting[] {
         const mappedSettings: MappedSetting[] = [];
-        sublimeSettings.forEach((value, key) => {
-            const ms: MappedSetting = new MappedSetting(new Setting(key, value));
+        const config = vscode.workspace.getConfiguration();
+
+        for (const [key, value] of sublimeSettings.entries()) {
+            const mappedSetting: MappedSetting = new MappedSetting(new Setting(key, value));
 
             const vscodeMapping = this.mapSetting(key, value);
             if (vscodeMapping) {
-                ms.setVscode(vscodeMapping);
-                const existingValue = this.getExistingValue(vscodeMapping);
-                if (existingValue) {
-                    ms.markAsDuplicate(new Setting(vscodeMapping.name, existingValue.toString()));
+                mappedSetting.setVscode(vscodeMapping);
+
+                const info = config.inspect(vscodeMapping.name);
+                if (info && info.globalValue) {
+                    if (info.globalValue === vscodeMapping.value) {
+                        continue;   // skip settings that already exist with the exact same value
+                    }
+                    mappedSetting.markAsDuplicate(new Setting(vscodeMapping.name, info.globalValue.toString()));
                 }
             }
-            mappedSettings.push(ms);
-        });
+            mappedSettings.push(mappedSetting);
+        }
         return mappedSettings;
     }
 
     private mapSetting(key: string, value: string): Setting | undefined {
-        const mappedSetting: string | object = this.settingsMappings.get(key);
+        const mappedSetting: any = this.settingsMappings.get(key);
         if (mappedSetting) {
             if (typeof mappedSetting === 'string') {
                 return new Setting(mappedSetting, value);
@@ -71,6 +72,6 @@ export class Importer {
             }
         }
 
-        return null;
+        return undefined;
     }
 }

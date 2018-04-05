@@ -16,7 +16,7 @@ function fsAccess(stringPath: string, checks: number): Promise<any> {
 
 // adapted from vs/base/common/async
 export function promisifier<T>(fn: Function, ...args: any[]): Promise<T> {
-    return new Promise((c, e) => fn(...args, (err, result) => err ? e(err) : c(result)));
+    return new Promise((c, e) => fn(...args, (err: any, result: any) => err ? e(err) : c(result)));
 }
 
 export async function getFilenamesInFolderAsync(folderPath: string): Promise<string[]> {

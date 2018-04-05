@@ -3,11 +3,6 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fileSystem from './fsWrapper';
 
-interface ISublimeFolders {
-    main: vscode.Uri;
-    settings: vscode.Uri;
-}
-
 export const sublimeSettingsFilename = 'Preferences.sublime-settings';
 
 const defaultSublimeSettingsPaths: Map<string, string[]> = new Map([
@@ -18,13 +13,12 @@ const defaultSublimeSettingsPaths: Map<string, string[]> = new Map([
 
 const settingsSubfoldersPath = path.join('Packages', 'User', 'Preferences.sublime-settings');
 
-export async function getExistingDefaultPaths(): Promise<ISublimeFolders[]> {
+export async function getExistingDefaultPaths(): Promise<vscode.Uri | undefined> {
     const foundPaths = await getOSDefaultPaths();
     if (!foundPaths.length) {
-        return [];
+        return undefined;
     }
-    const existingDefaultPaths: ISublimeFolders[] = await filterForExistingDirsAsync(foundPaths);
-    return existingDefaultPaths;
+    return filterForExistingDirsAsync(foundPaths);
 }
 
 export function getOSDefaultPaths(): string[] {
@@ -37,16 +31,15 @@ export function getOSDefaultPaths(): string[] {
     return foundPaths;
 }
 
-async function filterForExistingDirsAsync(paths: string[]): Promise<ISublimeFolders[]> {
-    const existingDirs: ISublimeFolders[] = [];
+async function filterForExistingDirsAsync(paths: string[]): Promise<vscode.Uri | undefined> {
     for (const p of paths) {
         const settingsPath: string = path.resolve(p, settingsSubfoldersPath);
         if (await fileSystem.pathExists(settingsPath)) {
-            existingDirs.push({ main: vscode.Uri.file(p), settings: vscode.Uri.file(settingsPath) });
+            return vscode.Uri.file(settingsPath);
         }
     }
 
-    return existingDirs;
+    return undefined;
 }
 
 export interface ISublimeSettingsPickerResult {
@@ -54,21 +47,11 @@ export interface ISublimeSettingsPickerResult {
     sublimeSettingsPath?: vscode.Uri;
 }
 
-export async function pickSublimeSettings(): Promise<ISublimeSettingsPickerResult | undefined> {
+export async function pickSublimeSettings(): Promise<vscode.Uri | undefined> {
     const folderPaths = await vscode.window.showOpenDialog({ canSelectFolders: true });
     if (!folderPaths) {
         return undefined;
     }
 
-    const sublimeSettingsFolders: ISublimeFolders[] = await filterForExistingDirsAsync([folderPaths[0].fsPath]);
-    if (!sublimeSettingsFolders.length) {
-        return {
-            path: folderPaths[0],
-        };
-    }
-
-    return {
-        path: folderPaths[0],
-        sublimeSettingsPath: sublimeSettingsFolders[0].settings,
-    };
+    return await filterForExistingDirsAsync([folderPaths[0].fsPath]);
 }

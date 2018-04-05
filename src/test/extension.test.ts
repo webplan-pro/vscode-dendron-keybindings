@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import { resolve } from 'path';
 import { readFileAsync } from '../fsWrapper';
 import { Importer } from '../importer';
-import {MappedSetting, Setting} from '../settings';
+import { MappedSetting, Setting } from '../settings';
 import * as testData from './testData';
 
 suite('Importer Tests', async () => {
@@ -20,8 +20,12 @@ suite('Importer Tests', async () => {
         assert.ok(mappedSettings.length === 4);
         expected.forEach((expSetting) => {
             const setting = mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
-            assert.ok(setting.vscode.name === expSetting.vscode.name
-                && setting.vscode.value === expSetting.vscode.value);
+            if (!setting) {
+                assert.fail(setting, 'A setting');
+            } else {
+                assert.ok(setting.vscode.name === expSetting.vscode.name
+                    && setting.vscode.value === expSetting.vscode.value);
+            }
         });
     });
 });
