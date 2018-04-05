@@ -6,6 +6,7 @@ import * as sublimeFolderFinder from './sublimeFolderFinder';
 
 export class HTMLPreviewEditor {
 
+    private browseLabel: string = 'Browse...';
     constructor(context: vscode.ExtensionContext, private importer: Importer) {
         context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => this.open()));
     }
@@ -14,7 +15,8 @@ export class HTMLPreviewEditor {
         sublimeSettingsPath = sublimeSettingsPath || await sublimeFolderFinder.getExistingDefaultPaths();
         if (!sublimeSettingsPath) {
             return this.showBrowseButtonAsync({
-                label: '$(issue-opened) No Sublime settings folder found. It\'s usually located here:',
+                label: this.browseLabel,
+                description: '$(issue-opened) No Sublime settings folder found. It\'s usually located here:',
                 detail: sublimeFolderFinder.getOSDefaultPaths().join(' '),
             });
         }
@@ -22,7 +24,8 @@ export class HTMLPreviewEditor {
         const mappedSettings: MappedSetting[] = await this.getSettings(sublimeSettingsPath.fsPath);
         if (!mappedSettings.length) {
             return await this.showBrowseButtonAsync({
-                label: '$(issue-opened) No new settings to import from',
+                label: this.browseLabel,
+                description: 'No new settings to import from:',
                 detail: sublimeSettingsPath.fsPath,
             });
         }
@@ -36,14 +39,12 @@ export class HTMLPreviewEditor {
     }
 
     private async showBrowseButtonAsync(msgItem: vscode.QuickPickItem): Promise<void> {
-        const browseString = 'Browse...';
-        const browseItem: vscode.QuickPickItem = { label: browseString };
-        const selectedItem: vscode.QuickPickItem | undefined = await vscode.window.showQuickPick([msgItem, browseItem]);
+        const selectedItem: vscode.QuickPickItem | undefined = await vscode.window.showQuickPick([msgItem]);
         if (!selectedItem) {
             return undefined;
         }
 
-        if (selectedItem.label === browseString) {
+        if (selectedItem.label === this.browseLabel) {
             this.pickFolder();
         }
     }
