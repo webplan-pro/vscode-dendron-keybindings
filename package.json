@@ -5,7 +5,7 @@
     "version": "1.0.1",
     "publisher": "auchenberg",
     "engines": {
-        "vscode": "^1.18.0"
+        "vscode": "^1.22.0"
     },
     "categories": [
         "Other"
@@ -16,13 +16,18 @@
         "Sublime Text"
     ],
     "activationEvents": [
-        "onCommand:extension.importFromSublime"
+        "onCommand:extension.importFromSublimePicker",
+        "onCommand:extension.importFromSublimeHTML"
     ],
     "contributes": {
         "commands": [
             {
-                "command": "extension.importFromSublime",
-                "title": "Import Sublime Text settings"
+                "command": "extension.importFromSublimePicker",
+                "title": "Import Sublime Text settings - Picker"
+            },
+            {
+                "command": "extension.importFromSublimeHTML",
+                "title": "Import Sublime Text settings - HTML"
             }
         ],
         "configuration": {
@@ -62,7 +67,7 @@
         "@types/node": "^7.0.43",
         "@types/relaxed-json": "^1.0.0",
         "typescript": "^2.0.3",
-        "vscode": "^1.1.5"
+        "vscode": "^1.1.14"
     },
     "dependencies": {
         "relaxed-json": "^1.0.1"

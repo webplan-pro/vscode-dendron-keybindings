@@ -1,10 +1,8 @@
 import * as vscode from 'vscode';
+import { readFileAsync } from './fsWrapper';
 import { Importer } from './importer';
 import { MappedSetting, Setting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
-import { ISublimeSettingsPickerResult } from './sublimeFolderFinder';
-import { resolve } from 'path';
-import { readFileAsync} from './fsWrapper';
 export const scheme = 'vs-code-html-preview';
 const previewUri = vscode.Uri.parse(`${scheme}://authority/vs-code-html-preview`);
 
@@ -22,43 +20,42 @@ export class HTMLPreviewEditor {
 
     private _onDidChange: vscode.EventEmitter<vscode.Uri> = new vscode.EventEmitter<vscode.Uri>();
     public readonly onDidChange: vscode.Event<vscode.Uri> = this._onDidChange.event;
-    private userSelectedPath: vscode.Uri;
+    private userSelectedPath: string = '';
     private isValid: boolean = true;
 
-    private _importer: Importer;
-
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(private context: vscode.ExtensionContext, private importer: Importer) {
         context.subscriptions.push(this._onDidChange);
-        context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => this.open()));
+        context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublimeHTML', () => this.open()));
         context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider(scheme, this));
         context.subscriptions.push(vscode.commands.registerCommand('extension.onBrowseButtonClicked', () => this.pickFolder()));
-        context.subscriptions.push(vscode.commands.registerCommand('extension.onImportSelectedSettings', (packet: ISettingsPacket) => this.onImportSelectedSettings(packet)));
+        context.subscriptions.push(vscode.commands.registerCommand('extension.onImportSelectedSettings',
+            (packet: ISettingsPacket) => this.onImportSelectedSettings(packet)));
         context.subscriptions.push(vscode.commands.registerCommand('extension.reload', () => this._onDidChange.fire(previewUri)));
     }
 
     public async provideTextDocumentContent(): Promise<string> {
-        const path = await this.getSettingsPath();
-        const settings: MappedSetting[] | undefined = this.isValid && path ? await this.getSettings(path.fsPath) : [];
+        const settingsPath = await this.getSettingsPath();
+        const settings: MappedSetting[] | undefined = this.isValid && settingsPath ? await this.getSettings(settingsPath) : [];
         return this.getHTML({
             mappedSettings: settings,
-            sublimeSettingsPath: path.fsPath,
+            sublimeSettingsPath: settingsPath || '',
             isValid: this.isValid,
         });
     }
 
-    private open() {
+    private open(): void {
         vscode.commands.executeCommand<any>('vscode.previewHtml', previewUri, vscode.ViewColumn.Active, 'Sublime Settings Importer');
     }
 
-    private async pickFolder() {
-        const folderPickerResult: ISublimeSettingsPickerResult = await sublimeFolderFinder.pickSublimeSettings();
-        if (folderPickerResult) {
-            if (folderPickerResult.sublimeSettingsPath) {
-                this.userSelectedPath = folderPickerResult.sublimeSettingsPath;
+    private async pickFolder(): Promise<void> {
+        const sublimeSettingsPath: vscode.Uri | undefined = await sublimeFolderFinder.pickSublimeSettings();
+        if (sublimeSettingsPath) {
+            if (sublimeSettingsPath) {
+                this.userSelectedPath = sublimeSettingsPath.fsPath;
             } else {
                 vscode.window.showWarningMessage('No settings folder found');
             }
-            this.isValid = !!folderPickerResult.sublimeSettingsPath;
+            this.isValid = !!sublimeSettingsPath;
             this._onDidChange.fire(previewUri);
         }
     }
@@ -66,8 +63,7 @@ export class HTMLPreviewEditor {
     private async onImportSelectedSettings(packet: ISettingsPacket): Promise<void> {
         if (packet.data) {
             const settings: Setting[] = packet.data.map((setting) => new Setting(setting.name, JSON.parse(setting.value)));
-            const importer = await this.getImporter();
-            await importer.updateSettingsAsync(settings);
+            await this.importer.updateSettingsAsync(settings);
             await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         } else {
             console.error(`Unhandled message: ${JSON.stringify(packet.data)}`);
@@ -75,7 +71,7 @@ export class HTMLPreviewEditor {
     }
 
     private async getSettings(sublimeSettingsPath: string): Promise<MappedSetting[]> {
-        const importer = await this.getImporter();
+        const importer = await this.importer;
         let settings: MappedSetting[] | undefined = await importer.getMappedSettingsAsync(await readFileAsync(sublimeSettingsPath, 'utf-8'));
         settings = settings.filter((s) => !MappedSetting.hasNoMatch(s));
         settings.sort((a, b) => {
@@ -91,20 +87,12 @@ export class HTMLPreviewEditor {
         return settings;
     }
 
-    private async getSettingsPath(): Promise<vscode.Uri> {
+    private async getSettingsPath(): Promise<string | undefined> {
         if (this.userSelectedPath) {
             return this.userSelectedPath;
         }
-        const defaultSublimePaths = await sublimeFolderFinder.getExistingDefaultPaths();
-        return defaultSublimePaths && defaultSublimePaths.length ? defaultSublimePaths[0].settings : null;
-    }
-
-    private async getImporter(): Promise<Importer> {
-        if (!this._importer) {
-            const mappingsFilePath = resolve(__dirname, '..', 'mappings/settings.json');
-            this._importer = new Importer(await readFileAsync(mappingsFilePath, 'utf-8'));
-        }
-        return this._importer;
+        const defaultSublimePath: vscode.Uri | undefined = await sublimeFolderFinder.getExistingDefaultPaths();
+        return defaultSublimePath ? defaultSublimePath.fsPath : undefined;
     }
 
     private getHTML(frontendData: IFrontendData): string {

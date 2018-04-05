@@ -14,6 +14,7 @@
         "class-name": true,
         "arrow-parens": false,
         "max-classes-per-file": false,
+        "object-literal-sort-keys": false,
         "typedef": [
             true,
             "call-signature",
@@ -22,7 +23,7 @@
         ],
         "max-line-length": [
             true,
-            150
+            170
         ],
         "no-console": [
             true,

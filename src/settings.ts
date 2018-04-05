@@ -14,7 +14,7 @@ export class MappedSetting {
   public sublime: Setting;
   public vscode: Setting;
   public isDuplicate: boolean = false;
-  public duplicateVscodeSetting: Setting;
+  public duplicateVscodeSetting?: Setting;
 
   constructor(sublimeSetting: Setting, vscodeSetting?: Setting) {
     this.sublime = sublimeSetting;

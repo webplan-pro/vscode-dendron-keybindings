@@ -13,11 +13,11 @@ class MappedSetting {
         return true;
     }
 
-    private static readonly NO_MATCH: string = "--No Match--";
+    private static readonly NO_MATCH: string = '--No Match--';
     public sublime: Setting;
     public vscode: Setting;
     public isDuplicate: boolean = false;
-    public duplicateVscodeSetting: Setting;
+    public duplicateVscodeSetting?: Setting;
 
     constructor(sublimeSetting: Setting, vscodeSetting?: Setting) {
         this.sublime = sublimeSetting;
@@ -28,7 +28,7 @@ class MappedSetting {
         this.vscode = setting;
     }
 
-    public markAsDuplicate(vscodeSetting: Setting) {
+    public markAsDuplicate(vscodeSetting: Setting): void {
         this.isDuplicate = true;
         this.duplicateVscodeSetting = vscodeSetting;
     }
@@ -174,6 +174,7 @@ class Frontend {
     }
 
     private getVscodeSettingsFromParentTR(td: HTMLElement): Setting {
+        // @ts-ignore
         return { name: td.parentElement.parentElement.dataset.vscodename, value: td.parentElement.parentElement.dataset.vscodevalue };
     }
 
@@ -200,6 +201,7 @@ class Frontend {
 }
 
 function onNewSettings(settingsTable: SettingsTable) {
+    // @ts-ignore
     const { mappedSettings, sublimeSettingsPath, isValid } = JSON.parse(decodeURI(document.getElementById('frontendData').dataset.frontend));
     if (sublimeSettingsPath) {
         const sublimeSettingsPathContainer = document.getElementById('settingsPathContainer');
