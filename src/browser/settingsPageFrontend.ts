@@ -182,16 +182,16 @@ class Frontend {
         this.sendSelectedSettingsToExtension(settings);
     }
 
-    private sendSelectedSettingsToExtension(settings: Setting[]) {
+    private sendSelectedSettingsToExtension(settings: Setting[]): void {
         const obj = {
-            data: settings
+            data: settings,
         };
         this.executeCommand('command:extension.onImportSelectedSettings?' + JSON.stringify(obj));
     }
 
     private executeCommand(cmd: string): void {
         const command = encodeURI(cmd);
-        var anchor = document.createElement('a');
+        const anchor = document.createElement('a');
         anchor.href = command;
         document.body.appendChild(anchor);
         anchor.click();
