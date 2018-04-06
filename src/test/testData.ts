@@ -1,6 +1,6 @@
 export const sublimeSettings = {
     "draw_white_space$test": "selection",
-    "word_separators$test": "-/_",
+    "word_separators$test": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?",
     "tab_size$test": 12,
     "ensure_newline_at_eof_on_save$test": false,
 };

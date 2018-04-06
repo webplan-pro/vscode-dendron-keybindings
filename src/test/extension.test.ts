@@ -7,7 +7,7 @@ suite('Importer Tests', async () => {
 
     const expected = new Map<string, MappedSetting>([
         ['numberSetting', new MappedSetting(new Setting('tab_size$test', 12), new Setting('editor.tabSize$test', 12))],
-        ['stringSetting', new MappedSetting(new Setting('word_separators$test', '-/_'), new Setting('editor.wordSeparators$test', '-/_'))],
+        ['stringSetting', new MappedSetting(new Setting('word_separators$test', "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"), new Setting('editor.wordSeparators$test', "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"))],
         ['boolSetting', new MappedSetting(new Setting('ensure_newline_at_eof_on_save$test', false), new Setting('files.insertFinalNewline$test', false))],
         ['complexSetting', new MappedSetting(new Setting('draw_white_space$test', 'boundary'), new Setting('editor.renderWhitespace$test', 'boundary'))],
     ]);

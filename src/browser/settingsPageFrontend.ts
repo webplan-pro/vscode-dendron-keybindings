@@ -134,9 +134,9 @@ class Frontend {
 
         this.submitButton.addEventListener('click', () => this.sendSettings(this.checkboxes.filter(chkbox => chkbox.checked)));
 
-        this.browseButton.addEventListener('click', () => this.executeCommand('command:extension.onBrowseButtonClicked'));
+        this.browseButton.addEventListener('click', () => this.executeCommand(encodeURIComponent('command:extension.onBrowseButtonClicked')));
 
-        this.reloadIcon.addEventListener('click', () => this.executeCommand('command:extension.reload?' + JSON.stringify(this.settingsPathContainer.value)));
+        this.reloadIcon.addEventListener('click', () => this.executeCommand('command:extension.reload?' + encodeURIComponent(JSON.stringify(this.settingsPathContainer.value))));
     }
 
     private onDidClickSelectAllCheckbox() {
@@ -185,15 +185,14 @@ class Frontend {
 
     private sendSelectedSettingsToExtension(settings: Setting[]): void {
         const obj = {
-            data: settings,
+            data: settings.map(setting => new Setting(encodeURIComponent(setting.name), encodeURIComponent(setting.value))),
         };
-        this.executeCommand('command:extension.onImportSelectedSettings?' + JSON.stringify(obj));
+        this.executeCommand(encodeURI('command:extension.onImportSelectedSettings?' + JSON.stringify(obj)));
     }
 
     private executeCommand(cmd: string): void {
-        const command = encodeURI(cmd);
         const anchor = document.createElement('a');
-        anchor.href = command;
+        anchor.href = cmd;
         document.body.appendChild(anchor);
         anchor.click();
         document.body.removeChild(anchor);
@@ -204,32 +203,32 @@ function onNewSettings(settingsTable: SettingsTable) {
     // @ts-ignore
     const { mappedSettings, sublimeSettingsPath, isValid } = JSON.parse(decodeURI(document.getElementById('frontendData').dataset.frontend));
     if (sublimeSettingsPath) {
-        const sublimeSettingsPathContainer = document.getElementById('settingsPathContainer');
+        const sublimeSettingsPathContainer = document.getElementById('settingsPathContainer')!; // '!' = trust me, this is not null --> https://stackoverflow.com/a/40640854
         sublimeSettingsPathContainer.title = sublimeSettingsPath;
         sublimeSettingsPathContainer.setAttribute('value', sublimeSettingsPath);
 
         if (isValid && mappedSettings.length) {
-            const mappedSettingsContainer = document.querySelector('#mappedSettings');
+            const mappedSettingsContainer = document.querySelector('#mappedSettings')!;
             const mappedSettingsEls = settingsTable.renderMappedSettings(mappedSettings);
             for (const mappedSetting of mappedSettingsEls) {
                 mappedSettingsContainer.appendChild(mappedSetting);
             }
         } else {
-            const settingsImporter = document.querySelector('#sublimeSettingsImporter');
+            const settingsImporter = document.querySelector('#sublimeSettingsImporter')!;
             const noSettingsFoundContainer = document.createElement('h4');
             addClasses(noSettingsFoundContainer, 'noSettingsFound');
             if (mappedSettings.length === 0) {
-                noSettingsFoundContainer.textContent = `No settings to import`;
+                noSettingsFoundContainer.textContent = 'No settings to import';
             } else {
-                noSettingsFoundContainer.textContent = `No Sublime settings folder found`;
+                noSettingsFoundContainer.textContent = 'No Sublime settings folder found';
             }
 
             settingsImporter.appendChild(noSettingsFoundContainer);
-            const settingsTable = document.querySelector('#settingsTableMapper');
+            const settingsTable = document.querySelector('#settingsTableMapper')!;
             settingsTable.classList.add('hidden');
         }
     } else {
-        const settingsTable = document.querySelector('#settingsTableMapper');
+        const settingsTable = document.querySelector('#settingsTableMapper')!;
         settingsTable.classList.add('hidden');
     }
 }

@@ -62,7 +62,8 @@ export class HTMLPreviewEditor {
 
     private async onImportSelectedSettings(packet: ISettingsPacket): Promise<void> {
         if (packet.data) {
-            const settings: Setting[] = packet.data.map((setting) => new Setting(setting.name, JSON.parse(setting.value)));
+            const settings: Setting[] = packet.data.map((setting) =>
+                new Setting(decodeURIComponent(setting.name), JSON.parse(decodeURIComponent(setting.value))));
             await this.importer.updateSettingsAsync(settings);
             await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
         } else {
