@@ -39,12 +39,8 @@ export class MultiQuickpick {
     }
 
     private async showBrowseButtonAsync(msgItem: vscode.QuickPickItem): Promise<void> {
-        const selectedItem: vscode.QuickPickItem | undefined = await vscode.window.showQuickPick([msgItem]);
-        if (!selectedItem) {
-            return undefined;
-        }
-
-        if (selectedItem.label === this.browseLabel) {
+        const browse: vscode.QuickPickItem | undefined = await vscode.window.showQuickPick([msgItem]);
+        if (browse) {
             this.pickFolderAsync();
         }
     }

@@ -41,7 +41,7 @@ class SettingsTable {
     }
 
     private renderMappedSetting(setting: MappedSetting, index: number): HTMLElement {
-        let settingRow = document.createElement('div');
+        const settingRow = document.createElement('div');
         addClasses(settingRow, 'settingRow clickable_parent');
         if (index % 2 === 0) {
             addClasses(settingRow, 'odd');
@@ -56,7 +56,7 @@ class SettingsTable {
         return settingRow;
     }
 
-    private renderCheckbox(setting: MappedSetting) {
+    private renderCheckbox(setting: MappedSetting): HTMLDivElement {
         const checkbox: HTMLInputElement = document.createElement('input') as HTMLInputElement;
         checkbox.type = 'checkbox';
         if (!setting.isDuplicate) {
@@ -139,31 +139,31 @@ class Frontend {
         this.reloadIcon.addEventListener('click', () => this.executeCommand('command:extension.reload?' + encodeURIComponent(JSON.stringify(this.settingsPathContainer.value))));
     }
 
-    private onDidClickSelectAllCheckbox() {
+    private onDidClickSelectAllCheckbox(): void {
         for (const chkbox of this.checkboxes) {
             chkbox.checked = this.selectAllCheckbox.checked;
         }
         this.refreshStates();
     }
 
-    private initUI() {
+    private initUI(): void {
         this.refreshStates();
         const { total, numChecked } = this.numCheckboxesChecked();
         this.selectAllCheckbox.checked = total === numChecked;
     }
 
-    private numCheckboxesChecked() {
+    private numCheckboxesChecked(): {total: number, numChecked: number} {
         const numChecked = this.checkboxes.filter((box) => box.checked).length;
         return { total: this.checkboxes.length, numChecked };
     }
 
-    private refreshStates() {
+    private refreshStates(): void {
         const chkboxStates = this.numCheckboxesChecked();
         this.setImportButtonState(chkboxStates.numChecked > 0);
         this.selectAllCheckbox.checked = chkboxStates.numChecked === chkboxStates.total;
     }
 
-    private setImportButtonState(on: boolean) {
+    private setImportButtonState(on: boolean): void {
         if (on) {
             this.submitButton.removeAttribute('disabled');
             this.submitButton.classList.remove('disabled');
@@ -199,7 +199,7 @@ class Frontend {
     }
 }
 
-function onNewSettings(settingsTable: SettingsTable) {
+function onNewSettings(settingsTable: SettingsTable): void {
     // @ts-ignore
     const { mappedSettings, sublimeSettingsPath, isValid } = JSON.parse(decodeURI(document.getElementById('frontendData').dataset.frontend));
     if (sublimeSettingsPath) {
@@ -224,12 +224,12 @@ function onNewSettings(settingsTable: SettingsTable) {
             }
 
             settingsImporter.appendChild(noSettingsFoundContainer);
-            const settingsTable = document.querySelector('#settingsTableMapper')!;
-            settingsTable.classList.add('hidden');
+            const settingsTableMapper = document.querySelector('#settingsTableMapper')!;
+            settingsTableMapper.classList.add('hidden');
         }
     } else {
-        const settingsTable = document.querySelector('#settingsTableMapper')!;
-        settingsTable.classList.add('hidden');
+        const settingsTableMapper = document.querySelector('#settingsTableMapper')!;
+        settingsTableMapper.classList.add('hidden');
     }
 }
 
