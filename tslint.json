@@ -22,8 +22,7 @@
             "member-variable-declaration"
         ],
         "max-line-length": [
-            true,
-            180
+            false
         ],
         "no-console": [
             true,

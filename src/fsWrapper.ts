@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 
 export async function pathExists(stringPath: string): Promise<boolean> {
     try {
@@ -19,26 +18,6 @@ export function promisifier<T>(fn: Function, ...args: any[]): Promise<T> {
     return new Promise((c, e) => fn(...args, (err: any, result: any) => err ? e(err) : c(result)));
 }
 
-export async function getFilenamesInFolderAsync(folderPath: string): Promise<string[]> {
-    const filenames: string[] = await promisifier<string[]>(fs.readdir, folderPath);
-    const validFilenames: string[] = [];
-    for (const filename of filenames) {
-        if (await isFileAsync(path.join(folderPath, filename))) {
-            validFilenames.push(filename);
-        }
-    }
-    return validFilenames;
-}
-
-async function isFileAsync(p: string): Promise<boolean> {
-    const stats = await promisifier<fs.Stats>(fs.lstat, p);
-    return stats.isFile();
-}
-
 export async function readFileAsync(filePath: string, encoding?: string): Promise<string> {
     return await promisifier<string>(fs.readFile, filePath, encoding);
-}
-
-export async function writeFileAsync(filePath: string, data: any, encoding?: string): Promise<void> {
-    return await promisifier<void>(fs.writeFile, filePath, data, encoding);
 }

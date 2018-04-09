@@ -25,7 +25,7 @@ export function getOSDefaultPaths(): string[] {
     const platform: NodeJS.Platform = os.platform();
     const foundPaths: string[] | undefined = defaultSublimeSettingsPaths.get(platform);
     if (!foundPaths) {
-        console.log('OS could not be identified. No default paths provided.');
+        console.error('OS could not be identified. No default paths provided.');
         return [];
     }
     return foundPaths;
@@ -40,18 +40,4 @@ async function filterForExistingDirsAsync(paths: string[]): Promise<vscode.Uri |
     }
 
     return undefined;
-}
-
-export interface ISublimeSettingsPickerResult {
-    path: vscode.Uri;
-    sublimeSettingsPath?: vscode.Uri;
-}
-
-export async function pickSublimeSettings(): Promise<vscode.Uri | undefined> {
-    const folderPaths = await vscode.window.showOpenDialog({ canSelectFolders: true });
-    if (!folderPaths) {
-        return undefined;
-    }
-
-    return await filterForExistingDirsAsync([folderPaths[0].fsPath]);
 }

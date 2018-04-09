@@ -1,5 +1,6 @@
-export class Setting {
-  constructor(readonly name: string, readonly value: any) {}
+export interface ISetting {
+  readonly name: string;
+  readonly value: any;
 }
 
 export class MappedSetting {
@@ -11,21 +12,21 @@ export class MappedSetting {
   }
 
   private static readonly NO_MATCH: string = '--No Match--';
-  public sublime: Setting;
-  public vscode: Setting;
+  public sublime: ISetting;
+  public vscode: ISetting;
   public isDuplicate: boolean = false;
-  public duplicateVscodeSetting?: Setting;
+  public duplicateVscodeSetting?: ISetting;
 
-  constructor(sublimeSetting: Setting, vscodeSetting?: Setting) {
+  constructor(sublimeSetting: ISetting, vscodeSetting?: ISetting) {
     this.sublime = sublimeSetting;
-    this.vscode = vscodeSetting || new Setting(MappedSetting.NO_MATCH, MappedSetting.NO_MATCH);
+    this.vscode = vscodeSetting || {name: MappedSetting.NO_MATCH, value: MappedSetting.NO_MATCH};
   }
 
-  public setVscode(setting: Setting): void {
+  public setVscode(setting: ISetting): void {
     this.vscode = setting;
   }
 
-  public markAsDuplicate(vscodeSetting: Setting): void {
+  public markAsDuplicate(vscodeSetting: ISetting): void {
     this.isDuplicate = true;
     this.duplicateVscodeSetting = vscodeSetting;
   }

@@ -1,23 +1,23 @@
 import * as assert from 'assert';
-import { Importer } from '../importer';
-import { MappedSetting, Setting } from '../settings';
+import { Mapper, AnalyzedSettings } from '../mapper';
+import { MappedSetting, ISetting } from '../settings';
 import * as testData from './testData';
 
 suite('Importer Tests', async () => {
 
     const expected = new Map<string, MappedSetting>([
-        ['numberSetting', new MappedSetting(new Setting('tab_size$test', 12), new Setting('editor.tabSize$test', 12))],
-        ['stringSetting', new MappedSetting(new Setting('word_separators$test', "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"), new Setting('editor.wordSeparators$test', "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"))],
-        ['boolSetting', new MappedSetting(new Setting('ensure_newline_at_eof_on_save$test', false), new Setting('files.insertFinalNewline$test', false))],
-        ['complexSetting', new MappedSetting(new Setting('draw_white_space$test', 'boundary'), new Setting('editor.renderWhitespace$test', 'boundary'))],
+        ['numberSetting', new MappedSetting({ name: 'tab_size$test', value: 12 }, { name: 'editor.tabSize$test', value: 12 })],
+        ['stringSetting', new MappedSetting({ name: 'word_separators$test', value: "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?" }, { name: 'editor.wordSeparators$test', value: "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?" })],
+        ['boolSetting', new MappedSetting({ name: 'ensure_newline_at_eof_on_save$test', value: false }, { name: 'files.insertFinalNewline$test', value: false })],
+        ['complexSetting', new MappedSetting({ name: 'draw_white_space$test', value: 'boundary' }, { name: 'editor.renderWhitespace$test', value: 'boundary' })],
     ]);
 
     test('Import different types', async () => {
-        const importer: Importer = new Importer(JSON.stringify(testData.testMappings));
-        const mappedSettings: MappedSetting[] = await importer.getMappedSettingsAsync(JSON.stringify(testData.sublimeSettings));
-        assert.ok(mappedSettings.length === 4, `mappedSettings.length is ${mappedSettings.length} instead of 4`);
+        const importer: Mapper = new Mapper(JSON.stringify(testData.testMappings));
+        const settings: AnalyzedSettings = await importer.getMappedSettings(JSON.stringify(testData.sublimeSettings));
+        assert.ok(settings.mappedSettings.length === 4, `mappedSettings.length is ${settings.mappedSettings.length} instead of 4`);
         expected.forEach((expSetting) => {
-            const setting = mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
+            const setting = settings.mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
             if (!setting) {
                 assert.fail(JSON.stringify(expSetting), 'Could not find mapped setting');
             } else {
