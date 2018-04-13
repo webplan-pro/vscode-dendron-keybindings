@@ -16,18 +16,13 @@
         "Sublime Text"
     ],
     "activationEvents": [
-        "onCommand:extension.importFromSublimePicker",
-        "onCommand:extension.importFromSublimeHTML"
+        "onCommand:extension.importFromSublime"
     ],
     "contributes": {
         "commands": [
             {
-                "command": "extension.importFromSublimePicker",
-                "title": "Import Sublime Text settings - Picker"
-            },
-            {
-                "command": "extension.importFromSublimeHTML",
-                "title": "Import Sublime Text settings - HTML"
+                "command": "extension.importFromSublime",
+                "title": "Import Sublime Text settings"
             }
         ],
         "configuration": {

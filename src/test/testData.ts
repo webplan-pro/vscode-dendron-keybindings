@@ -5,6 +5,10 @@ export const sublimeSettings = {
     "ensure_newline_at_eof_on_save$test": false,
 };
 
+export const sublimeSettingSameKeyVal = { "sameKeySameValue": true };
+export const sublimeSettingSameKeyDiffVal = { "sameKeyDiffVal": 'asdfjadfsla' };
+export const sublimeSettingNoMapping = { "noMapping": 'someVal' };
+
 export const testMappings = {
     "tab_size$test": "editor.tabSize$test", // Number
     "word_separators$test": "editor.wordSeparators$test", // String
@@ -20,4 +24,6 @@ export const testMappings = {
             "editor.renderWhitespace$test": "boundary"
         },
     },
+    "sameKeySameValue": "editor.sameKeySameValue",
+    "sameKeyDiffVal": "editor.sameKeyDiffVal",
 };

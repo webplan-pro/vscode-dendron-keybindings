@@ -1,7 +1,8 @@
 import * as assert from 'assert';
-import { Mapper, AnalyzedSettings } from '../mapper';
-import { MappedSetting, ISetting } from '../settings';
+import { AnalyzedSettings, Mapper } from '../mapper';
+import { ISetting, MappedSetting } from '../settings';
 import * as testData from './testData';
+import * as vscode from 'vscode';
 
 suite('Importer Tests', async () => {
 
@@ -13,8 +14,9 @@ suite('Importer Tests', async () => {
     ]);
 
     test('Import different types', async () => {
-        const importer: Mapper = new Mapper(JSON.stringify(testData.testMappings));
-        const settings: AnalyzedSettings = await importer.getMappedSettings(JSON.stringify(testData.sublimeSettings));
+        const testMappings = Promise.resolve(testData.testMappings);
+        const mapper: Mapper = new Mapper(testMappings);
+        const settings: AnalyzedSettings = await mapper.getMappedSettings(JSON.stringify(testData.sublimeSettings));
         assert.ok(settings.mappedSettings.length === 4, `mappedSettings.length is ${settings.mappedSettings.length} instead of 4`);
         expected.forEach((expSetting) => {
             const setting = settings.mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
@@ -26,5 +28,49 @@ suite('Importer Tests', async () => {
                     `Setting ${setting.vscode.name}: ${setting.vscode.value} failed`);
             }
         });
+    });
+
+    const alreadyExistingVsSettings: ISetting[] = [
+        { name: 'editor.sameKeySameValue', value: true },
+        { name: 'editor.sameKeyDiffVal', value: 'jajslfn' },
+    ];
+
+    test('Categorization of settings works', async () => {
+        const mockConfig = {
+            inspect: ((s: string) => {
+                const foundSetting: ISetting | undefined = alreadyExistingVsSettings.find((setting) => setting.name === s);
+                if (foundSetting) {
+                    return { globalValue: foundSetting.value };
+                }
+                return undefined;
+            }),
+        };
+
+        const testMappings = Promise.resolve(testData.testMappings);
+        const mapper: Mapper = new Mapper(testMappings, mockConfig);
+        const sublimeSettings = JSON.stringify({ ...testData.sublimeSettings, ...testData.sublimeSettingNoMapping, ...testData.sublimeSettingSameKeyDiffVal, ...testData.sublimeSettingSameKeyVal });
+        const settings: AnalyzedSettings = await mapper.getMappedSettings(sublimeSettings);
+
+        assert.ok(settings.alreadyExisting.length === 1);
+        assert.ok(settings.noMappings.length === 1);
+    });
+
+    test('Workaround for https://github.com/Microsoft/vscode/issues/47730', async () => {
+        let config = vscode.workspace.getConfiguration();
+        const settingName = 'editor.matchBrackets';
+        const backupSettingValue = config.inspect(settingName)!.globalValue;
+        await config.update(settingName, 'bogusValueForActivatingChangeListener', vscode.ConfigurationTarget.Global);
+        await config.update(settingName, true, vscode.ConfigurationTarget.Global);
+        config = vscode.workspace.getConfiguration();
+
+        const info = config.inspect(settingName);
+        if (!info) {
+            return assert.fail(info, 'inspect object');
+        }
+
+        assert.ok(info.globalValue === true, `globalValue: ${info.globalValue} is not true`);
+        assert.ok(info.defaultValue === true, `defaultValue: ${info.defaultValue} is not true`);
+
+        await config.update(settingName, backupSettingValue, vscode.ConfigurationTarget.Global);
     });
 });

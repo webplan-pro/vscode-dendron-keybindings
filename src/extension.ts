@@ -3,19 +3,24 @@ import { readFileAsync } from './fsWrapper';
 import { AnalyzedSettings, Mapper } from './mapper';
 import { ISetting, MappedSetting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
+import * as path from 'path';
 
 const mapper = new Mapper();
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-    context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublimePicker', () => importSettingsFromSublime()));
+    context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => importSettingsFromSublime()));
 }
 
 async function importSettingsFromSublime(): Promise<void> {
     const analyzedSettings = await getAnalyzedSettings();
     if (analyzedSettings) {
-        const mappedSettings = await selectSettingsToImport(analyzedSettings);
-        if (mappedSettings && mappedSettings.length) {
-            await importSelectedSettings(mappedSettings);
+        if (analyzedSettings.mappedSettings.length) {
+            const mappedSettings = await selectSettingsToImport(analyzedSettings);
+            if (mappedSettings && mappedSettings.length) {
+                await importSelectedSettings(mappedSettings);
+            }
+        } else {
+            vscode.window.showInformationMessage('All settings imported.');
         }
     }
 }
@@ -33,25 +38,28 @@ async function getSublimeFolderPath(): Promise<string | undefined> {
     if (sublimeSettingsPath) {
         return sublimeSettingsPath.fsPath;
     }
-    return await pickSublimeSettingsPath();
+    return await browsePrompt(`No Sublime settings file found at the default location: ${path.join(sublimeFolderFinder.getOSDefaultPaths()[0], sublimeFolderFinder.sublimeSettingsFilename)}`);
 }
 
-async function pickSublimeSettingsPath(): Promise<string | undefined> {
-    const result = await vscode.window.showInformationMessage('Pick your Sublime settings folder', 'Browse...');
+async function browsePrompt(msg: string): Promise<string | undefined> {
+    const result = await vscode.window.showInformationMessage(msg, 'Browse...');
     if (result) {
-        const sublimeSettingsFilePaths = await vscode.window.showOpenDialog({ canSelectFiles: true });
-        if (sublimeSettingsFilePaths && sublimeSettingsFilePaths.length) {
-            const validationResult = await validatePath(sublimeSettingsFilePaths[0].fsPath);
-            if (!validationResult) {
-                return sublimeSettingsFilePaths[0].fsPath;
+        const sublimeSettingsFiles = await vscode.window.showOpenDialog({ canSelectFiles: true });
+        if (sublimeSettingsFiles && sublimeSettingsFiles.length) {
+            const filePath = sublimeSettingsFiles[0].fsPath;
+            const isValidFilePath = await validate(filePath);
+            if (isValidFilePath) {
+                return filePath;
+            } else {
+                vscode.window.showErrorMessage(`Could not find ${sublimeFolderFinder.sublimeSettingsFilename} at ${sublimeSettingsFiles[0].fsPath}`);
             }
         }
     }
     return undefined;
 }
 
-async function validatePath(path: string): Promise<string> {
-    return path ? '' : 'path should not be empty';
+function validate(settingsFilePath: string): boolean {
+    return settingsFilePath.endsWith(sublimeFolderFinder.sublimeSettingsFilename);
 }
 
 async function getSettings(sublimeSettingsPath: string): Promise<AnalyzedSettings> {
@@ -104,8 +112,10 @@ async function importSettings(settings: ISetting[]): Promise<void> {
         const incrementSize = 100.0 / settings.length;
         const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration();
         await Promise.all(settings.map(async setting => {
-            await config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global);
-            progress.report({ increment: incrementSize, message: setting.name });
+            // workaround for https://github.com/Microsoft/vscode/issues/47730
+            return config.update(setting.name, 'bug-workaround-47730', vscode.ConfigurationTarget.Global)
+            .then(() => config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global))
+            .then(() => progress.report({ increment: incrementSize, message: setting.name }));
         }));
     });
 }

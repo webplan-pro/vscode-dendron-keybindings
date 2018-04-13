@@ -12,7 +12,11 @@ export class AnalyzedSettings {
 
 export class Mapper {
 
-    private settingsMappings: Promise<{}> | undefined  = undefined ;
+    private settingsMappings: Promise<{}> | undefined = undefined;
+
+    constructor(settingsMappings?: Promise<{}>, private mockConfig?: any) {
+        this.settingsMappings = settingsMappings;
+    }
 
     public async getMappedSettings(sublimeSettings: string): Promise<AnalyzedSettings> {
         const settingsMappings = await this.getSettingsMappings();
@@ -29,7 +33,7 @@ export class Mapper {
 
     private mapAllSettings(mappedSettings: { [key: string]: any }, sublimeSettings: { [key: string]: any }): AnalyzedSettings {
         const analyzedSettings: AnalyzedSettings = new AnalyzedSettings();
-        const config = vscode.workspace.getConfiguration();
+        const config = this.mockConfig || vscode.workspace.getConfiguration();
 
         for (const key of Object.keys(sublimeSettings)) {
             const value = sublimeSettings[key];
@@ -39,10 +43,10 @@ export class Mapper {
                 mappedSetting.setVscode(vscodeMapping);
 
                 const info = config.inspect(vscodeMapping.name);
-                if (info && info.globalValue) {
+                if (info && info.globalValue !== undefined) {
                     if (info.globalValue === vscodeMapping.value) {
                         analyzedSettings.alreadyExisting.push(mappedSetting);
-                        continue;   // skip settings that already exist with the exact same value
+                        continue;
                     }
                     mappedSetting.markAsDuplicate({ name: vscodeMapping.name, value: info.globalValue.toString() });
                 }

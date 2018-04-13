@@ -31,7 +31,7 @@ export function getOSDefaultPaths(): string[] {
     return foundPaths;
 }
 
-async function filterForExistingDirsAsync(paths: string[]): Promise<vscode.Uri | undefined> {
+export async function filterForExistingDirsAsync(paths: string[]): Promise<vscode.Uri | undefined> {
     for (const p of paths) {
         const settingsPath: string = path.resolve(p, settingsSubfoldersPath);
         if (await fileSystem.pathExists(settingsPath)) {

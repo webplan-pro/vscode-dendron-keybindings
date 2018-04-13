@@ -6,7 +6,6 @@
     
     "jsRules": {},
     "rules": {
-        "duplicate-imports": true,
         "no-string-throw": true,
         "no-unused-expression": true,
         "no-duplicate-variable": true,
@@ -15,6 +14,7 @@
         "arrow-parens": false,
         "max-classes-per-file": false,
         "object-literal-sort-keys": false,
+        "ordered-imports": false,
         "typedef": [
             true,
             "call-signature",
@@ -38,17 +38,6 @@
             "single",
             "avoid-escape",
             "avoid-template"
-        ],
-        "no-unexternalized-strings": [
-            true,
-            {
-                "signatures": [
-                    "localize",
-                    "nls.localize"
-                ],
-                "keyIndex": 0,
-                "messageIndex": 1
-            }
         ]
     }
 }
