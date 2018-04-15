@@ -4,11 +4,13 @@ import { AnalyzedSettings, Mapper } from './mapper';
 import { ISetting, MappedSetting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import * as path from 'path';
+import { start } from './extensionKeymap';
 
 const mapper = new Mapper();
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => importSettingsFromSublime()));
+    start();
 }
 
 async function importSettingsFromSublime(): Promise<void> {
@@ -112,10 +114,8 @@ async function importSettings(settings: ISetting[]): Promise<void> {
         const incrementSize = 100.0 / settings.length;
         const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration();
         await Promise.all(settings.map(async setting => {
-            // workaround for https://github.com/Microsoft/vscode/issues/47730
-            return config.update(setting.name, 'bug-workaround-47730', vscode.ConfigurationTarget.Global)
-            .then(() => config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global))
-            .then(() => progress.report({ increment: incrementSize, message: setting.name }));
+            return config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global)
+                .then(() => progress.report({ increment: incrementSize, message: setting.name }));
         }));
     });
 }

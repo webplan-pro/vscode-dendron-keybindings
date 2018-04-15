@@ -2,7 +2,6 @@ import * as assert from 'assert';
 import { AnalyzedSettings, Mapper } from '../mapper';
 import { ISetting, MappedSetting } from '../settings';
 import * as testData from './testData';
-import * as vscode from 'vscode';
 
 suite('Importer Tests', async () => {
 
@@ -53,24 +52,5 @@ suite('Importer Tests', async () => {
 
         assert.ok(settings.alreadyExisting.length === 1);
         assert.ok(settings.noMappings.length === 1);
-    });
-
-    test('Workaround for https://github.com/Microsoft/vscode/issues/47730', async () => {
-        let config = vscode.workspace.getConfiguration();
-        const settingName = 'editor.matchBrackets';
-        const backupSettingValue = config.inspect(settingName)!.globalValue;
-        await config.update(settingName, 'bogusValueForActivatingChangeListener', vscode.ConfigurationTarget.Global);
-        await config.update(settingName, true, vscode.ConfigurationTarget.Global);
-        config = vscode.workspace.getConfiguration();
-
-        const info = config.inspect(settingName);
-        if (!info) {
-            return assert.fail(info, 'inspect object');
-        }
-
-        assert.ok(info.globalValue === true, `globalValue: ${info.globalValue} is not true`);
-        assert.ok(info.defaultValue === true, `defaultValue: ${info.defaultValue} is not true`);
-
-        await config.update(settingName, backupSettingValue, vscode.ConfigurationTarget.Global);
     });
 });
