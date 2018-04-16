@@ -4,7 +4,6 @@ import { AnalyzedSettings, Mapper } from './mapper';
 import { ISetting, MappedSetting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import * as path from 'path';
-import { importV3Settings } from './keymap';
 
 const mapper = new Mapper();
 
@@ -19,9 +18,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 }
 
 async function showPrompt(): Promise<void> {
-    const answer: string | undefined = await vscode.window.showInformationMessage('Do you want to enable the new Sublime Text Keymap 3.0 features?', 'yes', 'no');
+    const answer: string | undefined = await vscode.window.showInformationMessage('Would you like to customize VS Code to behave more like Sublime Text?', 'yes', 'no');
     if (answer && answer === 'yes') {
-        importV3Settings();
+        importSettingsFromSublime();
     }
 }
 
@@ -88,6 +87,22 @@ async function getSettings(sublimeSettingsPath: string): Promise<AnalyzedSetting
         }
         return a.sublime.name.localeCompare(b.sublime.name);
     });
+
+    return appendCustomizationSettings(settings);
+}
+
+function appendCustomizationSettings(settings: AnalyzedSettings): AnalyzedSettings {
+    const customizationSettings: ISetting[] = [
+        { name: 'editor.multiCursorModifier', value: 'ctrlCmd' },
+        { name: 'editor.snippetSuggestions', value: 'top' },
+        { name: 'editor.formatOnPaste', value: true },
+    ];
+    customizationSettings.forEach(setting => {
+        if (settings.mappedSettings.find(mappedSetting => mappedSetting.vscode.name !== setting.name)) {
+            settings.mappedSettings.push(new MappedSetting({ name: '', value: '' }, setting));
+        }
+    });
+
     return settings;
 }
 
@@ -107,7 +122,7 @@ function setting2QuickPickItem(setting: MappedSetting): vscode.QuickPickItem {
         detail: setting.isDuplicate
             ? `$(issue-opened) Overwrites existing value: ${setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value}`
             : '',
-        label: `${setting.sublime.name} $(arrow-right) ${setting.vscode.name}`,
+        label: setting.sublime.name ? `${setting.sublime.name} $(arrow-right) setting.vscode.name` : setting.vscode.name,
         picked: !setting.isDuplicate,
     };
 }
@@ -125,9 +140,14 @@ async function importSettings(settings: ISetting[]): Promise<void> {
         progress.report({ increment: 0 });
         const incrementSize = 100.0 / settings.length;
         const config: vscode.WorkspaceConfiguration = vscode.workspace.getConfiguration();
-        await Promise.all(settings.map(async setting => {
-            return config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global)
-                .then(() => progress.report({ increment: incrementSize, message: setting.name }));
-        }));
+        for (const setting of settings) {
+            try {
+                await config.update(setting.name, setting.value, vscode.ConfigurationTarget.Global);
+                progress.report({ increment: incrementSize, message: setting.name });
+            } catch (e) {
+                vscode.window.showErrorMessage(e.message);
+                return;
+            }
+        }
     });
 }
