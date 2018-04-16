@@ -14,7 +14,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const hasPrompted = context.globalState.get('alreadyPrompted') || false;
     if (!hasPrompted) {
         await showPrompt();
-        context.globalState.update('alreadyPrompted', true);
+        await context.globalState.update('alreadyPrompted', true);
     }
 }
 
