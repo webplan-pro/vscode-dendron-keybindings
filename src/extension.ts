@@ -4,13 +4,25 @@ import { AnalyzedSettings, Mapper } from './mapper';
 import { ISetting, MappedSetting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import * as path from 'path';
-import { start } from './extensionKeymap';
+import { importV3Settings } from './keymap';
 
 const mapper = new Mapper();
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => importSettingsFromSublime()));
-    start();
+
+    const hasPrompted = context.globalState.get('alreadyPrompted') || false;
+    if (!hasPrompted) {
+        await showPrompt();
+        context.globalState.update('alreadyPrompted', true);
+    }
+}
+
+async function showPrompt(): Promise<void> {
+    const answer: string | undefined = await vscode.window.showInformationMessage('Do you want to enable the new Sublime Text Keymap 3.0 features?', 'yes', 'no');
+    if (answer && answer === 'yes') {
+        importV3Settings();
+    }
 }
 
 async function importSettingsFromSublime(): Promise<void> {
