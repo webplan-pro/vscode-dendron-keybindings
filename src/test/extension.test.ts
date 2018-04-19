@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { AnalyzedSettings, Mapper } from '../mapper';
+import { CategorizedSettings, Mapper } from '../mapper';
 import { ISetting, MappedSetting } from '../settings';
 import * as testData from './testData';
 
@@ -15,7 +15,7 @@ suite('Importer Tests', async () => {
     test('Import different types', async () => {
         const testMappings = Promise.resolve(testData.testMappings);
         const mapper: Mapper = new Mapper(testMappings);
-        const settings: AnalyzedSettings = await mapper.getMappedSettings(JSON.stringify(testData.sublimeSettings));
+        const settings: CategorizedSettings = await mapper.getMappedSettings(JSON.stringify(testData.sublimeSettings));
         assert.ok(settings.mappedSettings.length === 4, `mappedSettings.length is ${settings.mappedSettings.length} instead of 4`);
         expected.forEach((expSetting) => {
             const setting = settings.mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
@@ -48,7 +48,7 @@ suite('Importer Tests', async () => {
         const testMappings = Promise.resolve(testData.testMappings);
         const mapper: Mapper = new Mapper(testMappings, mockConfig);
         const sublimeSettings = JSON.stringify({ ...testData.sublimeSettings, ...testData.sublimeSettingNoMapping, ...testData.sublimeSettingSameKeyDiffVal, ...testData.sublimeSettingSameKeyVal });
-        const settings: AnalyzedSettings = await mapper.getMappedSettings(sublimeSettings);
+        const settings: CategorizedSettings = await mapper.getMappedSettings(sublimeSettings);
 
         assert.ok(settings.alreadyExisting.length === 1);
         assert.ok(settings.noMappings.length === 1);

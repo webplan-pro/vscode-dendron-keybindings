@@ -4,10 +4,11 @@ import * as vscode from 'vscode';
 import { readFileAsync } from './fsWrapper';
 import { ISetting, MappedSetting } from './settings';
 
-export class AnalyzedSettings {
+export class CategorizedSettings {
     public mappedSettings: MappedSetting[] = [];
     public alreadyExisting: MappedSetting[] = [];
     public noMappings: ISetting[] = [];
+    public sublimeFeelSettings: ISetting[] = [];
 }
 
 export class Mapper {
@@ -18,7 +19,7 @@ export class Mapper {
         this.settingsMappings = settingsMappings;
     }
 
-    public async getMappedSettings(sublimeSettings: string): Promise<AnalyzedSettings> {
+    public async getMappedSettings(sublimeSettings: string): Promise<CategorizedSettings> {
         const settingsMappings = await this.getSettingsMappings();
         return this.mapAllSettings(settingsMappings, rjson.parse(sublimeSettings));
     }
@@ -31,8 +32,8 @@ export class Mapper {
 
     }
 
-    private mapAllSettings(mappedSettings: { [key: string]: any }, sublimeSettings: { [key: string]: any }): AnalyzedSettings {
-        const analyzedSettings: AnalyzedSettings = new AnalyzedSettings();
+    private mapAllSettings(mappedSettings: { [key: string]: any }, sublimeSettings: { [key: string]: any }): CategorizedSettings {
+        const analyzedSettings: CategorizedSettings = new CategorizedSettings();
         const config = this.mockConfig || vscode.workspace.getConfiguration();
 
         for (const key of Object.keys(sublimeSettings)) {
@@ -55,7 +56,30 @@ export class Mapper {
                 analyzedSettings.noMappings.push({ name: key, value });
             }
         }
-        return analyzedSettings;
+        return this.appendSublimeFeelSettings(analyzedSettings, config);
+    }
+
+    private appendSublimeFeelSettings(settings: CategorizedSettings, config: vscode.WorkspaceConfiguration): CategorizedSettings {
+        const customizationSettings: ISetting[] = [
+            { name: 'editor.multiCursorModifier', value: 'ctrlCmd' },
+            { name: 'editor.snippetSuggestions', value: 'top' },
+            { name: 'editor.formatOnPaste', value: true },
+        ];
+
+        // don't show settings that already exist in mapped or existing
+        const mappedAndExisting: MappedSetting[] = Array.from(new Set([...settings.mappedSettings, ...settings.alreadyExisting]));
+        const uniqueSettings = customizationSettings.filter(customizationSetting => mappedAndExisting.find(mappedSetting => mappedSetting.vscode.name !== customizationSetting.name));
+        // don't show settings that already exist in user config
+        uniqueSettings.forEach(customizationSetting => {
+            const info = config.inspect(customizationSetting.name);
+            if (info) {
+                if (info.globalValue === undefined || info.globalValue !== customizationSetting.value) {
+                    settings.sublimeFeelSettings.push(customizationSetting);
+                }
+            }
+        });
+
+        return settings;
     }
 
     private mapSetting(key: string, value: string, mappedValue: any): ISetting | undefined {
