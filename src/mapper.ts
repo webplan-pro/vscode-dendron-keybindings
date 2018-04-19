@@ -8,7 +8,7 @@ export class CategorizedSettings {
     public mappedSettings: MappedSetting[] = [];
     public alreadyExisting: MappedSetting[] = [];
     public noMappings: ISetting[] = [];
-    public sublimeFeelSettings: ISetting[] = [];
+    public sublimeFeelSettings: MappedSetting[] = [];   // settings that are not in the mappings file but improve the sublime feel & look in VS Code
 }
 
 export class Mapper {
@@ -60,21 +60,21 @@ export class Mapper {
     }
 
     private appendSublimeFeelSettings(settings: CategorizedSettings, config: vscode.WorkspaceConfiguration): CategorizedSettings {
-        const customizationSettings: ISetting[] = [
-            { name: 'editor.multiCursorModifier', value: 'ctrlCmd' },
-            { name: 'editor.snippetSuggestions', value: 'top' },
-            { name: 'editor.formatOnPaste', value: true },
+        const sublimeFeelSettings: MappedSetting[] = [
+            new MappedSetting({ name: '', value: '' }, { name: 'editor.multiCursorModifier', value: 'ctrlCmd' }),
+            new MappedSetting({ name: '', value: '' }, { name: 'editor.snippetSuggestions', value: 'top' }),
+            new MappedSetting({ name: '', value: '' }, { name: 'editor.formatOnPaste', value: true }),
         ];
 
-        // don't show settings that already exist in mapped or existing
-        const mappedAndExisting: MappedSetting[] = Array.from(new Set([...settings.mappedSettings, ...settings.alreadyExisting]));
-        const uniqueSettings = customizationSettings.filter(customizationSetting => mappedAndExisting.find(mappedSetting => mappedSetting.vscode.name !== customizationSetting.name));
+        // filter out settings that already exist in mapped or existing
+        const mappedUnionExisting: MappedSetting[] = Array.from(new Set([...settings.mappedSettings, ...settings.alreadyExisting]));
+        const uniqueFeelSettings = sublimeFeelSettings.filter(customizationSetting => mappedUnionExisting.find(mappedSetting => mappedSetting.vscode.name !== customizationSetting.vscode.name));
         // don't show settings that already exist in user config
-        uniqueSettings.forEach(customizationSetting => {
-            const info = config.inspect(customizationSetting.name);
+        uniqueFeelSettings.forEach(feelSetting => {
+            const info = config.inspect(feelSetting.vscode.name);
             if (info) {
-                if (info.globalValue === undefined || info.globalValue !== customizationSetting.value) {
-                    settings.sublimeFeelSettings.push(customizationSetting);
+                if (info.globalValue === undefined || info.globalValue !== feelSetting.vscode.value) {
+                    settings.sublimeFeelSettings.push(feelSetting);
                 }
             }
         });

@@ -91,30 +91,22 @@ async function getSettings(sublimeSettingsPath: string): Promise<CategorizedSett
 }
 
 async function showPicker(settings: CategorizedSettings): Promise<MappedSetting[]> {
-    const pickedSettingNames = await vscode.window.showQuickPick([...settings.mappedSettings.map(mappedSetting2QuickPickItem), feelSetting2QuickPickItem(settings.sublimeFeelSettings)], { canPickMany: true });
+    const pickedSettingNames = await vscode.window.showQuickPick([...settings.mappedSettings.map(mappedSetting2QuickPickItem), ...settings.sublimeFeelSettings.map(mappedSetting2QuickPickItem)], { canPickMany: true });
     if (pickedSettingNames) {
-        return pickedSettingNames.map(name => settings.mappedSettings.find(setting => mappedSetting2QuickPickItem(setting).label === name.label)) as MappedSetting[];
+        const mappedAndFeelSettings = settings.mappedSettings.concat(settings.sublimeFeelSettings);
+        return pickedSettingNames.map(name => mappedAndFeelSettings.find(setting => mappedSetting2QuickPickItem(setting).label === name.label)) as MappedSetting[];
     }
     return [];
 }
 
 function mappedSetting2QuickPickItem(setting: MappedSetting): vscode.QuickPickItem {
+    const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)'};  // required to store in var cause auto-format adds spaces to hypens
     return {
         detail: setting.isDuplicate
-            ? `$(issue - opened) Overwrites existing value: ${ setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value } `
+            ? `${icons.exclamationPoint} Overwrites existing value: ${ setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value } `
             : '',
-        label: setting.sublime.name ? `${ setting.sublime.name } $(arrow - right) ${setting.vscode.name}` : setting.vscode.name,
+        label: setting.sublime.name ? `${ setting.sublime.name } ${icons.arrowRight} ${setting.vscode.name}` : setting.vscode.name,
         picked: !setting.isDuplicate,
-    };
-}
-
-function feelSetting2QuickPickItem(setting: ISetting[]): vscode.QuickPickItem {
-    const names = setting.map(s => s.name);
-    return {
-        detail: 'Customizes VS Code to behave more like Sublime',
-        description: names.join(', '),
-        label: '',
-        picked: true,
     };
 }
 
