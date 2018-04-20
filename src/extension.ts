@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { readFileAsync } from './fsWrapper';
-import { CategorizedSettings, Mapper } from './mapper';
-import { ISetting, MappedSetting } from './settings';
+import { Mapper } from './mapper';
+import { ISetting, MappedSetting, CategorizedSettings } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import * as path from 'path';
 
@@ -9,6 +9,7 @@ const mapper = new Mapper();
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => start()));
+    await context.globalState.update('alreadyPrompted', false);  // TODO: // FIXME: remove!
     const hasPrompted = context.globalState.get('alreadyPrompted') || false;
     if (!hasPrompted) {
         await showPrompt();
@@ -51,7 +52,7 @@ async function getSublimeFolderPath(): Promise<string | undefined> {
     if (sublimeSettingsPath) {
         return sublimeSettingsPath.fsPath;
     }
-    return await browsePrompt(`No Sublime settings file found at the default location: ${ path.join(sublimeFolderFinder.getOSDefaultPaths()[0], sublimeFolderFinder.sublimeSettingsFilename) } `);
+    return await browsePrompt(`No Sublime settings file found at the default location: ${path.join(sublimeFolderFinder.getOSDefaultPaths()[0], sublimeFolderFinder.sublimeSettingsFilename)} `);
 }
 
 async function browsePrompt(msg: string): Promise<string | undefined> {
@@ -64,7 +65,7 @@ async function browsePrompt(msg: string): Promise<string | undefined> {
             if (isValidFilePath) {
                 return filePath;
             } else {
-                vscode.window.showErrorMessage(`Could not find ${ sublimeFolderFinder.sublimeSettingsFilename } at ${ sublimeSettingsFiles[0].fsPath } `);
+                vscode.window.showErrorMessage(`Could not find ${sublimeFolderFinder.sublimeSettingsFilename} at ${sublimeSettingsFiles[0].fsPath} `);
             }
         }
     }
@@ -78,11 +79,11 @@ function validate(settingsFilePath: string): boolean {
 async function getSettings(sublimeSettingsPath: string): Promise<CategorizedSettings> {
     const settings: CategorizedSettings | undefined = await mapper.getMappedSettings(await readFileAsync(sublimeSettingsPath, 'utf-8'));
     settings.mappedSettings.sort((a, b) => {
-        if (a.isDuplicate && b.isDuplicate) {
+        if (a.willOverride && b.willOverride) {
             return a.sublime.name.localeCompare(b.sublime.name);
-        } else if (a.isDuplicate) {
+        } else if (a.willOverride) {
             return -1;
-        } else if (b.isDuplicate) {
+        } else if (b.willOverride) {
             return 1;
         }
         return a.sublime.name.localeCompare(b.sublime.name);
@@ -100,13 +101,13 @@ async function showPicker(settings: CategorizedSettings): Promise<MappedSetting[
 }
 
 function mappedSetting2QuickPickItem(setting: MappedSetting): vscode.QuickPickItem {
-    const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)'};  // required to store in var cause auto-format adds spaces to hypens
+    const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)' };  // required to store in var cause auto-format adds spaces to hypens
     return {
-        detail: setting.isDuplicate
-            ? `${icons.exclamationPoint} Overwrites existing value: ${ setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value } `
+        detail: setting.willOverride
+            ? `${icons.exclamationPoint} Overwrites existing value: ${setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value} `
             : '',
-        label: setting.sublime.name ? `${ setting.sublime.name } ${icons.arrowRight} ${setting.vscode.name}` : setting.vscode.name,
-        picked: !setting.isDuplicate,
+        label: setting.sublime.name ? `${setting.sublime.name} ${icons.arrowRight} ${setting.vscode.name}` : `{Sublime Default} ${icons.arrowRight} ${setting.vscode.name}: ${setting.vscode.value}`,
+        picked: !setting.willOverride,
     };
 }
 

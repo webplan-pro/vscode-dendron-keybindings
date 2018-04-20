@@ -2,14 +2,7 @@ import { resolve } from 'path';
 import * as rjson from 'relaxed-json';
 import * as vscode from 'vscode';
 import { readFileAsync } from './fsWrapper';
-import { ISetting, MappedSetting } from './settings';
-
-export class CategorizedSettings {
-    public mappedSettings: MappedSetting[] = [];
-    public alreadyExisting: MappedSetting[] = [];
-    public noMappings: ISetting[] = [];
-    public sublimeFeelSettings: MappedSetting[] = [];   // settings that are not in the mappings file but improve the sublime feel & look in VS Code
-}
+import { ISetting, MappedSetting, CategorizedSettings } from './settings';
 
 export class Mapper {
 
@@ -36,34 +29,48 @@ export class Mapper {
         const analyzedSettings: CategorizedSettings = new CategorizedSettings();
         const config = this.mockConfig || vscode.workspace.getConfiguration();
 
-        for (const key of Object.keys(sublimeSettings)) {
-            const value = sublimeSettings[key];
-            const vscodeMapping = this.mapSetting(key, value, mappedSettings[key]);
-            if (vscodeMapping) {
-                const mappedSetting: MappedSetting = new MappedSetting({ name: key, value });
-                mappedSetting.setVscode(vscodeMapping);
+        for (const sublimeKey of Object.keys(sublimeSettings)) {
+            const sublimeValue = sublimeSettings[sublimeKey];
+            const vscodeSetting = this.mapSetting(sublimeKey, sublimeValue, mappedSettings[sublimeKey]);
+            if (vscodeSetting) {
+                const result = this.checkWithExistingSettings(vscodeSetting, config);
+                const mappedSetting = new MappedSetting({ name: sublimeKey, value: sublimeValue }, vscodeSetting);
 
-                const info = config.inspect(vscodeMapping.name);
-                if (info && info.globalValue !== undefined) {
-                    if (info.globalValue === vscodeMapping.value) {
-                        analyzedSettings.alreadyExisting.push(mappedSetting);
-                        continue;
+                if (result.keyValuePairExists) {
+                    analyzedSettings.alreadyExisting.push(mappedSetting);   // setting with same key-value pair already exists
+                } else {
+                    if (result.overwritesValueWith) {
+                        mappedSetting.markAsOverride(vscodeSetting.name, result.overwritesValueWith); // setting with same key but different value exists
                     }
-                    mappedSetting.markAsDuplicate({ name: vscodeMapping.name, value: info.globalValue.toString() });
+                    analyzedSettings.mappedSettings.push(mappedSetting);
                 }
-                analyzedSettings.mappedSettings.push(mappedSetting);
             } else {
-                analyzedSettings.noMappings.push({ name: key, value });
+                analyzedSettings.noMappings.push({ name: sublimeKey, value: sublimeValue });
             }
         }
         return this.appendSublimeFeelSettings(analyzedSettings, config);
     }
 
+    private checkWithExistingSettings(vscodeSetting: ISetting, config: vscode.WorkspaceConfiguration): { keyValuePairExists: boolean, overwritesValueWith: string } {
+        const returnVal = { keyValuePairExists: false, overwritesValueWith: '' };
+        const info = config.inspect(vscodeSetting.name);
+        if (info && info.globalValue !== undefined) {
+            if (info.globalValue === vscodeSetting.value) {
+                returnVal.keyValuePairExists = true;
+            } else {
+                returnVal.overwritesValueWith = info.globalValue.toString();
+            }
+        }
+        return returnVal;
+    }
+
     private appendSublimeFeelSettings(settings: CategorizedSettings, config: vscode.WorkspaceConfiguration): CategorizedSettings {
+        const emptySetting: ISetting = { name: '', value: '' };
         const sublimeFeelSettings: MappedSetting[] = [
-            new MappedSetting({ name: '', value: '' }, { name: 'editor.multiCursorModifier', value: 'ctrlCmd' }),
-            new MappedSetting({ name: '', value: '' }, { name: 'editor.snippetSuggestions', value: 'top' }),
-            new MappedSetting({ name: '', value: '' }, { name: 'editor.formatOnPaste', value: true }),
+            new MappedSetting(emptySetting, { name: 'editor.multiCursorModifier', value: 'ctrlCmd' }),
+            new MappedSetting(emptySetting, { name: 'editor.snippetSuggestions', value: 'top' }),
+            new MappedSetting(emptySetting, { name: 'editor.formatOnPaste', value: true }),
+            new MappedSetting(emptySetting, { name: 'workbench.colorTheme', value: 'Monokai' }),
         ];
 
         // filter out settings that already exist in mapped or existing
