@@ -9,7 +9,6 @@ const mapper = new Mapper();
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
     context.subscriptions.push(vscode.commands.registerCommand('extension.importFromSublime', () => start()));
-    await context.globalState.update('alreadyPrompted', false);  // TODO: // FIXME: remove!
     const hasPrompted = context.globalState.get('alreadyPrompted') || false;
     if (!hasPrompted) {
         await showPrompt();
@@ -79,11 +78,11 @@ function validate(settingsFilePath: string): boolean {
 async function getSettings(sublimeSettingsPath: string): Promise<CategorizedSettings> {
     const settings: CategorizedSettings | undefined = await mapper.getMappedSettings(await readFileAsync(sublimeSettingsPath, 'utf-8'));
     settings.mappedSettings.sort((a, b) => {
-        if (a.willOverride && b.willOverride) {
+        if (a.vscode.overwritesValue && b.vscode.overwritesValue) {
             return a.sublime.name.localeCompare(b.sublime.name);
-        } else if (a.willOverride) {
+        } else if (a.vscode.overwritesValue) {
             return -1;
-        } else if (b.willOverride) {
+        } else if (b.vscode.overwritesValue) {
             return 1;
         }
         return a.sublime.name.localeCompare(b.sublime.name);
@@ -103,11 +102,11 @@ async function showPicker(settings: CategorizedSettings): Promise<MappedSetting[
 function mappedSetting2QuickPickItem(setting: MappedSetting): vscode.QuickPickItem {
     const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)' };  // required to store in var cause auto-format adds spaces to hypens
     return {
-        detail: setting.willOverride
-            ? `${icons.exclamationPoint} Overwrites existing value: ${setting.duplicateVscodeSetting && setting.duplicateVscodeSetting.value} `
+        detail: setting.vscode.overwritesValue
+            ? `${icons.exclamationPoint} Overwrites existing value: '${setting.vscode.oldValue}' with '${setting.vscode.value}'`
             : '',
         label: setting.sublime.name ? `${setting.sublime.name} ${icons.arrowRight} ${setting.vscode.name}` : `{Sublime Default} ${icons.arrowRight} ${setting.vscode.name}: ${setting.vscode.value}`,
-        picked: !setting.willOverride,
+        picked: !setting.vscode.overwritesValue,
     };
 }
 

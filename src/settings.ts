@@ -3,24 +3,26 @@ export interface ISetting {
   readonly value: any;
 }
 
+export interface IVscodeSetting extends ISetting {
+  overwritesValue?: boolean;
+  newValue?: any;
+  oldValue?: any;
+}
+
+const emptySetting = { name: '', value: '' };
+
 export class MappedSetting {
   public sublime: ISetting;
-  public vscode: ISetting;
-  public willOverride: boolean = false;
-  public duplicateVscodeSetting?: ISetting;
+  public vscode: IVscodeSetting;
 
-  constructor(sublimeSetting: ISetting, vscodeSetting?: ISetting) {
-    this.sublime = sublimeSetting || { name: '', value: '' };
-    this.vscode = vscodeSetting || { name: '', value: '' };
+  constructor(settings: {sublimeSetting?: ISetting; vscodeSetting?: IVscodeSetting}) {
+    this.sublime = settings.sublimeSetting || emptySetting;
+    this.vscode = settings.vscodeSetting || emptySetting;
   }
 
-  public setVscode(setting: ISetting): void {
-    this.vscode = setting;
-  }
-
-  public markAsOverride(vscodeName: string, newValue: any): void {
-    this.willOverride = true;
-    this.duplicateVscodeSetting = {name: vscodeName, value: newValue};
+  public markAsOverride(oldValue: any): void {
+    this.vscode.overwritesValue = true;
+    this.vscode.oldValue = oldValue;
   }
 }
 
