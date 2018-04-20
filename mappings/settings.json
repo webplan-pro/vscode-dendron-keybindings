@@ -70,7 +70,7 @@
     "tab_completion": "editor.tabCompletion", // Boolean
     "auto_complete_delay": "editor.quickSuggestionsDelay", // Number
     "auto_complete_commit_on_tab": {
-        "true" : {
+        "true": {
             "editor.acceptSuggestionOnEnter": "off"
         }
     },
@@ -94,7 +94,17 @@
         }
     },
     "scroll_past_end": "editor.scrollBeyondLastLine", // Boolean
-    "word_wrap": "editor.wordWrap", // String
+    "word_wrap": {
+        "true": {
+            "editor.wordWrap": "on"
+        },
+        "false": {
+            "editor.wordWrap": "off"
+        },
+        "auto": {
+            "editor.wordWrap": "on"
+        }
+    },
     "indent_subsequent_lines": {
         "yes": {
             "editor.wrappingIndent": "none"
