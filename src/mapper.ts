@@ -79,11 +79,13 @@ export class Mapper {
             new VscodeSetting('workbench.colorTheme', 'Monokai'),
         ];
 
-        // get unique settings from mapped & alreadyExisting
-        const uniqueMappedExisting: MappedSetting[] = Array.from(new Set([...settings.mappedSettings, ...settings.alreadyExisting]));
-        const uniqueDefaultSettings = defaultSettings.filter(defaultSetting => uniqueMappedExisting.find(mappedSetting => mappedSetting.vscode.name !== defaultSetting.name));
-        // don't show settings that already exist in user config
+        const mappedAndExisting: MappedSetting[] = [...settings.mappedSettings, ...settings.alreadyExisting];
+        // filter out default settings that will be imported as mapped settings or already exist in the user settings
+        const uniqueDefaultSettings = mappedAndExisting.length
+            ? defaultSettings.filter(defaultSetting => !mappedAndExisting.find(mappedSetting => mappedSetting.vscode.name === defaultSetting.name))
+            : defaultSettings;
 
+        // don't show settings that already exist in user config
         uniqueDefaultSettings.forEach(defaultSetting => {
             const configTest = this.checkWithExistingSettings(defaultSetting, config);
 

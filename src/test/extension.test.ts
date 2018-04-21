@@ -52,5 +52,6 @@ suite('Importer Tests', async () => {
 
         assert.ok(settings.alreadyExisting.length === 1);
         assert.ok(settings.noMappings.length === 1);
+        assert.ok(settings.mappedSettings.filter(s => s.vscode.overwritesValue).length === 1);
     });
 });

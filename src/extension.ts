@@ -26,8 +26,8 @@ async function showPrompt(): Promise<void> {
 async function start(): Promise<void> {
     const categorizedSettings = await getCategorizedSettings();
     if (categorizedSettings) {
-        if (categorizedSettings.mappedSettings.length) {    // TODO: Or default settings
-            const selectedSettings = await showPicker(categorizedSettings);
+        if (categorizedSettings.mappedSettings.length || categorizedSettings.defaultSettings.length) {
+            const selectedSettings: VscodeSetting[] = await showPicker(categorizedSettings);
             if (selectedSettings && selectedSettings.length) {
                 await importSettings(selectedSettings);
                 await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
@@ -90,34 +90,30 @@ async function getSettings(sublimeSettingsPath: string): Promise<CategorizedSett
     return settings;
 }
 
-async function showPicker(settings: CategorizedSettings): Promise<VscodeSetting[]> {
-    const pickedItems = await vscode.window.showQuickPick([...settings.mappedSettings.map((ms) => settings2QuickPickItem(ms.vscode, ms.sublime.name)), ...settings.defaultSettings.map((def) => settings2QuickPickItem(def))], { canPickMany: true });
-    if (pickedItems) {
-        const mappedAndDefaultSettings: Array<VscodeSetting | MappedSetting> = [...settings.defaultSettings, ...settings.mappedSettings];
-        return quickPickItemsToSettings(pickedItems, mappedAndDefaultSettings).map(setting => setting instanceof MappedSetting ? setting.vscode : setting);
-    }
-    return [];
+interface ISettingsQuickPickItem extends vscode.QuickPickItem {
+    /** Used to map back from QuickPickItem to Setting */
+    setting: MappedSetting | VscodeSetting;
 }
 
-function settings2QuickPickItem(vscodeSetting: VscodeSetting, sublimeName?: string): vscode.QuickPickItem {
+async function showPicker(settings: CategorizedSettings): Promise<VscodeSetting[]> {
+    // showing mapped & default settings
+    const pickedItems = await vscode.window.showQuickPick(
+        [...settings.mappedSettings.map((ms) => setting2QuickPickItem(ms.vscode, ms.sublime.name)),
+        ...settings.defaultSettings.map((s) => setting2QuickPickItem(s))], { canPickMany: true });
+    // converting all selected entries to VscodeSettings
+    return pickedItems ? pickedItems.map(pickItem => pickItem.setting instanceof MappedSetting ? pickItem.setting.vscode : pickItem.setting) : [];
+}
+
+function setting2QuickPickItem(setting: VscodeSetting, sublimeName?: string): ISettingsQuickPickItem {
     const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)' };  // stored in var because auto-format adds spaces to hypens
     return {
-        detail: vscodeSetting.overwritesValue
-            ? `${icons.exclamationPoint} Overwrites existing value: '${vscodeSetting.oldValue}' with '${vscodeSetting.value}'`
+        detail: setting.overwritesValue
+            ? `${icons.exclamationPoint} Overwrites existing value: '${setting.oldValue}' with '${setting.value}'`
             : '',
-        label: sublimeName ? `${sublimeName} ${icons.arrowRight} ${vscodeSetting.name}` : `{Sublime Default} ${icons.arrowRight} ${vscodeSetting.name}: ${vscodeSetting.value}`,
-        picked: !vscodeSetting.overwritesValue,
+        label: sublimeName ? `${sublimeName} ${icons.arrowRight} ${setting.name}` : `{Sublime Default} ${icons.arrowRight} ${setting.name}: ${setting.value}`,
+        picked: !setting.overwritesValue,
+        setting,
     };
-}
-
-function quickPickItemsToSettings(pickedItems: vscode.QuickPickItem[], settings: Array<VscodeSetting | MappedSetting>): Array<VscodeSetting | MappedSetting> {
-    return settings.filter((setting) => pickedItems.find(name => {
-        if (setting instanceof MappedSetting) {
-            return settings2QuickPickItem(setting.vscode, setting.sublime.name).label === name.label;
-        } else {
-            return settings2QuickPickItem(setting).label === name.label;
-        }
-    }));
 }
 
 async function importSettings(settings: ISetting[]): Promise<void> {

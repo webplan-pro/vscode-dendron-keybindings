@@ -16,13 +16,7 @@ export class VscodeSetting implements ISetting {
 }
 
 export class MappedSetting {
-  public readonly sublime: ISetting;
-  public readonly vscode: VscodeSetting;
-
-  constructor(sublimeSetting: ISetting, vscodeSetting: VscodeSetting) {
-    this.sublime = sublimeSetting;
-    this.vscode = vscodeSetting;
-  }
+  constructor(public readonly sublime: ISetting, public readonly vscode: VscodeSetting) {}
 }
 
 export class CategorizedSettings {
