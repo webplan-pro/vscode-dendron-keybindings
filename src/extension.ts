@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { readFileAsync } from './fsWrapper';
 import { Mapper } from './mapper';
-import { ISetting, MappedSetting, CategorizedSettings } from './settings';
+import { ISetting, MappedSetting, CategorizedSettings, VscodeSetting } from './settings';
 import * as sublimeFolderFinder from './sublimeFolderFinder';
 import * as path from 'path';
 
@@ -26,10 +26,10 @@ async function showPrompt(): Promise<void> {
 async function start(): Promise<void> {
     const categorizedSettings = await getCategorizedSettings();
     if (categorizedSettings) {
-        if (categorizedSettings.mappedSettings.length) {
+        if (categorizedSettings.mappedSettings.length) {    // TODO: Or default settings
             const selectedSettings = await showPicker(categorizedSettings);
             if (selectedSettings && selectedSettings.length) {
-                await importSettings(selectedSettings.map(selSettings => selSettings.vscode));
+                await importSettings(selectedSettings);
                 await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
             }
         } else {
@@ -90,24 +90,34 @@ async function getSettings(sublimeSettingsPath: string): Promise<CategorizedSett
     return settings;
 }
 
-async function showPicker(settings: CategorizedSettings): Promise<MappedSetting[]> {
-    const pickedSettingNames = await vscode.window.showQuickPick([...settings.mappedSettings.map(mappedSetting2QuickPickItem), ...settings.sublimeFeelSettings.map(mappedSetting2QuickPickItem)], { canPickMany: true });
-    if (pickedSettingNames) {
-        const mappedAndFeelSettings = settings.mappedSettings.concat(settings.sublimeFeelSettings);
-        return pickedSettingNames.map(name => mappedAndFeelSettings.find(setting => mappedSetting2QuickPickItem(setting).label === name.label)) as MappedSetting[];
+async function showPicker(settings: CategorizedSettings): Promise<VscodeSetting[]> {
+    const pickedItems = await vscode.window.showQuickPick([...settings.mappedSettings.map((ms) => settings2QuickPickItem(ms.vscode, ms.sublime.name)), ...settings.defaultSettings.map((def) => settings2QuickPickItem(def))], { canPickMany: true });
+    if (pickedItems) {
+        const mappedAndDefaultSettings: Array<VscodeSetting | MappedSetting> = [...settings.defaultSettings, ...settings.mappedSettings];
+        return quickPickItemsToSettings(pickedItems, mappedAndDefaultSettings).map(setting => setting instanceof MappedSetting ? setting.vscode : setting);
     }
     return [];
 }
 
-function mappedSetting2QuickPickItem(setting: MappedSetting): vscode.QuickPickItem {
-    const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)' };  // required to store in var cause auto-format adds spaces to hypens
+function settings2QuickPickItem(vscodeSetting: VscodeSetting, sublimeName?: string): vscode.QuickPickItem {
+    const icons = { exclamationPoint: '$(issue-opened)', arrowRight: '$(arrow-right)' };  // stored in var because auto-format adds spaces to hypens
     return {
-        detail: setting.vscode.overwritesValue
-            ? `${icons.exclamationPoint} Overwrites existing value: '${setting.vscode.oldValue}' with '${setting.vscode.value}'`
+        detail: vscodeSetting.overwritesValue
+            ? `${icons.exclamationPoint} Overwrites existing value: '${vscodeSetting.oldValue}' with '${vscodeSetting.value}'`
             : '',
-        label: setting.sublime.name ? `${setting.sublime.name} ${icons.arrowRight} ${setting.vscode.name}` : `{Sublime Default} ${icons.arrowRight} ${setting.vscode.name}: ${setting.vscode.value}`,
-        picked: !setting.vscode.overwritesValue,
+        label: sublimeName ? `${sublimeName} ${icons.arrowRight} ${vscodeSetting.name}` : `{Sublime Default} ${icons.arrowRight} ${vscodeSetting.name}: ${vscodeSetting.value}`,
+        picked: !vscodeSetting.overwritesValue,
     };
+}
+
+function quickPickItemsToSettings(pickedItems: vscode.QuickPickItem[], settings: Array<VscodeSetting | MappedSetting>): Array<VscodeSetting | MappedSetting> {
+    return settings.filter((setting) => pickedItems.find(name => {
+        if (setting instanceof MappedSetting) {
+            return settings2QuickPickItem(setting.vscode, setting.sublime.name).label === name.label;
+        } else {
+            return settings2QuickPickItem(setting).label === name.label;
+        }
+    }));
 }
 
 async function importSettings(settings: ISetting[]): Promise<void> {

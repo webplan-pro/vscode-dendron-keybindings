@@ -2,7 +2,14 @@ import { resolve } from 'path';
 import * as rjson from 'relaxed-json';
 import * as vscode from 'vscode';
 import { readFileAsync } from './fsWrapper';
-import { ISetting, MappedSetting, CategorizedSettings } from './settings';
+import { ISetting, MappedSetting, CategorizedSettings, VscodeSetting } from './settings';
+
+interface IConfigCheck {
+    /** Key-Value pair already exists in user settings */
+    readonly alreadyExists: boolean;
+    /** Setting already exists in user settings but with a different value */
+    readonly existingValue: string;
+}
 
 export class Mapper {
 
@@ -30,78 +37,83 @@ export class Mapper {
         const config = this.mockConfig || vscode.workspace.getConfiguration();
 
         for (const sublimeKey of Object.keys(sublimeSettings)) {
-            const sublimeValue = sublimeSettings[sublimeKey];
-            const vscodeSetting = this.mapSetting(sublimeKey, sublimeValue, mappedSettings[sublimeKey]);
+            const sublimeSetting = { name: sublimeKey, value: sublimeSettings[sublimeKey] };
+            const vscodeSetting = this.mapSetting(sublimeSetting, mappedSettings[sublimeKey]);
             if (vscodeSetting) {
-                const result = this.checkWithExistingSettings(vscodeSetting, config);
-                const mappedSetting = new MappedSetting({sublimeSetting: { name: sublimeKey, value: sublimeValue }, vscodeSetting});
+                const configTest = this.checkWithExistingSettings(vscodeSetting, config);
+                const mappedSetting = new MappedSetting(sublimeSetting, vscodeSetting);
 
-                if (result.keyValuePairExists) {
+                if (configTest.alreadyExists) {
                     analyzedSettings.alreadyExisting.push(mappedSetting);   // setting with same key-value pair already exists
                 } else {
-                    if (result.valueBeingOverwritten) {
-                        mappedSetting.markAsOverride(result.valueBeingOverwritten); // setting with same key but different value exists
+                    if (configTest.existingValue) {
+                        mappedSetting.vscode.markAsOverride(configTest.existingValue); // setting with same key but different value exists
                     }
                     analyzedSettings.mappedSettings.push(mappedSetting);
                 }
             } else {
-                analyzedSettings.noMappings.push({ name: sublimeKey, value: sublimeValue });
+                analyzedSettings.noMappings.push(sublimeSetting);
             }
         }
-        return this.appendSublimeFeelSettings(analyzedSettings, config);
+        return this.appendDefaultSublimeSettings(analyzedSettings, config);
     }
 
-    private checkWithExistingSettings(vscodeSetting: ISetting, config: vscode.WorkspaceConfiguration): { keyValuePairExists: boolean, valueBeingOverwritten: string } {
-        const returnVal = { keyValuePairExists: false, valueBeingOverwritten: '' };
+    private checkWithExistingSettings(vscodeSetting: VscodeSetting, config: vscode.WorkspaceConfiguration): IConfigCheck {
+        const returnVal = { alreadyExists: false, existingValue: '' };
         const info = config.inspect(vscodeSetting.name);
         if (info && info.globalValue !== undefined) {
             if (info.globalValue === vscodeSetting.value) {
-                returnVal.keyValuePairExists = true;
+                returnVal.alreadyExists = true;
             } else {
-                returnVal.valueBeingOverwritten = info.globalValue.toString();
+                returnVal.existingValue = info.globalValue.toString();
             }
         }
         return returnVal;
     }
 
-    private appendSublimeFeelSettings(settings: CategorizedSettings, config: vscode.WorkspaceConfiguration): CategorizedSettings {
-        const sublimeFeelSettings: MappedSetting[] = [
-            new MappedSetting({ vscodeSetting: { name: 'editor.multiCursorModifier', value: 'ctrlCmd' } }),
-            new MappedSetting({ vscodeSetting: { name: 'editor.snippetSuggestions', value: 'top' } }),
-            new MappedSetting({ vscodeSetting: { name: 'editor.formatOnPaste', value: true } }),
-            new MappedSetting({ vscodeSetting: { name: 'workbench.colorTheme', value: 'Monokai' } }),
+    private appendDefaultSublimeSettings(settings: CategorizedSettings, config: vscode.WorkspaceConfiguration): CategorizedSettings {
+        const defaultSettings: VscodeSetting[] = [
+            new VscodeSetting('editor.multiCursorModifier', 'ctrlCmd'),
+            new VscodeSetting('editor.snippetSuggestions', 'top'),
+            new VscodeSetting('editor.formatOnPaste', true),
+            new VscodeSetting('workbench.colorTheme', 'Monokai'),
         ];
 
-        // filter out settings that already exist in mapped or existing
-        const mappedUnionExisting: MappedSetting[] = Array.from(new Set([...settings.mappedSettings, ...settings.alreadyExisting]));
-        const uniqueFeelSettings = sublimeFeelSettings.filter(customizationSetting => mappedUnionExisting.find(mappedSetting => mappedSetting.vscode.name !== customizationSetting.vscode.name));
+        // get unique settings from mapped & alreadyExisting
+        const uniqueMappedExisting: MappedSetting[] = Array.from(new Set([...settings.mappedSettings, ...settings.alreadyExisting]));
+        const uniqueDefaultSettings = defaultSettings.filter(defaultSetting => uniqueMappedExisting.find(mappedSetting => mappedSetting.vscode.name !== defaultSetting.name));
         // don't show settings that already exist in user config
-        uniqueFeelSettings.forEach(feelSetting => {
-            const info = config.inspect(feelSetting.vscode.name);
-            if (info) {
-                if (info.globalValue === undefined || info.globalValue !== feelSetting.vscode.value) {
-                    settings.sublimeFeelSettings.push(feelSetting);
+
+        uniqueDefaultSettings.forEach(defaultSetting => {
+            const configTest = this.checkWithExistingSettings(defaultSetting, config);
+
+            if (configTest.alreadyExists) {
+                settings.alreadyExisting.push(new MappedSetting({ name: 'Default Setting', value: '' }, defaultSetting));
+            } else {
+                if (configTest.existingValue) {
+                    defaultSetting.markAsOverride(configTest.existingValue);
                 }
+                settings.defaultSettings.push(defaultSetting);
             }
         });
 
         return settings;
     }
 
-    private mapSetting(key: string, value: string, mappedValue: any): ISetting | undefined {
+    private mapSetting(sublimeSetting: ISetting, mappedValue: any): VscodeSetting | undefined {
         if (mappedValue !== undefined) {
             if (typeof mappedValue === 'string') {
-                return { name: mappedValue, value };
+                return new VscodeSetting(mappedValue, sublimeSetting.value);
             } else if (typeof mappedValue === 'object') {
-                const obj = mappedValue[value];
+                const obj = mappedValue[sublimeSetting.value];
                 if (!obj) {
-                    vscode.window.showErrorMessage(`mapSetting() failed on key: ${key}, value: ${value}, mappedSetting: ${JSON.stringify(mappedValue)}`);
+                    vscode.window.showErrorMessage(`mapSetting() failed on setting: ${JSON.stringify(sublimeSetting)}, mappedSetting: ${JSON.stringify(mappedValue)}`);
                     return undefined;
                 }
                 const keys = Object.keys(obj);
                 const newKey = keys[0];
                 const newValue = obj[newKey];
-                return { name: newKey, value: newValue };
+                return new VscodeSetting(newKey, newValue);
             }
         }
 

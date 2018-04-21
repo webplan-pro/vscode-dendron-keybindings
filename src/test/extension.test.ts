@@ -1,15 +1,15 @@
 import * as assert from 'assert';
 import { Mapper } from '../mapper';
-import { ISetting, MappedSetting, CategorizedSettings } from '../settings';
+import { ISetting, MappedSetting, CategorizedSettings, VscodeSetting } from '../settings';
 import * as testData from './testData';
 
 suite('Importer Tests', async () => {
 
     const expected = new Map<string, MappedSetting>([
-        ['numberSetting', new MappedSetting({ sublimeSetting: { name: 'tab_size$test', value: 12 }, vscodeSetting: { name: 'editor.tabSize$test', value: 12 } })],
-        ['stringSetting', new MappedSetting({ sublimeSetting: { name: 'word_separators$test', value: "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?" }, vscodeSetting: { name: 'editor.wordSeparators$test', value: "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?" } })],
-        ['boolSetting', new MappedSetting({ sublimeSetting: { name: 'ensure_newline_at_eof_on_save$test', value: false }, vscodeSetting: { name: 'files.insertFinalNewline$test', value: false } })],
-        ['complexSetting', new MappedSetting({ sublimeSetting: { name: 'draw_white_space$test', value: 'boundary' }, vscodeSetting: { name: 'editor.renderWhitespace$test', value: 'boundary' } })],
+        ['numberSetting', new MappedSetting({ name: 'tab_size$test', value: 12 }, new VscodeSetting('editor.tabSize$test', 12))],
+        ['stringSetting', new MappedSetting({ name: 'word_separators$test', value: "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?" }, new VscodeSetting('editor.wordSeparators$test', "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?"))],
+        ['boolSetting', new MappedSetting({ name: 'ensure_newline_at_eof_on_save$test', value: false }, new VscodeSetting('files.insertFinalNewline$test', false))],
+        ['complexSetting', new MappedSetting({ name: 'draw_white_space$test', value: 'boundary' }, new VscodeSetting('editor.renderWhitespace$test', 'boundary'))],
     ]);
 
     test('Import different types', async () => {

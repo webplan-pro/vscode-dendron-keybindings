@@ -3,26 +3,25 @@ export interface ISetting {
   readonly value: any;
 }
 
-export interface IVscodeSetting extends ISetting {
-  overwritesValue?: boolean;
-  newValue?: any;
-  oldValue?: any;
-}
+export class VscodeSetting implements ISetting {
+  public overwritesValue?: boolean;
+  public oldValue?: any;
 
-const emptySetting = { name: '', value: '' };
-
-export class MappedSetting {
-  public sublime: ISetting;
-  public vscode: IVscodeSetting;
-
-  constructor(settings: {sublimeSetting?: ISetting; vscodeSetting?: IVscodeSetting}) {
-    this.sublime = settings.sublimeSetting || emptySetting;
-    this.vscode = settings.vscodeSetting || emptySetting;
-  }
+  constructor(public readonly name: string, public readonly value: any) { }
 
   public markAsOverride(oldValue: any): void {
-    this.vscode.overwritesValue = true;
-    this.vscode.oldValue = oldValue;
+    this.overwritesValue = true;
+    this.oldValue = oldValue;
+  }
+}
+
+export class MappedSetting {
+  public readonly sublime: ISetting;
+  public readonly vscode: VscodeSetting;
+
+  constructor(sublimeSetting: ISetting, vscodeSetting: VscodeSetting) {
+    this.sublime = sublimeSetting;
+    this.vscode = vscodeSetting;
   }
 }
 
@@ -30,5 +29,5 @@ export class CategorizedSettings {
   public mappedSettings: MappedSetting[] = [];
   public alreadyExisting: MappedSetting[] = [];
   public noMappings: ISetting[] = [];
-  public sublimeFeelSettings: MappedSetting[] = [];   // settings that are not in the mappings file but improve the sublime feel & look in VS Code
+  public defaultSettings: VscodeSetting[] = [];   // default sublime settings that are not in the mappings file but improve the sublime feel & look in VS Code
 }
