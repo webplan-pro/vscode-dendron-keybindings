@@ -13,8 +13,7 @@ suite('Importer Tests', async () => {
     ]);
 
     test('Import different types', async () => {
-        const testMappings = Promise.resolve(testData.testMappings);
-        const mapper: Mapper = new Mapper(testMappings);
+        const mapper: Mapper = new Mapper({ mappings: testData.testMappings, defaults: [] });
         const settings: CategorizedSettings = await mapper.getMappedSettings(JSON.stringify(testData.sublimeSettings));
         assert.ok(settings.mappedSettings.length === 4, `mappedSettings.length is ${settings.mappedSettings.length} instead of 4`);
         expected.forEach((expSetting) => {
@@ -45,13 +44,19 @@ suite('Importer Tests', async () => {
             }),
         };
 
-        const testMappings = Promise.resolve(testData.testMappings);
-        const mapper: Mapper = new Mapper(testMappings, mockConfig);
+        const defaultSettings = [
+            new VscodeSetting(testData.testMappings.tab_size$test, 6),  // already exists in sublime settings and should be removed
+            new VscodeSetting('thisShouldStay', true),
+        ];
+
+        const mapper: Mapper = new Mapper({ mappings: testData.testMappings, defaults: defaultSettings }, mockConfig);
         const sublimeSettings = JSON.stringify({ ...testData.sublimeSettings, ...testData.sublimeSettingNoMapping, ...testData.sublimeSettingSameKeyDiffVal, ...testData.sublimeSettingSameKeyVal });
         const settings: CategorizedSettings = await mapper.getMappedSettings(sublimeSettings);
 
         assert.ok(settings.alreadyExisting.length === 1);
         assert.ok(settings.noMappings.length === 1);
         assert.ok(settings.mappedSettings.filter(s => s.vscode.overwritesValue).length === 1);
+        assert.ok(settings.defaultSettings.length === 1);
+        assert.ok(settings.defaultSettings[0].name === 'thisShouldStay');
     });
 });

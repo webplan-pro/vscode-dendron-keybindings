@@ -1,8 +1,8 @@
 export const sublimeSettings = {
-    "draw_white_space$test": "selection",
-    "word_separators$test": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?",
     "tab_size$test": 12,
+    "word_separators$test": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?",
     "ensure_newline_at_eof_on_save$test": false,
+    "draw_white_space$test": "selection",
 };
 
 export const sublimeSettingSameKeyVal = { "sameKeySameValue": true };
@@ -27,3 +27,4 @@ export const testMappings = {
     "sameKeySameValue": "editor.sameKeySameValue",
     "sameKeyDiffVal": "editor.sameKeyDiffVal",
 };
+

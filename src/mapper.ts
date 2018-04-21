@@ -11,34 +11,37 @@ interface IConfigCheck {
     readonly existingValue: string;
 }
 
+interface IMapperSettings {
+    mappings: { [key: string]: any };
+    defaults: VscodeSetting[];
+}
 export class Mapper {
 
-    private settingsMappings: Promise<{}> | undefined = undefined;
-
-    constructor(settingsMappings?: Promise<{}>, private mockConfig?: any) {
-        this.settingsMappings = settingsMappings;
-    }
+    constructor(private settings?: IMapperSettings, private mockConfig?: any) { }
 
     public async getMappedSettings(sublimeSettings: string): Promise<CategorizedSettings> {
-        const settingsMappings = await this.getSettingsMappings();
+        const settingsMappings = await this.getSettings();
         return this.mapAllSettings(settingsMappings, rjson.parse(sublimeSettings));
     }
 
-    private async getSettingsMappings(): Promise<{}> {
-        if (!this.settingsMappings) {
-            this.settingsMappings = readFileAsync(resolve(__dirname, '..', 'mappings/settings.json'), 'utf-8').then(rjson.parse);
+    private async getSettings(): Promise<IMapperSettings> {
+        if (!this.settings) {
+            const [mappingsFile, defaultsFile] = await Promise.all([readFileAsync(resolve(__dirname, '..', 'settings/mappings.json'), 'utf-8'), readFileAsync(resolve(__dirname, '..', 'settings/defaults.json'), 'utf-8')]);
+            this.settings = {
+                mappings: rjson.parse(mappingsFile),
+                defaults: (rjson.parse(defaultsFile) as [[string, any]]).map((setting) => new VscodeSetting(setting[0], setting[1])),
+            };
         }
-        return this.settingsMappings;
-
+        return this.settings;
     }
 
-    private mapAllSettings(mappedSettings: { [key: string]: any }, sublimeSettings: { [key: string]: any }): CategorizedSettings {
+    private mapAllSettings(settings: IMapperSettings, sublimeSettings: { [key: string]: any }): CategorizedSettings {
         const analyzedSettings: CategorizedSettings = new CategorizedSettings();
         const config = this.mockConfig || vscode.workspace.getConfiguration();
 
         for (const sublimeKey of Object.keys(sublimeSettings)) {
             const sublimeSetting = { name: sublimeKey, value: sublimeSettings[sublimeKey] };
-            const vscodeSetting = this.mapSetting(sublimeSetting, mappedSettings[sublimeKey]);
+            const vscodeSetting = this.mapSetting(sublimeSetting, settings.mappings[sublimeKey]);
             if (vscodeSetting) {
                 const configTest = this.checkWithExistingSettings(vscodeSetting, config);
                 const mappedSetting = new MappedSetting(sublimeSetting, vscodeSetting);
@@ -55,7 +58,7 @@ export class Mapper {
                 analyzedSettings.noMappings.push(sublimeSetting);
             }
         }
-        return this.appendDefaultSublimeSettings(analyzedSettings, config);
+        return this.appendDefaultSublimeSettings(analyzedSettings, settings.defaults, config);
     }
 
     private checkWithExistingSettings(vscodeSetting: VscodeSetting, config: vscode.WorkspaceConfiguration): IConfigCheck {
@@ -71,14 +74,7 @@ export class Mapper {
         return returnVal;
     }
 
-    private appendDefaultSublimeSettings(settings: CategorizedSettings, config: vscode.WorkspaceConfiguration): CategorizedSettings {
-        const defaultSettings: VscodeSetting[] = [
-            new VscodeSetting('editor.multiCursorModifier', 'ctrlCmd'),
-            new VscodeSetting('editor.snippetSuggestions', 'top'),
-            new VscodeSetting('editor.formatOnPaste', true),
-            new VscodeSetting('workbench.colorTheme', 'Monokai'),
-        ];
-
+    private appendDefaultSublimeSettings(settings: CategorizedSettings, defaultSettings: VscodeSetting[], config: vscode.WorkspaceConfiguration): CategorizedSettings {
         const mappedAndExisting: MappedSetting[] = [...settings.mappedSettings, ...settings.alreadyExisting];
         // filter out default settings that will be imported as mapped settings or already exist in the user settings
         const uniqueDefaultSettings = mappedAndExisting.length

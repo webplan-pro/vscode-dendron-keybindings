@@ -110,7 +110,9 @@ function setting2QuickPickItem(setting: VscodeSetting, sublimeName?: string): IS
         detail: setting.overwritesValue
             ? `${icons.exclamationPoint} Overwrites existing value: '${setting.oldValue}' with '${setting.value}'`
             : '',
-        label: sublimeName ? `${sublimeName} ${icons.arrowRight} ${setting.name}` : `{Sublime Default} ${icons.arrowRight} ${setting.name}: ${setting.value}`,
+        label: sublimeName
+            ? `${sublimeName} ${icons.arrowRight} ${setting.name}`
+            : `{Sublime Default} ${icons.arrowRight} ${setting.name}: ${setting.value}`,
         picked: !setting.overwritesValue,
         setting,
     };

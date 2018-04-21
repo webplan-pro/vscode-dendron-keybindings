@@ -3,7 +3,11 @@
     "extends": [
         "tslint:recommended"
     ],
-    
+    "linterOptions": {
+        "exclude": [
+            "test/testData.ts"
+        ]
+    },
     "jsRules": {},
     "rules": {
         "no-string-throw": true,
@@ -39,5 +43,5 @@
             "avoid-escape",
             "avoid-template"
         ]
-    }
+    },
 }
