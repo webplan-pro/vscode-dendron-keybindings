@@ -5,43 +5,23 @@ This extension imports keybindings and settings from Sublime Text to VS Code.
 
 ## Getting Started
 ### Keymappings
-This extension ports the most popular Sublime Text keyboard shortcuts to Visual Studio Code. After installing the extension and restarting VS Code your favorite keyboard shortcuts from Sublime Text are now available. 
+This extension ports the most popular Sublime Text keyboard shortcuts to Visual Studio Code.  
+Just restart VS Code after installing this extension and your favorite Sublime Text keyboard shortcuts will be available in VS Code. 
 ### Importing settings
-1. Run `Import Sublime Text settings` from the Command Palette
-2. Select all the settings you want to import and hit enter or press the OK button
+A prompt is shown the first time the extension is launched that let's you import your Sublime Settings.  
+If you want to import your settings at a later time use the `Import Sublime Text settings` command from the Command Palette (F1).
 
 ![](.readme/demo.gif)
 
-# Sublime Text Keymap for VS Code
 
+## FAQ
+### What keyboard shortcuts are included?
 
-
-## Changes Introduced in Version 3.0
-
-- Multi cursor editing changed from <kbd>alt</kbd> + click to <kbd>ctrl</kbd> (or <kbd>cmd</kbd>) + click. 
-- Enable format on paste. 
-- Change snippet suggestions to be at the top of the completion list. 
-
-All of these features make VS Code more "Sublime Text like." The changes to your User Settings file are as followed. 
-
-```javascript
-// Changes the multi cursor mouse binding
-"editor.multiCursorModifier": "ctrlCmd",
-
-// Specifies the location of snippets in the suggestion widget
-"editor.snippetSuggestions": "top",
-
-// Controls whether format on paste is on or off
-"editor.formatOnPaste": true
-```
-
-## What keyboard shortcuts are included?
-
-You can see all the keyboard shortcuts in the extension's contribution list. 
+The included keyboard shortcuts can be looked up in the [contribution list](https://code.visualstudio.com/docs/editor/extension-gallery#_extension-details). 
 
 ![extension contributions](.readme/contributions_list.png)
 
-## Why don't all Sublime Text commands work? 
+### Why don't all Sublime Text commands work? 
 
 VS Code has not implemented all features. Head on over to this [GitHub issue](https://github.com/Microsoft/vscode/issues/3776) and let the VS Code team know what you'd like to see. 
 
@@ -54,13 +34,14 @@ You can install an extension for many of these features:
 * [transpose](https://marketplace.visualstudio.com/items?itemName=v4run.transpose)
 * [Close HTML/XML tag](https://marketplace.visualstudio.com/items?itemName=Compulim.compulim-vscode-closetag)
 
-## How do I contribute a keyboard shortcut?
+## Contributing
+### How do I contribute a keyboard shortcut?
 
 We may have missed a keyboard shortcut. If we did please help us out! It is very easy to make a PR. 
 
 1. Head over to our [GitHub repository](https://github.com/Microsoft/vscode-sublime-keybindings). 
 2. Open the [`package.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json). 
-3. Add a JSON object to [`contributes.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json#L25) as seen below. 
+3. Add a JSON object to [`contributes.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json#L57) as seen below. 
 4. Open a pull request. 
 
 ```json
@@ -73,7 +54,13 @@ We may have missed a keyboard shortcut. If we did please help us out! It is very
 }
 ```
 
-You can read more about how to contribute keybindings in extensions in the [official documentation](http://code.visualstudio.com/docs/extensionAPI/extension-points#_contributeskeybindings). 
+### How do I contribute a Sublime setting?
+
+There are two different types of settings files: The mappings file holds the information on how a certain sublime setting should be mapped to a VS Code setting. The defaults file contains settings that are set by default in Sublime.
+1. Head over to our [GitHub repository](https://github.com/Microsoft/vscode-sublime-keybindings). 
+2. Open the [`settings/mappings.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/settings/mappings.json) or the [`settings/defaults.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/settings/defaults.json).  
+3. Add your setting 
+4. Open a pull request. 
 
 
 ## License
