@@ -21,7 +21,14 @@ export class Mapper {
 
     public async getMappedSettings(sublimeSettings: string): Promise<CategorizedSettings> {
         const settingsMappings = await this.getSettings();
-        return this.mapAllSettings(settingsMappings, rjson.parse(sublimeSettings));
+        let parsedSublimeSettings;
+        try {
+            parsedSublimeSettings = rjson.parse(sublimeSettings);
+        } catch (e) {
+            vscode.window.showErrorMessage('The sublime settings file could not be parsed. Please check if it contains syntax errors.');
+            throw(e);
+        }
+        return this.mapAllSettings(settingsMappings, parsedSublimeSettings);
     }
 
     private async getSettings(): Promise<IMapperSettings> {
