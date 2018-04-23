@@ -14,7 +14,7 @@ suite('Importer Tests', async () => {
 
     test('Import different types', async () => {
         const mapper: Mapper = new Mapper({ mappings: testData.testMappings, defaults: [] });
-        const settings: CategorizedSettings = await mapper.getMappedSettings(JSON.stringify(testData.sublimeSettings));
+        const settings: CategorizedSettings = await mapper.getMappedSettings(JSON.stringify(testData.sublimeSettings.mapped));
         assert.ok(settings.mappedSettings.length === 4, `mappedSettings.length is ${settings.mappedSettings.length} instead of 4`);
         expected.forEach((expSetting) => {
             const setting = settings.mappedSettings.find(m => m.sublime.name === expSetting.sublime.name);
@@ -29,8 +29,8 @@ suite('Importer Tests', async () => {
     });
 
     const alreadyExistingVsSettings: ISetting[] = [
-        { name: 'editor.sameKeySameValue', value: true },
-        { name: 'editor.sameKeyDiffVal', value: 'jajslfn' },
+        { name: 'editor.sameKeySameValue', value: testData.sublimeSettings.mappedSpecialCases.sameKeyVal.sameKeySameValue },
+        { name: 'editor.sameKeyDiffVal', value: testData.sublimeSettings.mappedSpecialCases.sameKeyDiffVal.sameKeyDiffVal + 'different' },
     ];
 
     test('Categorization of settings works', async () => {
@@ -50,13 +50,13 @@ suite('Importer Tests', async () => {
         ];
 
         const mapper: Mapper = new Mapper({ mappings: testData.testMappings, defaults: defaultSettings }, mockConfig);
-        const sublimeSettings = JSON.stringify({ ...testData.sublimeSettings, ...testData.sublimeSettingNoMapping, ...testData.sublimeSettingSameKeyDiffVal, ...testData.sublimeSettingSameKeyVal });
+        const sublimeSettings = JSON.stringify({ ...testData.sublimeSettings.mapped, ...testData.sublimeSettings.mappedSpecialCases.sameKeyDiffVal, ...testData.sublimeSettings.mappedSpecialCases.sameKeyVal, ...testData.sublimeSettings.noMapping });
         const settings: CategorizedSettings = await mapper.getMappedSettings(sublimeSettings);
 
-        assert.ok(settings.alreadyExisting.length === 1);
-        assert.ok(settings.noMappings.length === 1);
-        assert.ok(settings.mappedSettings.filter(s => s.vscode.overwritesValue).length === 1);
-        assert.ok(settings.defaultSettings.length === 1);
-        assert.ok(settings.defaultSettings[0].name === 'thisShouldStay');
+        assert.ok(settings.alreadyExisting.length === 1, 'settings.alreadyExisting.length === 1');
+        assert.ok(settings.noMappings.length === 1, 'settings.noMappings.length === 1');
+        assert.ok(settings.mappedSettings.filter(s => s.vscode.overwritesValue).length === 1, 'settings.mappedSettings.filter(s => s.vscode.overwritesValue).length === 1');
+        assert.ok(settings.defaultSettings.length === 1, 'settings.defaultSettings.length === 1');
+        assert.ok(settings.defaultSettings[0].name === 'thisShouldStay', "settings.defaultSettings[0].name === 'thisShouldStay'");
     });
 });

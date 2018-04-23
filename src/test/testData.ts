@@ -1,13 +1,16 @@
 export const sublimeSettings = {
-    "tab_size$test": 12,
-    "word_separators$test": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?",
-    "ensure_newline_at_eof_on_save$test": false,
-    "draw_white_space$test": "selection",
+    mapped: {
+        "tab_size$test": 12,
+        "word_separators$test": "./\\()\"'-:,.;<>~!@#$%^&*|+=[]{}`~?",
+        "ensure_newline_at_eof_on_save$test": false,
+        "draw_white_space$test": "selection",
+    },
+    mappedSpecialCases: {
+        sameKeyVal: { "sameKeySameValue": true },
+        sameKeyDiffVal: { "sameKeyDiffVal": 'asdfjadfsla' },
+    },
+    noMapping: { "noMapping": 'someVal' },
 };
-
-export const sublimeSettingSameKeyVal = { "sameKeySameValue": true };
-export const sublimeSettingSameKeyDiffVal = { "sameKeyDiffVal": 'asdfjadfsla' };
-export const sublimeSettingNoMapping = { "noMapping": 'someVal' };
 
 export const testMappings = {
     "tab_size$test": "editor.tabSize$test", // Number

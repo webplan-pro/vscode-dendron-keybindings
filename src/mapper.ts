@@ -95,6 +95,17 @@ export class Mapper {
             }
         });
 
+        settings.defaultSettings.sort((a, b) => {
+            if (a.overwritesValue && b.overwritesValue) {
+                return a.name.localeCompare(b.name);
+            } else if (a.overwritesValue) {
+                return 1;
+            } else if (b.overwritesValue) {
+                return -1;
+            }
+            return a.name.localeCompare(b.name);
+        });
+
         return settings;
     }
 
