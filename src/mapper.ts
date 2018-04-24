@@ -123,7 +123,7 @@ export class Mapper {
             } else if (typeof mappedValue === 'object') {
                 const obj = mappedValue[sublimeSetting.value];
                 if (!obj) {
-                    vscode.window.showErrorMessage(`mapSetting() failed on setting: ${JSON.stringify(sublimeSetting)}, mappedSetting: ${JSON.stringify(mappedValue)}`);
+                    vscode.window.showErrorMessage(`Failed to parse setting: '${sublimeSetting.name}: ${sublimeSetting.value}'. Please check if it contains syntax errors`);
                     return undefined;
                 }
                 const keys = Object.keys(obj);
