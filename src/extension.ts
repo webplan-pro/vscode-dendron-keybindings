@@ -33,7 +33,7 @@ async function start(): Promise<void> {
                 await vscode.commands.executeCommand('workbench.action.openGlobalSettings');
             }
         } else {
-            vscode.window.showInformationMessage('All settings imported');
+            vscode.window.showInformationMessage('Nothing to import. All settings have already been imported');
         }
     }
 }
