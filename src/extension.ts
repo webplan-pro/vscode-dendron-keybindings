@@ -99,7 +99,7 @@ async function showPicker(settings: CategorizedSettings): Promise<VscodeSetting[
     // showing mapped & default settings
     const pickedItems = await vscode.window.showQuickPick(
         [...settings.mappedSettings.map((ms) => setting2QuickPickItem(ms.vscode, ms.sublime.name)),
-        ...settings.defaultSettings.map((s) => setting2QuickPickItem(s))], { canPickMany: true });
+            ...settings.defaultSettings.map((s) => setting2QuickPickItem(s))], { canPickMany: true, ignoreFocusOut: true });
     // converting all selected entries to VscodeSettings
     return pickedItems ? pickedItems.map(pickItem => pickItem.setting instanceof MappedSetting ? pickItem.setting.vscode : pickItem.setting) : [];
 }
