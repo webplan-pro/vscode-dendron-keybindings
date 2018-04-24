@@ -17,8 +17,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 }
 
 async function showPrompt(): Promise<void> {
-    const answer: string | undefined = await vscode.window.showInformationMessage('Would you like to customize VS Code to behave more like Sublime Text?', 'yes', 'no');
-    if (answer && answer === 'yes') {
+    const answer: string | undefined = await vscode.window.showInformationMessage('Would you like to customize VS Code to behave more like Sublime Text?', 'Yes', 'No');
+    if (answer && answer === 'Yes') {
         start();
     }
 }
