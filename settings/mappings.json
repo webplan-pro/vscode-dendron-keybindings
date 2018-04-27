@@ -75,7 +75,6 @@
     "copy_with_empty_selection": "editor.emptySelectionClipboard", // Boolean
     "auto_find_in_selection": "editor.find.autoFindInSelection", // Boolean
     "drag_text": "editor.dragAndDrop", // Boolean
-    "default_encoding": "files.encoding", // String
     "font_face": "editor.fontFamily", // String
     "font_size": "editor.fontSize", // Number
     "line_numbers": {
@@ -117,7 +116,102 @@
     "match_brackets": "editor.matchBrackets", // Boolean
     "match_selection": "editor.selectionHighlight", // Boolean
     "draw_indent_guides": "editor.renderIndentGuides", // Boolean
-    "remember_full_screen": "window.restoreFullscreen" // Boolean,
+    "remember_full_screen": "window.restoreFullscreen", // Boolean,
+    "default_encoding": {
+        "UTF-8": {
+            "files.encoding": "utf8"
+        },
+        "UTF-16 LE": {
+            "files.encoding": "utf16le"
+        },
+        "UTF-16 BE": {
+            "files.encoding": "utf16be"
+        },
+        "Western (Windows 1252)": {
+            "files.encoding": "windows1252"
+        },
+        "Western (ISO 8859-1)": {
+            "files.encoding": "iso88591"
+        },
+        "Western (ISO 8859-3)": {
+            "files.encoding": "iso88593"
+        },
+        "Western (ISO 8859-15)": {
+            "files.encoding": "iso885915"
+        },
+        "Western (Mac Roman)": {
+            "files.encoding": "macroman"
+        },
+        "DOS (CP 437)": {
+            "files.encoding": "cp437"
+        },
+        "Arabic (Windows 1256)": {
+            "files.encoding": "windows1256"
+        },
+        "Arabic (ISO 8859-6)": {
+            "files.encoding": "iso88596"
+        },
+        "Baltic (Windows 1257)": {
+            "files.encoding": "windows1257"
+        },
+        "Baltic (ISO 8859-4)": {
+            "files.encoding": "iso88594"
+        },
+        "Celtic (ISO 8859-14)": {
+            "files.encoding": "iso885914"
+        },
+        "Central European (Windows 1250)": {
+            "files.encoding": "windows1250"
+        },
+        "Central European (ISO 8859-2)": {
+            "files.encoding": "iso88592"
+        },
+        "Cyrillic (Windows 1251)": {
+            "files.encoding": "windows1251"
+        },
+        "Cyrillic (Windows 866)": {
+            "files.encoding": "cp866"
+        },
+        "Cyrillic (ISO 8859-5)": {
+            "files.encoding": "iso88595"
+        },
+        "Cyrillic (KOI8-R)": {
+            "files.encoding": "koi8r"
+        },
+        "Cyrillic (KOI8-U)": {
+            "files.encoding": "koi8u"
+        },
+        "Estonian (ISO 8859-13)": {
+            "files.encoding": "iso885913"
+        },
+        "Greek (Windows 1253)": {
+            "files.encoding": "windows1253"
+        },
+        "Greek (ISO 8859-7)": {
+            "files.encoding": "iso88597"
+        },
+        "Hebrew (Windows 1255)": {
+            "files.encoding": "windows1255"
+        },
+        "Hebrew (ISO 8859-8)": {
+            "files.encoding": "iso88598"
+        },
+        "Nordic (ISO 8859-10)": {
+            "files.encoding": "iso885910"
+        },
+        "Romanian (ISO 8859-16)": {
+            "files.encoding": "iso885916"
+        },
+        "Turkish (Windows 1254)": {
+            "files.encoding": "windows1254"
+        },
+        "Turkish (ISO 8859-9)": {
+            "files.encoding": "iso88599"
+        },
+        "Vietnamese (Windows 1258)": {
+            "files.encoding": "windows1258"
+        }
+    }
     // "folder_exclude_patterns": "files.exclude",
     // "file_exclude_patterns": "files.exclude",
     // "color_scheme": "workbench.colorTheme",
