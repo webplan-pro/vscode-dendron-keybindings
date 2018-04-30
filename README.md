@@ -11,7 +11,7 @@ Just restart VS Code after the installation of this extension and your favorite 
 The first time the extension is launched a prompt is shown that let's you import your Sublime Settings.  
 If you want to import your settings at a later time use the `Sublime Text Keymap: Import Sublime Text Settings` command from the Command Palette (F1).
 
-![](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/.readme/demo.gif)
+![](.readme/demo.gif)
 ## FAQ
 ### What keyboard shortcuts are included?
 
