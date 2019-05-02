@@ -22,6 +22,7 @@
     ],
     "main": "./out/extension",
     "preview": false,
+    "extensionKind": "ui"
     "icon": "sublime_keyboard_with_padding.png",
     "repository": {
         "type": "git",
