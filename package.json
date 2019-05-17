@@ -1,23 +1,28 @@
 {
     "name": "sublime-keybindings",
-    "displayName": "Sublime Text Keymap",
-    "description": "Popular Sublime Text keybindings for VS Code.",
-    "version": "3.0.3",
+    "displayName": "Sublime Text Keymap and Settings Importer",
+    "description": "Import Sublime Text settings and keybindings into VS Code.",
+    "version": "4.0.1",
     "publisher": "ms-vscode",
     "engines": {
-        "vscode": "^1.18.0"
+        "vscode": "^1.22.0"
     },
     "categories": [
         "Keymaps"
     ],
     "keywords": [
-        "keymap"
+        "keymap",
+        "Importer",
+        "Settings",
+        "Sublime Text"
     ],
     "activationEvents": [
-        "*"
+        "*",
+        "onCommand:extension.importFromSublime"
     ],
-    "main": "./extension",
+    "main": "./out/extension",
     "preview": false,
+    "extensionKind": "ui",
     "icon": "sublime_keyboard_with_padding.png",
     "repository": {
         "type": "git",
@@ -26,10 +31,47 @@
     "bugs": {
         "url": "https://github.com/Microsoft/vscode-sublime-keybindings/issues"
     },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test",
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^7.0.43",
+        "@types/relaxed-json": "^1.0.0",
+        "typescript": "^2.0.3",
+        "vscode": "^1.1.34"
+    },
+    "dependencies": {
+        "relaxed-json": "^1.0.1"
+    },
     "contributes": {
+        "commands": [
+            {
+                "command": "extension.importFromSublime",
+                "title": "Sublime Text Keymap: Import Sublime Text Settings"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Sublime Text Keymap configuration",
+            "properties": {
+                "sublimeTextKeymap.promptV3Features": {
+                    "type": [
+                        "boolean",
+                        "null"
+                    ],
+                    "default": null,
+                    "description": "Status of Sublime Text Keymap version three features added."
+                }
+            }
+        },
         "keybindings": [
             {
-                "mac": "cmd+shift+ctrl+f",
+                "mac": "ctrl+shift+cmd+f",
                 "win": "shift+f11",
                 "linux": "shift+f11",
                 "key": "shift+f11",
@@ -427,13 +469,6 @@
                 "when": "editorTextFocus"
             },
             {
-                "mac": "cmd+ctrl+shift+f",
-                "win": "shift+f11",
-                "linux": "shift+f11",
-                "key": "shift+f11",
-                "command": "workbench.action.toggleZenMode"
-            },
-            {
                 "mac": "cmd+j",
                 "key": "ctrl+j",
                 "command": "editor.action.joinLines",
@@ -506,28 +541,15 @@
                 "command": "deleteAllRight",
                 "key": "ctrl+k ctrl+k",
                 "when": "editorTextFocus && !editorReadonly"
+            },
+            {
+                "mac": "cmd+shift+space",
+                "win": "ctrl+shift+space",
+                "linux": "ctrl+shift+space",
+                "command": "editor.action.smartSelect.grow",
+                "key": "ctrl+shift+space",
+                "when": "editorTextFocus"
             }
-        ],
-        "configuration": {
-            "type": "object",
-            "title": "Sublime Text Keymap configuration",
-            "properties": {
-                "sublimeTextKeymap.promptV3Features": {
-                    "type": [
-                        "boolean",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "Status of Sublime Text Keymap version three features added."
-                }
-            }
-        }
-    },
-    "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install"
-    },
-    "devDependencies": {
-        "vscode": "^1.0.3",
-        "typescript": "^2.0.3"
+        ]
     }
 }
