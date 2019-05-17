@@ -55,20 +55,6 @@
                 "title": "Sublime Text Keymap: Import Sublime Text Settings"
             }
         ],
-        "configuration": {
-            "type": "object",
-            "title": "Sublime Text Keymap configuration",
-            "properties": {
-                "sublimeTextKeymap.promptV3Features": {
-                    "type": [
-                        "boolean",
-                        "null"
-                    ],
-                    "default": null,
-                    "description": "Status of Sublime Text Keymap version three features added."
-                }
-            }
-        },
         "keybindings": [
             {
                 "mac": "ctrl+shift+cmd+f",
