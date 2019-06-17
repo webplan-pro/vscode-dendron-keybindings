@@ -74,8 +74,8 @@ export class Mapper {
         if (info && info.globalValue !== undefined) {
             if (info.globalValue === vscodeSetting.value) {
                 returnVal.alreadyExists = true;
-            } else {
-                returnVal.existingValue = info.globalValue.toString();
+            } else if(typeof info.globalValue == 'object') {
+                returnVal.existingValue = info.globalValue ? info.globalValue.toString() : '';
             }
         }
         return returnVal;
