@@ -63,7 +63,8 @@
                 "win": "ctrl+y",
                 "linux": "ctrl+y",
                 "key": "ctrl+y",
-                "command": "redo"
+                "command": "redo",
+                "when": "editorTextFocus && !editorReadonly"
             },
             {
                 "mac": "ctrl+shift+cmd+f",
