@@ -59,6 +59,13 @@
         ],
         "keybindings": [
             {
+                "mac": "cmd+y",
+                "win": "ctrl+y",
+                "linux": "ctrl+y",
+                "key": "ctrl+y",
+                "command": "redo"
+            },
+            {
                 "mac": "ctrl+shift+cmd+f",
                 "win": "shift+f11",
                 "linux": "shift+f11",
