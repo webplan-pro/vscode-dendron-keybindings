@@ -1,3 +1,7 @@
+## 4.0.5
+- Update `extensionKind` property, fix npm security issues
+- Adopt [PR #116](https://github.com/microsoft/vscode-sublime-keybindings/pull/116) that adds `CMD+Y` 
+
 ## 4.0
 - New feature: import settings from an existing Sublime installation
 
