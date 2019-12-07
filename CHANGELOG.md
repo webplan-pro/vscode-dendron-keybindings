@@ -1,3 +1,6 @@
+## 4.0.6
+- Update `extensionKind` to be both `ui` and `workspace` (will favor ui), see [vscode#85819](https://github.com/microsoft/vscode/issues/85819)
+
 ## 4.0.5
 - Update `extensionKind` property, fix npm security issues
 - Adopt [PR #116](https://github.com/microsoft/vscode-sublime-keybindings/pull/116) that adds `CMD+Y` 

@@ -2,7 +2,7 @@
     "name": "sublime-keybindings",
     "displayName": "Sublime Text Keymap and Settings Importer",
     "description": "Import Sublime Text settings and keybindings into VS Code.",
-    "version": "4.0.5",
+    "version": "4.0.6",
     "publisher": "ms-vscode",
     "engines": {
         "vscode": "^1.22.0"
@@ -23,7 +23,8 @@
     "main": "./out/extension",
     "preview": false,
     "extensionKind": [
-        "ui"
+        "ui",
+        "workspace"
     ],
     "icon": "sublime_keyboard_with_padding.png",
     "repository": {
