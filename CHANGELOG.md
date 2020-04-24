@@ -1,3 +1,7 @@
+## 4.0.7
+- Update readme
+- Fix tests
+
 ## 4.0.6
 - Update `extensionKind` to be both `ui` and `workspace` (will favor ui), see [vscode#85819](https://github.com/microsoft/vscode/issues/85819)
 
