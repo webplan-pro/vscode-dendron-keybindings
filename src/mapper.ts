@@ -26,7 +26,7 @@ export class Mapper {
             parsedSublimeSettings = rjson.parse(sublimeSettings);
         } catch (e) {
             vscode.window.showErrorMessage('The sublime settings file could not be parsed. Please check if it contains syntax errors.');
-            throw(e);
+            throw (e);
         }
         return this.mapAllSettings(settingsMappings, parsedSublimeSettings);
     }
@@ -74,8 +74,8 @@ export class Mapper {
         if (info && info.globalValue !== undefined) {
             if (info.globalValue === vscodeSetting.value) {
                 returnVal.alreadyExists = true;
-            } else if(typeof info.globalValue == 'object') {
-                returnVal.existingValue = info.globalValue ? info.globalValue.toString() : '';
+            } else {
+                returnVal.existingValue = returnVal.existingValue === null ? '' : String(info.globalValue);
             }
         }
         return returnVal;

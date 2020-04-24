@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import { Mapper } from '../mapper';
-import { ISetting, MappedSetting, CategorizedSettings, VscodeSetting } from '../settings';
+import { Mapper } from '../../mapper';
+import { ISetting, MappedSetting, CategorizedSettings, VscodeSetting } from '../../settings';
 import * as testData from './testData';
 
 suite('Importer Tests', async () => {
