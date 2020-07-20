@@ -4,6 +4,7 @@
     "description": "Import Sublime Text settings and keybindings into VS Code.",
     "version": "4.0.7",
     "publisher": "ms-vscode",
+    "license": "SEE LICENSE IN LICENSE.md",
     "engines": {
         "vscode": "^1.32.0"
     },
