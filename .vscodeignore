@@ -2,6 +2,7 @@
 typings/**
 out/test/**
 test/**
+build/**
 src/**
 **/*.map
 .gitignore
