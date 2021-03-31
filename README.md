@@ -38,8 +38,8 @@ You can install an extension for many of these features:
 We may have missed a keyboard shortcut. If we did please help us out! It is very easy to make a PR. 
 
 1. Head over to our [GitHub repository](https://github.com/Microsoft/vscode-sublime-keybindings). 
-2. Open the [`package.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json). 
-3. Add a JSON object to [`contributes.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/package.json#L57) as seen below. 
+2. Open the [`package.json` file](https://github.com/Microsoft/vscode-sublime-keybindings/blob/main/package.json). 
+3. Add a JSON object to [`contributes.keybindings`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/main/package.json#L57) as seen below. 
 4. Open a pull request. 
 
 ```json
@@ -57,7 +57,7 @@ We may have missed a keyboard shortcut. If we did please help us out! It is very
 There are two different types of settings files: The ```mappings``` file holds the information on how a sublime setting can be mapped to a VS Code setting. The ```defaults``` file contains default Sublime settings that are not explicitly set in the Sublime settings file (e.g. the Monokai theme).  
 To make a Pull Request:
 1. Head over to our [GitHub repository](https://github.com/Microsoft/vscode-sublime-keybindings). 
-2. Open the [`settings/mappings.json`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/settings/mappings.json) or the [`settings/defaults.json`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/master/settings/defaults.json) file.  
+2. Open the [`settings/mappings.json`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/main/settings/mappings.json) or the [`settings/defaults.json`](https://github.com/Microsoft/vscode-sublime-keybindings/blob/main/settings/defaults.json) file.  
 3. Add your setting 
 4. Open a pull request. 
 
