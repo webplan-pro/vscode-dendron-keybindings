@@ -1,7 +1,7 @@
 
 # Sublime Importer for VS Code
 
-This extension imports keybindings and settings from Sublime Text to VS Code.
+This extension imports keybindings and settings from Sublime Text to Visual Studio Code.
 
 ## Getting Started
 ### Keymappings
