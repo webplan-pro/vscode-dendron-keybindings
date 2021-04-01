@@ -33,7 +33,9 @@ export class Mapper {
 
     private async getSettings(): Promise<IMapperSettings> {
         if (!this.settings) {
-            const [mappingsFile, defaultsFile] = await Promise.all([readFileAsync(resolve(__dirname, '..', 'settings/mappings.json'), 'utf-8'), readFileAsync(resolve(__dirname, '..', 'settings/defaults.json'), 'utf-8')]);
+            // make sure set node: false in /build/node_extension.webpack.config.json so that __dirname is correct
+            const [mappingsFile, defaultsFile] = await Promise.all([readFileAsync(resolve(__dirname, '..', 'settings/mappings.json'), 'utf-8'), 
+                                                                    readFileAsync(resolve(__dirname, '..', 'settings/defaults.json'), 'utf-8')]);
             this.settings = {
                 mappings: rjson.parse(mappingsFile),
                 defaults: (rjson.parse(defaultsFile) as [[string, any]]).map((setting) => new VscodeSetting(setting[0], setting[1])),
