@@ -1,3 +1,7 @@
+## 4.0.9
+- Add `deleteAllLeft` binding (`Ctrl+Shift+Backspace` and `Ctrl+Shift+Delete`) [#136](https://github.com/microsoft/vscode-sublime-keybindings/pull/136)
+
+
 ## 4.0.8
 - Don't show welcome message if installed by Settings Sync [#132](https://github.com/microsoft/vscode-sublime-keybindings/issues/132)
 - Updated dependencies to address dependabot issues
