@@ -340,6 +340,22 @@
                 "when": "editorFocus"
             },
             {
+                "mac": "ctrl+shift+backspace",
+                "win": "ctrl+shift+backspace",
+                "linux": "ctrl+shift+backspace",
+                "key": "ctrl+shift+backspace",
+                "command": "deleteAllLeft",
+                "when": "editorFocus"
+            },
+            {
+                "mac": "ctrl+shift+delete",
+                "win": "ctrl+shift+delete",
+                "linux": "ctrl+shift+delete",
+                "key": "ctrl+shift+delete",
+                "command": "deleteAllRight",
+                "when": "editorFocus"
+            },
+            {
                 "mac": "ctrl+shift+up",
                 "win": "alt+shift+up",
                 "linux": "alt+shift+up",
