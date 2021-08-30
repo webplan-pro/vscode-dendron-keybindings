@@ -26,8 +26,7 @@
     "preview": false,
     "extensionKind": [
         "ui",
-        "workspace",
-        "web"
+        "workspace"
     ],
     "icon": "sublime_keyboard_with_padding.png",
     "repository": {
