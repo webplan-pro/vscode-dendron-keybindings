@@ -3,7 +3,7 @@
     "displayName": "Dendron keybindings",
     "description": "Sets keybindings for Dendron in VS Code.",
     "publisher": "webplan-pro",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "icon": "dendron_keyboard_with_padding.png",
     "license": "SEE LICENSE IN LICENSE.md",
     "engines": {
