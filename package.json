@@ -18,9 +18,6 @@
         "modifiers",
         "dendron"
     ],
-    "activationEvents": [
-        "onStartupFinished"
-    ],
     "preview": false,
     "extensionKind": [
         "ui",
