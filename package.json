@@ -69,7 +69,7 @@
                 "description": "Selection in the active text editor will be extracted to be appended to the note that you looked up.",
                 "mac": "cmd+l cmd+e",
                 "win": "alt+l alt+e",
-                "linux": "altl alt+e",
+                "linux": "alt+l alt+e",
                 "command": "dendron.lookupNote",
                 "args": {
                   "selectionType": "selectionExtract"
@@ -109,7 +109,7 @@
                 }
               },
               {
-                "name": "Lookup (Hotizontal Split)",
+                "name": "Lookup (Horizontal Split)",
                 "description": "The result of the lookup will be opened in the column directly right of the active editor.",
                 "mac": "cmd+l cmd+t",
                 "win": "alt+l alt+t",
