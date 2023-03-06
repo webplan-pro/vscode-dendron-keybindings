@@ -2,6 +2,7 @@
     "name": "dendron-keybindings",
     "displayName": "Dendron keybindings",
     "description": "Sets keybindings for Dendron in VS Code.",
+    "publisher": "webplan-pro",
     "version": "1",
     "license": "SEE LICENSE IN LICENSE.md",
     "engines": {
